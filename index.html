@@ -104,7 +104,7 @@
   header.wf{
     background:#fff;
     padding:16px 0 0;
-    position:relative; left:50%; width:100vw; margin-left:-50vw;
+    position:relative; left:50%; width:100vw; margin-left:-50vw; z-index:310;
     border-bottom:1px solid var(--line-light);
   }
   /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1080px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
@@ -148,11 +148,13 @@
   .gnb-static:hover{ font-weight:700; }
 
   /* 레드프린팅 참고: 팝업이 흰 배경 + 큰 그림자로 붕 뜬 카드처럼 보이지 않도록,
-     그림자·둥근모서리 없이 옅은 회색 면으로 헤더 바로 아래에 이어 붙인다. */
+     그림자·둥근모서리 없이 흰 배경 면으로 헤더 바로 아래에 이어 붙이고,
+     대신 메가메뉴 아래쪽 페이지 전체를 살짝 암전시켜 포커스를 준다. */
   .mega-menu{
     display:none;
     position:absolute; top:100%; left:50%; width:100vw; margin-left:-50vw; z-index:300;
-    background:var(--box);
+    background:#fff;
+    border-bottom:1px solid var(--line-light);
   }
   .mega-menu.show{ display:block; }
   /* 메가메뉴 안쪽 콘텐츠(썸네일+컬럼)는 화면 전체가 아니라 헤더와 같은 1080px 폭에 맞춰 정렬 */
@@ -160,6 +162,14 @@
     display:flex; gap:44px; text-align:left;
     max-width:1080px; margin:0 auto; padding:32px 24px 40px;
   }
+  /* 메가메뉴가 열려있는 동안 헤더/메가메뉴 아래 나머지 화면을 어둡게 눌러주는 딤 처리 */
+  .mega-dim{
+    position:fixed; inset:0; z-index:250;
+    background:rgba(15,15,15,.55);
+    opacity:0; visibility:hidden;
+    transition:opacity .15s ease;
+  }
+  .mega-dim.show{ opacity:1; visibility:visible; }
 
   .mega-thumb-wrap{ display:flex; flex-direction:column; gap:10px; width:150px; flex-shrink:0; }
   .mega-thumb-img{
@@ -964,6 +974,7 @@
   <span class="title">굿즈 인쇄 제작 자사몰 · 와이어프레임</span>
 </div>
 <div class="frame-label" id="frame-label"></div>
+<div class="mega-dim" id="mega-dim"></div>
 
 <!-- ================= 01 메인(홈) ================= -->
 <div class="page" id="page-home">
@@ -2666,6 +2677,7 @@
   frameLabel.textContent = pages[0].label + ' — 와이어프레임 (저해상도 레이아웃 시안)';
 
   // 메가메뉴 hover 토글 (GNB 카테고리 hover 시 세부 카테고리 노출)
+  const megaDim = document.getElementById('mega-dim');
   document.querySelectorAll('.wf-gnb-wrap').forEach(wrap => {
     const catItems = wrap.querySelectorAll('.gnb-cat');
     catItems.forEach(cat => {
@@ -2673,10 +2685,12 @@
         wrap.querySelectorAll('.mega-menu').forEach(m => m.classList.remove('show'));
         const target = document.getElementById('mega-' + cat.dataset.menu);
         if (target) target.classList.add('show');
+        if (megaDim) megaDim.classList.add('show');
       });
     });
     wrap.addEventListener('mouseleave', () => {
       wrap.querySelectorAll('.mega-menu').forEach(m => m.classList.remove('show'));
+      if (megaDim) megaDim.classList.remove('show');
     });
   });
 
