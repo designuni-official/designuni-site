@@ -1,0 +1,3156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>디자인유니 - 자사몰 디자인 시안</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    /* 브랜드 컬러 - 제공된 디자인 시스템 문서 기준 (Primary #cc1418 단일 포인트 컬러) */
+    --navy:#cc1418;
+    --navy-dark:#a31013;
+    --navy-light:#fbe9ea;
+    --red:#cc1418;
+    --red-dark:#a31013;
+    --green:#1c7a41;
+    --yellow:#f5b100;
+
+    /* 뉴트럴 - 디자인 시스템 문서 + wireframe.html 그레이 스케일 기준 */
+    --ink:#0e0e0e;
+    --text:#0e0e0e;
+    --muted:#8a8a8a;
+    --line:#8a8a8a;
+    --line-light:#dcdcdc;
+    --bg:#f4f4f4;
+    --box:#e9e9e9;
+    --box2:#dcdcdc;
+
+    /* 기존 코드 전반에서 참조하는 변수명 유지 (호환용 별칭) */
+    --accent:var(--navy);
+
+    /* 반경 / 그림자 / 폰트 - 디자인 시스템 문서 기준 (버튼·탭 4px / 카드·모달 8px) */
+    --r-sm:4px;
+    --r-md:8px;
+    --r-lg:16px;
+    --shadow-sm:0 2px 10px rgba(0,0,0,.08);
+    --shadow-md:0 10px 26px rgba(0,0,0,.12);
+    --shadow-lg:0 24px 56px rgba(0,0,0,.20);
+    --font:'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Apple SD Gothic Neo', Arial, sans-serif;
+
+    /* 이미지 없는 자리에 쓰는 플레이스홀더 그라디언트 (뉴트럴 그레이톤으로 통일) */
+    --ph-grad:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23aeaeae'%20stroke-width='1.5'%3E%3Crect%20x='3'%20y='4'%20width='18'%20height='16'%20rx='2.5'/%3E%3Ccircle%20cx='8.6'%20cy='9.6'%20r='1.6'/%3E%3Cpath%20d='M21%2015.5l-5.2-5.2-9.3%209.3'/%3E%3C/svg%3E") no-repeat center/26% auto, linear-gradient(135deg, #f2f2f2, #e2e2e2);
+    --ph-grad-dark:linear-gradient(160deg, #2e2e2e, #161616);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:var(--font);
+    background:#fff;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 상단 페이지 탭 (실제 서비스가 아닌, 이 파일 안에서 12개 페이지를 넘겨보기 위한 데모용 내비게이션) */
+  .tabbar{
+    position:sticky; top:0; z-index:100;
+    background:var(--navy-dark);
+    padding:10px 16px;
+    display:flex; flex-wrap:wrap; gap:6px;
+    box-shadow:0 2px 10px rgba(0,0,0,.25);
+  }
+  .tabbar .title{
+    color:#fff; font-weight:700; font-size:14px;
+    display:flex; align-items:center; margin-right:12px;
+  }
+  .tabbtn{
+    background:rgba(255,255,255,.10); color:rgba(255,255,255,.85); border:none;
+    padding:8px 13px; font-size:12px; border-radius:var(--r-sm);
+    cursor:pointer; white-space:nowrap; transition:background .15s ease, color .15s ease;
+  }
+  .tabbtn:hover{ background:rgba(255,255,255,.18); color:#fff; }
+  .tabbtn.active{ background:#fff; color:var(--navy); font-weight:700; }
+
+  /* 배경을 전부 흰색으로 통일 - 더 이상 회색 바탕 위에 뜬 카드가 아니라
+     페이지 자체가 흰 화면이고, 콘텐츠만 1080px 폭으로 정렬된다. */
+  .page{
+    display:none; max-width:1080px; margin:0 auto; background:#fff;
+  }
+  .page.active{ display:block; }
+
+  .frame-label{
+    max-width:1080px; margin:16px auto 0; padding:0 4px;
+    font-size:13px; color:var(--navy); font-weight:700;
+  }
+
+  /* 와이어프레임 공통 박스 - 카드/버튼/드롭다운 등 여러 용도로 함께 쓰이는 범용 컴포넌트 */
+  .wf-box{
+    background:var(--box);
+    border-radius:var(--r-sm);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text); font-size:12px; text-align:center;
+    padding:6px;
+    transition:background .15s ease, box-shadow .15s ease, color .15s ease, transform .15s ease;
+  }
+  .wf-box.dashed{ background:var(--box2); }
+  .wf-box.solid-dark{
+    background:var(--navy); color:#fff; font-weight:500;
+    box-shadow:0 4px 12px rgba(204,20,24,.28);
+  }
+  .wf-box.solid-dark:hover{ background:var(--navy-dark); transform:translateY(-1px); box-shadow:0 6px 16px rgba(204,20,24,.34); }
+
+  /* 레드프린팅 참고: 메뉴바 구분선이 카드 폭(1080px)이 아니라 화면 최대 크기를
+     그대로 따라가도록, 헤더 자체를 뷰포트 전체 너비로 브레이크아웃한다. */
+  /* GNB 바로 아래 구분선을 header.wf 자체(뷰포트 전체 폭)에 둬서 화면 끝까지 이어지게 한다 */
+  header.wf{
+    background:#fff;
+    padding:16px 0 0;
+    position:relative; left:50%; width:100vw; margin-left:-50vw;
+    border-bottom:1px solid var(--line-light);
+  }
+  /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1080px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
+  .wf-header-inner{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  .wf-top-util{
+    display:flex; justify-content:flex-end; gap:12px; font-size:11px; color:var(--muted); margin-bottom:10px;
+  }
+  .wf-header-row{
+    display:flex; align-items:center; gap:16px;
+  }
+  .wf-logo{ width:110px; height:38px; flex-shrink:0; font-weight:700; color:var(--navy); letter-spacing:-.2px; }
+  .wf-header-spacer{ flex:1; }
+  .wf-icon-row{ display:flex; align-items:center; gap:24px; flex-shrink:0; }
+  .wf-icon-item{ display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; }
+  .wf-icon-item .icon-circle{
+    width:34px; height:34px; border-radius:50%; background:var(--box); position:relative;
+    transition:background .15s ease;
+  }
+  .wf-icon-item:hover .icon-circle{ background:var(--navy-light); }
+  .wf-icon-item .icon-label{ font-size:9px; color:var(--muted); white-space:nowrap; }
+  .cart-badge{
+    position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9px; font-weight:700;
+    width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  }
+  .wf-gnb{
+    display:flex; gap:4px; margin-top:14px;
+  }
+  .wf-gnb div{
+    flex:1; text-align:center; padding:10px 4px; font-size:12.5px; font-weight:500;
+    color:var(--text);
+  }
+
+  /* 메가메뉴 (카테고리 hover 시 세부 카테고리 노출, 레드프린팅 스타일 참고) */
+  /* 구분선 자체는 header.wf(화면 전체 폭)에 있고, 여기서는 그 선까지의 여백만 잡는다 */
+  .wf-gnb-wrap{ position:relative; padding-bottom:14px; }
+  /* 레드프린팅 참고: GNB 호버는 배경 음영 없이, 같은 폰트 패밀리 안에서 굵기 단계만
+     2~3단계 올라가는 방식으로만 강조한다 (500 -> 800). */
+  .gnb-cat{ cursor:default; transition:font-weight .12s ease; }
+  .gnb-cat:hover{ font-weight:700; }
+  .gnb-static{ cursor:pointer; transition:font-weight .12s ease; }
+  .gnb-static:hover{ font-weight:700; }
+
+  /* 레드프린팅 참고: 팝업이 흰 배경 + 큰 그림자로 붕 뜬 카드처럼 보이지 않도록,
+     그림자·둥근모서리 없이 옅은 회색 면으로 헤더 바로 아래에 이어 붙인다. */
+  .mega-menu{
+    display:none;
+    position:absolute; top:100%; left:50%; width:100vw; margin-left:-50vw; z-index:300;
+    background:var(--box);
+  }
+  .mega-menu.show{ display:block; }
+  /* 메가메뉴 안쪽 콘텐츠(썸네일+컬럼)는 화면 전체가 아니라 헤더와 같은 1080px 폭에 맞춰 정렬 */
+  .mega-menu-inner{
+    display:flex; gap:44px; text-align:left;
+    max-width:1080px; margin:0 auto; padding:32px 24px 40px;
+  }
+
+  .mega-thumb-wrap{ display:flex; flex-direction:column; gap:10px; width:150px; flex-shrink:0; }
+  .mega-thumb-img{
+    width:150px; height:180px; background:var(--ph-grad); border-radius:var(--r-md);
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); text-align:center;
+  }
+  .mega-thumb-dots{ display:flex; gap:5px; justify-content:center; }
+  .mega-thumb-dots span{ width:5px; height:5px; border-radius:50%; background:var(--line); display:inline-block; }
+  .mega-thumb-title{ font-size:14px; font-weight:700; color:var(--ink); }
+  .mega-thumb-desc{ font-size:11px; color:var(--muted); line-height:1.5; }
+
+  .mega-col{
+    display:flex; flex-direction:column; gap:28px;
+    padding-right:40px; min-width:120px;
+  }
+  .mega-group{ display:flex; flex-direction:column; gap:12px; }
+  .mega-group-title{
+    font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; width:fit-content;
+    transition: color .15s ease;
+  }
+  .mega-group-title .chev{ color:var(--muted); font-weight:normal; margin-left:2px; transition: color .15s ease; }
+  .mega-group-title:hover{ color:var(--navy); }
+  .mega-group-title:hover .chev{ color:var(--navy); }
+  .mega-item{
+    font-size:13px; color:var(--text); display:flex; align-items:center; gap:6px; white-space:nowrap;
+    cursor:pointer; width:fit-content; transition: color .15s ease, font-weight .15s ease;
+  }
+  .mega-item:hover{ color:var(--navy); font-weight:700; }
+  .mm-badge{ font-size:9px; font-weight:700; color:#fff; background:var(--ink); padding:1px 5px; border-radius:999px; }
+  .mm-badge.mm-new{ background:var(--red); }
+
+  main.wf{ padding:28px 32px; }
+
+  .wf-banner{ width:100%; height:180px; margin-bottom:16px; font-size:14px; }
+
+  /* 메인 배너 슬라이드 (자동 전환 + 좌우 화살표 + 도트 인디케이터)
+     레드프린팅 실제 메인배너 참고: 컬러 그라디언트로 꾸미지 않고 실제 상품/프로모션 사진이
+     꽉 차게 들어가는 방식이라, 사진 없는 지금은 은은한 회색조 플레이스홀더로만 둔다. */
+  .main-banner{ position:relative; width:100%; height:200px; margin-bottom:18px; overflow:hidden; border-radius:var(--r-md); }
+  .main-banner-track{ display:flex; height:100%; transition:transform .5s ease; }
+  .main-banner-slide{
+    flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background:var(--ph-grad);
+    color:var(--muted); font-size:14px; font-weight:600; box-sizing:border-box;
+  }
+  .main-banner-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--ink); cursor:pointer; box-shadow:var(--shadow-sm); z-index:2;
+    transition:background .15s ease, color .15s ease;
+  }
+  .main-banner-arrow:hover{ background:var(--ink); color:#fff; }
+  .main-banner-arrow-left{ left:14px; }
+  .main-banner-arrow-right{ right:14px; }
+  .main-banner-dots{ position:absolute; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:2; }
+  .main-banner-dots span{ width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; }
+  .main-banner-dots span.active{ background:var(--ink); }
+  .grid{ display:grid; gap:14px; }
+  .grid-4{ grid-template-columns:repeat(4,1fr); }
+  .grid-3{ grid-template-columns:repeat(3,1fr); }
+  .grid-2{ grid-template-columns:repeat(2,1fr); }
+  /* 레드프린팅 "SHORTS" 등 섹션 타이틀 참고: 컬러 장식 없이 크고 굵은 블랙 타이포로만 구분 */
+  .section-title{
+    font-size:20px; font-weight:600; color:var(--ink); margin:34px 0 14px;
+    letter-spacing:-.4px;
+  }
+  .product-card{
+    height:auto; flex-direction:column; align-items:stretch; justify-content:flex-start;
+    gap:0; padding:0; position:relative; background:#fff; text-align:left;
+    border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm);
+  }
+  .product-card .thumb{ width:100%; height:200px; background:var(--ph-grad); }
+  /* 실제 배포된 duni 프론트(designuni.netlify.app) 기준: 기울임 없이 평평한 원형 뱃지 */
+  .product-badge{
+    position:absolute; top:10px; left:10px; width:42px; height:42px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+    font-style:italic; color:#fff; z-index:2; box-shadow:0 4px 10px rgba(0,0,0,.28);
+  }
+  /* 실제 배포본 기준: Best=포인트컬러(레드) / New=블랙 */
+  .product-badge.best{ background:var(--red); }
+  .product-badge.new{ background:var(--ink); }
+  .product-name{ display:block; padding:13px 14px; color:var(--ink); font-weight:700; font-size:14px; }
+  .cat-banner{
+    height:150px; flex-direction:column; align-items:flex-start; justify-content:flex-end;
+    padding:16px 18px; text-align:left; gap:4px; background:var(--ph-grad);
+    border-radius:var(--r-md);
+  }
+  .cat-banner .cat-title{ font-size:18px; font-weight:600; color:var(--ink); }
+  .cat-banner .cat-sub{ font-size:11.5px; color:var(--muted); }
+
+  /* 배너 hover 강조 애니메이션 */
+  .banner-hover{
+    transition: transform .22s ease, box-shadow .22s ease;
+    cursor: pointer;
+  }
+  .banner-hover:hover{
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+    z-index: 5;
+    position: relative;
+  }
+
+  .shorts-slider{ display:flex; align-items:center; gap:10px; }
+  .shorts-row{
+    display:flex; gap:12px; overflow-x:auto; scroll-behavior:smooth;
+    scroll-snap-type:x mandatory; flex:1;
+  }
+  .shorts-row::-webkit-scrollbar{ display:none; }
+  .shorts-card{
+    width:190px; flex-shrink:0; height:280px; flex-direction:column; cursor:pointer;
+    align-items:flex-start; justify-content:flex-end; padding:14px; text-align:left;
+    background:var(--ph-grad-dark); border-radius:var(--r-md); box-shadow:var(--shadow-sm);
+    scroll-snap-align:start;
+  }
+  .shorts-arrow{
+    flex-shrink:0; width:34px; height:34px; border-radius:50%; background:#fff;
+    border:none; display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--navy); cursor:pointer; box-shadow:var(--shadow-sm);
+  }
+  .shorts-arrow:hover{ background:var(--navy); color:#fff; }
+  .shorts-card .shorts-title{ font-size:12.5px; font-weight:700; color:#fff; }
+  .shorts-card .shorts-channel{ font-size:10.5px; color:rgba(255,255,255,.72); }
+  /* 레드프린팅 하단 푸터 참고: 진한 회색 바 하나가 아니라, 연한 배경 위에
+     연락처 + 링크 컬럼들 + SNS + 사업자 정보 순으로 쌓이는 구조 */
+  /* 레드프린팅처럼 배경(회색)은 화면 끝까지, 콘텐츠만 1080px로 가운데 정렬 */
+  footer.wf{
+    margin-top:34px;
+    background:var(--bg);
+    font-size:11px; color:var(--muted);
+    position:relative; left:50%; width:100vw; margin-left:-50vw;
+  }
+  .footer-inner{ max-width:1080px; margin:0 auto; padding:36px 24px 0; }
+  .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:28px; }
+  .footer-contact-title{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:10px; }
+  .footer-contact-phone{ font-size:20px; font-weight:700; color:var(--ink); margin-bottom:6px; letter-spacing:-.3px; }
+  .footer-contact-desc{ font-size:11px; color:var(--muted); line-height:1.7; }
+  .footer-cols{ display:flex; gap:56px; flex-wrap:wrap; }
+  .footer-col-title{ font-size:12.5px; font-weight:600; color:var(--ink); margin-bottom:12px; }
+  .footer-col-item{ font-size:11.5px; color:var(--muted); margin-bottom:8px; }
+  .footer-link{ cursor:pointer; }
+  .footer-link:hover{ color:var(--navy); text-decoration:underline; }
+  .footer-sns-row{ display:flex; gap:10px; padding:20px 0; }
+  .footer-sns-icon{
+    width:30px; height:30px; border-radius:50%; background:var(--box);
+    display:flex; align-items:center; justify-content:center; font-size:9.5px; color:var(--muted);
+    transition:background .15s ease, color .15s ease;
+  }
+  .footer-sns-icon:hover{ background:var(--navy); color:#fff; }
+  .footer-legal{ padding:16px 0 28px; font-size:10.5px; color:var(--muted); line-height:1.9; }
+  .footer-legal-links{ display:flex; justify-content:flex-end; gap:14px; margin-bottom:10px; font-size:11px; color:var(--text); }
+  .footer-info-modal-box{
+    background:#fff; width:420px; max-width:92vw; max-height:80vh; overflow-y:auto;
+    padding:26px; position:relative; border-radius:var(--r-md); box-shadow:var(--shadow-lg);
+  }
+  .footer-info-modal-title{ font-size:15px; font-weight:700; color:var(--navy); margin-bottom:14px; padding-right:20px; }
+  .footer-info-modal-body{ font-size:12px; color:var(--text); line-height:1.8; white-space:pre-line; }
+  .badge{
+    display:inline-block; font-size:10px; background:var(--navy); color:#fff; padding:2px 6px; border-radius:999px; margin-right:4px;
+  }
+
+  /* 상품 상세 (레드프린팅 - 깔끔한 UI/sticky 요약, 올댓프린팅 - 아이콘형 옵션 참고)
+     레드프린팅 실제 사이트 확인 결과: 창이 좁아져도 옵션 영역을 억지로 줄이지 않고,
+     레이아웃 자체가 최소폭을 유지한 채 페이지가 가로 스크롤되는 방식이었다.
+     상세내역 박스는 position:sticky로 세로 스크롤에는 따라오되, 가로로는 문서 흐름을
+     그대로 따르고(가로 스크롤하면 같이 이동), 우측 상단 × 버튼으로 사용자가 직접 닫을 수 있다. */
+  .detail-layout{ display:flex; gap:28px; align-items:flex-start; min-width:960px; }
+
+  .detail-media{ width:320px; flex-shrink:0; }
+  .detail-main-img{
+    width:320px; height:320px; background:var(--ph-grad); border-radius:var(--r-md); box-shadow:var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12px; text-align:center;
+  }
+  .detail-thumb-strip{ display:flex; align-items:center; gap:8px; margin-top:10px; }
+  .thumb-arrow{
+    width:24px; height:24px; border-radius:50%; background:var(--box); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .thumb-arrow:hover{ background:var(--navy-light); color:var(--navy); }
+  .thumb-item{ width:54px; height:54px; background:var(--ph-grad); border-radius:var(--r-sm); flex-shrink:0; cursor:pointer; }
+
+  .detail-options{ flex:1; min-width:380px; }
+  .hit-badge{ display:inline-block; background:var(--navy); color:#fff; font-size:10px; font-weight:700; padding:3px 9px; border-radius:999px; }
+  .detail-title{ font-size:20px; font-weight:700; color:var(--ink); margin:10px 0 14px; letter-spacing:-.2px; }
+  .detail-divider{ margin:22px 0; }
+  .info-row{ display:flex; font-size:12.5px; margin-bottom:9px; }
+  .info-row .info-label{ width:80px; color:var(--muted); flex-shrink:0; }
+  .info-row .info-value{ color:var(--text); }
+  .price-tag{ font-size:23px; font-weight:700; color:var(--ink); }
+  .price-guide-btn{
+    display:inline-flex; align-items:center; gap:4px; background:var(--box); border-radius:16px;
+    padding:7px 14px; font-size:11.5px; color:var(--text); cursor:pointer; margin-top:10px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .price-guide-btn:hover{ color:var(--navy); background:var(--navy-light); }
+
+  .opt-label{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:10px; }
+  .size-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:10px; }
+  .size-btn{ background:var(--box); border-radius:var(--r-sm); padding:9px 4px; text-align:center; font-size:11px; color:var(--text); cursor:pointer; transition:background .15s ease, color .15s ease; }
+  .size-btn:hover{ background:var(--navy-light); color:var(--navy); }
+  .size-btn.selected{ background:var(--navy); color:#fff; font-weight:700; }
+
+  .custom-size-row{
+    display:none; align-items:center; gap:8px; background:var(--navy-light);
+    border-radius:var(--r-sm); padding:12px; margin-bottom:18px;
+  }
+  .custom-size-row.show{ display:flex; }
+  .custom-size-field{ flex:1; display:flex; align-items:center; gap:6px; }
+  .custom-size-field label{ font-size:11px; color:var(--muted); flex-shrink:0; }
+  .custom-size-field .wf-box{ height:32px; flex:1; font-size:11px; }
+  .custom-size-x{ font-size:12px; color:var(--muted); flex-shrink:0; }
+
+  .accordion-opt{ margin-top:4px; }
+  .accordion-opt-head{ display:flex; justify-content:space-between; align-items:center; padding:14px 2px; font-size:13px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .accordion-opt-body{ padding:0 2px 16px; }
+
+  .icon-opt-grid{ display:flex; flex-wrap:wrap; gap:12px; }
+  .icon-opt-item{ display:flex; flex-direction:column; align-items:center; gap:6px; width:56px; }
+  .icon-opt-circle{ width:44px; height:44px; border-radius:var(--r-sm); background:var(--box); cursor:pointer; transition:background .15s ease; }
+  .icon-opt-circle:hover{ background:var(--navy-light); }
+  .icon-opt-circle.selected{ background:var(--navy); box-shadow:0 0 0 4px var(--navy-light); }
+  .icon-opt-circle.locked{ cursor:default; background:var(--navy-light); }
+  .icon-opt-label{ font-size:10px; color:var(--muted); text-align:center; line-height:1.5; }
+  .opt-tag{ font-size:9px; color:var(--muted); }
+
+  .opt-sub-label{ font-size:11.5px; color:var(--muted); margin:14px 0 8px; }
+  .dowel-pos-row{ display:none; margin-top:14px; padding-top:14px; }
+  .dowel-pos-row.show{ display:block; }
+
+  .file-tab-row{ display:flex; gap:4px; background:var(--box); border-radius:var(--r-sm); padding:4px; }
+  .file-tab{ flex:1; text-align:center; padding:11px 4px; font-size:11.5px; color:var(--text); cursor:pointer; transition:background .15s ease, color .15s ease; }
+  .file-tab.selected{ background:var(--navy); color:#fff; font-weight:700; }
+  .file-upload-box{ height:70px; background:var(--box); border-radius:var(--r-sm); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:11.5px; margin-top:10px; }
+  .file-tab-panel{ display:none; margin-top:10px; }
+  .file-tab-panel.show{ display:block; }
+  .file-panel-note{ font-size:10.5px; color:var(--muted); margin-top:6px; }
+  .file-panel-textarea{ width:100%; min-height:70px; background:var(--box); border:none; border-radius:var(--r-sm); padding:8px; font-size:11.5px; color:var(--text); resize:vertical; box-sizing:border-box; font-family:var(--font); }
+  .reorder-list{ display:flex; flex-direction:column; gap:8px; }
+  .reorder-item{ display:flex; align-items:center; gap:10px; background:var(--box); border-radius:var(--r-sm); padding:8px; font-size:11.5px; }
+  .reorder-item span{ flex:1; }
+  .reorder-select{ flex:none; padding:6px 12px; margin:0; }
+
+  .detail-summary{
+    width:210px; flex-shrink:0; position:sticky; top:16px;
+    border-radius:var(--r-md); padding:18px; background:#fff;
+    box-shadow:var(--shadow-md);
+  }
+  .summary-close{ position:absolute; top:14px; right:14px; cursor:pointer; color:var(--muted); font-size:14px; line-height:1; }
+  .summary-title{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:14px; }
+  .summary-row{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted); margin-bottom:9px; }
+  .summary-row .sr-val{ color:var(--ink); font-weight:700; }
+  .summary-divider{ margin:16px 0; }
+  .summary-price-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; }
+  .summary-price-row .sp-label{ font-size:11.5px; color:var(--muted); }
+  .summary-price-row .sp-val{ font-size:18px; font-weight:700; color:var(--ink); }
+  .summary-btn-row{ display:flex; flex-direction:column; gap:8px; }
+  .summary-btn{ text-align:center; padding:11px; border-radius:var(--r-sm); font-size:12px; background:var(--box); cursor:pointer; color:var(--text); transition:background .15s ease, color .15s ease; }
+  .summary-btn:hover{ background:var(--navy-light); color:var(--navy); }
+  .summary-btn.primary{ background:var(--navy); color:#fff; font-weight:700; }
+  .summary-btn.primary:hover{ background:var(--navy-dark); }
+  .summary-ship-note{ margin-top:14px; font-size:10px; color:var(--muted); line-height:1.5; background:var(--navy-light); padding:9px; border-radius:var(--r-sm); }
+  .summary-warn{ margin-top:10px; font-size:9.5px; color:var(--red); line-height:1.5; }
+
+  .tab-strip{ display:flex; gap:4px; margin-top:24px; background:var(--box); border-radius:var(--r-sm); padding:4px; }
+  .tab-strip div{ flex:1; text-align:center; padding:11px; border-radius:var(--r-sm); font-size:12px; color:var(--text);}
+  .desc-block{ height:260px; margin-top:0; }
+
+  /* 리스트/필터 페이지 (레드프린팅 스타일 참고) */
+  .list-wrap{ display:flex; gap:28px; }
+  .filter-col{ width:200px; flex-shrink:0; display:flex; flex-direction:column; }
+  .filter-box{ height:150px; }
+  .sort-row{ display:flex; justify-content:space-between; margin-bottom:12px; }
+  .sort-row .wf-box{ width:150px; height:32px; }
+  .pagination{ display:flex; justify-content:center; gap:8px; margin-top:20px; }
+  .pagination .wf-box{ width:32px; height:32px; }
+
+  /* 공통 버튼 행 (장바구니/주문/견적문의/로그인 등에서 사용) */
+  .btn-row{ display:flex; gap:8px; }
+  .btn-row .wf-box{ height:48px; flex:1; font-weight:700; }
+
+  .side-cat-title{ font-size:19px; font-weight:600; color:var(--navy); margin-bottom:14px; }
+  .side-nav-list{ display:flex; flex-direction:column; }
+  .side-nav-item{
+    font-size:13px; color:var(--text); padding:9px 2px; cursor:pointer; display:flex; justify-content:space-between;
+    transition: color .15s ease;
+  }
+  .side-nav-item .count{ color:var(--muted); font-size:11.5px; }
+  .side-nav-item:hover{ color:var(--navy); font-weight:700; }
+  .side-nav-item.active{ color:var(--navy); font-weight:700; }
+  .side-divider{ margin:22px 0; }
+  .side-sub-title{ font-weight:700; color:var(--ink); font-size:12px; margin-bottom:10px; }
+
+  .product-card-2{
+    flex-direction:column; align-items:stretch; justify-content:flex-start;
+    height:auto; padding:0; text-align:left; background:#fff;
+    border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm);
+  }
+  .thumb-2{ position:relative; width:100%; height:170px; background:var(--ph-grad); }
+  .wish-heart{
+    position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%;
+    background:#fff; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--muted); transition:color .15s ease;
+  }
+  .wish-heart:hover{ color:var(--red); }
+  .promo-badge{
+    position:absolute; top:8px; left:8px; background:var(--red); color:#fff; font-size:10px; font-weight:700;
+    padding:3px 7px; border-radius:10px;
+  }
+  .pc2-info{ padding:11px 12px 15px; }
+  .pc2-path{ font-size:10.5px; color:var(--muted); margin-bottom:4px; }
+  .pc2-name{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .pc2-price{ font-size:13.5px; font-weight:700; color:var(--ink); }
+  .pc2-unit{ font-size:11px; color:var(--muted); font-weight:normal; }
+
+  /* 표 형태 */
+  table.wf-table{ width:100%; border-collapse:collapse; font-size:12px; }
+  table.wf-table th, table.wf-table td{ padding:11px 14px; text-align:left; color:var(--text); }
+  table.wf-table th{ background:var(--navy-light); color:var(--navy); font-weight:700; }
+  table.wf-table tr:nth-child(even) td{ background:var(--box); }
+  .ref-link{ color:var(--navy); text-decoration:underline; cursor:pointer; }
+
+  /* 참고이미지 팝업 모달 */
+  .ref-modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1000;
+    align-items:center; justify-content:center;
+  }
+  .ref-modal-overlay.show{ display:flex; }
+  .ref-modal-box{ background:#fff; border-radius:var(--r-md); padding:22px; width:420px; position:relative; box-shadow:var(--shadow-lg); }
+  .ref-modal-close{ position:absolute; top:10px; right:14px; cursor:pointer; font-size:16px; color:var(--muted); line-height:1; }
+  .ref-modal-img{
+    width:100%; height:280px; background:var(--ph-grad); border-radius:var(--r-md);
+    display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; text-align:center;
+  }
+  .ref-modal-caption{ margin-top:12px; font-size:12px; color:var(--text); text-align:center; }
+
+  /* 장바구니 담기 완료 팝업 */
+  .cart-modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1000;
+    align-items:center; justify-content:center;
+  }
+  .cart-modal-overlay.show{ display:flex; }
+  .cart-modal-box{
+    background:#fff; border-radius:var(--r-md); padding:34px 30px 24px; width:420px; text-align:center;
+    box-shadow:var(--shadow-lg);
+  }
+  .cart-modal-text{ font-size:14px; color:var(--text); line-height:1.7; margin-bottom:22px; }
+  .cart-modal-btn-row{ display:flex; gap:10px; }
+  .cart-modal-btn{ flex:1; padding:13px; border-radius:var(--r-sm); font-size:13px; cursor:pointer; transition:background .15s ease; }
+  .cart-modal-btn.outline{ color:var(--text); background:var(--box); }
+  .cart-modal-btn.outline:hover{ background:var(--box); }
+  .cart-modal-btn.solid{ background:var(--navy); color:#fff; font-weight:700; }
+  .cart-modal-btn.solid:hover{ background:var(--navy-dark); }
+
+  /* SHORTS 클릭 시 뜨는 재생 팝업 (실제 유튜브 쇼츠 카드처럼 크게, 화면 중앙에 세로로 배치) */
+  .shorts-modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:1000;
+    align-items:center; justify-content:center;
+  }
+  .shorts-modal-overlay.show{ display:flex; }
+  .shorts-modal-box{
+    background:transparent; position:relative;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+  .shorts-modal-player{
+    width:320px; height:568px; background:var(--ph-grad-dark); border-radius:20px; flex-shrink:0;
+    position:relative; color:#fff; overflow:hidden; box-shadow:var(--shadow-lg);
+  }
+  .shorts-modal-player::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:130px; z-index:1;
+    background:linear-gradient(to bottom, rgba(0,0,0,.6), rgba(0,0,0,0));
+  }
+  .shorts-modal-player::after{
+    content:''; position:absolute; bottom:0; left:0; right:0; height:110px; z-index:1;
+    background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0));
+  }
+  .shorts-modal-top{
+    position:absolute; top:18px; left:18px; right:60px; z-index:2;
+    display:flex; align-items:flex-start; gap:10px;
+  }
+  .shorts-modal-badge{
+    flex-shrink:0; width:32px; height:32px; border-radius:50%; background:var(--navy); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:9.5px; font-weight:700;
+  }
+  .shorts-modal-title{ font-size:14px; font-weight:700; color:#fff; line-height:1.35; }
+  .shorts-modal-subtitle{ font-size:11px; color:rgba(255,255,255,.85); margin-top:3px; }
+  .shorts-modal-play-icon{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2;
+    width:60px; height:60px; border-radius:50%; background:rgba(0,0,0,.38); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:22px;
+  }
+  .shorts-modal-watermark{
+    position:absolute; bottom:18px; left:0; right:0; z-index:2; text-align:center;
+    color:#fff; font-weight:700; font-size:13px; letter-spacing:.2px;
+  }
+  .shorts-modal-close{
+    position:absolute; top:-16px; left:300px; z-index:3; width:38px; height:38px; border-radius:50%;
+    background:rgba(20,20,20,.55); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:15px; cursor:pointer; backdrop-filter:blur(2px); transition:background .2s ease;
+  }
+  .shorts-modal-close:hover{ background:rgba(20,20,20,.85); }
+  .shorts-modal-yt-btn{
+    width:320px; box-sizing:border-box; display:block; text-align:center; background:#FF0000; color:#fff;
+    font-size:12.5px; font-weight:700; padding:12px; border-radius:var(--r-sm); text-decoration:none;
+    transition:background .2s ease;
+  }
+  .shorts-modal-yt-btn:hover{ background:#cc0000; }
+
+  /* 관리자: 카테고리 세부 편집 / 상품 옵션 등록·수정 팝업 */
+  .admin-modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000;
+    align-items:center; justify-content:center;
+  }
+  .admin-modal-overlay.show{ display:flex; }
+  .admin-modal-box{
+    background:#fff; width:420px; max-width:92vw; max-height:86vh; overflow-y:auto;
+    padding:26px 26px 22px; position:relative; border-radius:var(--r-md); box-shadow:var(--shadow-lg);
+  }
+  .admin-modal-close{
+    position:absolute; top:14px; right:14px; width:26px; height:26px; border-radius:50%;
+    background:var(--box); display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--muted); cursor:pointer; transition:background .15s ease;
+  }
+  .admin-modal-close:hover{ background:var(--box2); }
+  .admin-modal-title{ font-size:15px; font-weight:700; color:var(--navy); margin-bottom:18px; padding-right:20px; }
+  .admin-modal-field{ margin-bottom:16px; }
+  .admin-modal-field label{ display:block; font-size:11px; color:var(--muted); margin-bottom:6px; }
+  .admin-modal-input{
+    width:100%; min-height:34px; background:var(--box);
+    border-radius:var(--r-sm); font-size:12px; color:var(--text); padding:8px 10px; display:flex; align-items:center;
+    transition:background .15s ease, box-shadow .15s ease;
+  }
+  .admin-modal-input:focus{ outline:none; background:#fff; box-shadow:0 0 0 2px var(--navy-light); }
+  .admin-modal-textarea{ min-height:60px; align-items:flex-start; line-height:1.6; }
+  .admin-chip-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .admin-chip{
+    display:inline-flex; align-items:center; gap:6px; background:var(--navy-light);
+    color:var(--navy); font-size:11px; padding:5px 8px 5px 10px; border-radius:14px;
+  }
+  .admin-chip i{ font-style:normal; cursor:pointer; color:#8a97a8; font-size:11px; }
+  .admin-chip i:hover{ color:var(--red); }
+  .admin-modal-add-row{ height:32px; font-size:11px; cursor:pointer; }
+  .admin-modal-add-row:hover{ background:var(--box2); }
+  .admin-modal-btn-row{ display:flex; gap:8px; margin-top:20px; }
+  .admin-modal-btn-row .wf-box{ flex:1; height:38px; cursor:pointer; font-size:12px; }
+
+  /* 상품 옵션 등록/수정 팝업 - 옵션값 목록(이미지·옵션명·설명·필수선택) */
+  .admin-modal-box-wide{ width:560px; }
+  .admin-modal-row2{ display:flex; gap:12px; }
+  .admin-modal-row2 .admin-modal-field{ flex:1; }
+  .opt-value-table{ background:var(--box); border-radius:var(--r-sm); padding:10px; }
+  .opt-value-header{
+    display:grid; grid-template-columns:44px 1fr 1fr 56px 18px; gap:8px;
+    font-size:10px; color:var(--muted); margin-bottom:8px; padding:0 2px;
+  }
+  .opt-value-row{
+    display:grid; grid-template-columns:44px 1fr 1fr 56px 18px; gap:8px; align-items:center;
+    margin-bottom:8px;
+  }
+  .opt-value-row:last-child{ margin-bottom:0; }
+  .opt-value-thumb{
+    width:44px; height:44px; border-radius:var(--r-sm); background:var(--ph-grad); font-size:9px; flex-shrink:0; cursor:pointer;
+  }
+  .admin-modal-input.small{ height:30px; padding:0 8px; font-size:11px; }
+  .opt-value-required{ display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px; color:var(--muted); }
+  .opt-value-required input{ margin:0; }
+  .opt-value-remove{ cursor:pointer; color:var(--muted); font-size:12px; text-align:center; }
+  .opt-value-remove:hover{ color:var(--red); }
+
+  /* 상품 등록/수정 팝업 - 규격별 · 수량구간별 단가표 */
+  .price-spec-block{
+    background:var(--box); border-radius:var(--r-sm); padding:12px; margin-bottom:10px;
+  }
+  .price-spec-block:last-child{ margin-bottom:0; }
+  .price-spec-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .price-spec-head .admin-modal-input{ flex:1; background:#fff; }
+  .price-spec-head label{ font-size:10px; color:var(--muted); flex-shrink:0; }
+  .price-spec-remove{ cursor:pointer; color:var(--muted); font-size:13px; flex-shrink:0; }
+  .price-spec-remove:hover{ color:var(--red); }
+  .price-tier-header{
+    display:grid; grid-template-columns:1fr 1fr 1.3fr 18px; gap:8px; font-size:10px; color:var(--muted); margin-bottom:6px;
+  }
+  .price-tier-row{
+    display:grid; grid-template-columns:1fr 1fr 1.3fr 18px; gap:8px; align-items:center; margin-bottom:6px;
+  }
+  .price-tier-row:last-child{ margin-bottom:0; }
+  .price-tier-add{ height:28px; font-size:10.5px; cursor:pointer; margin-top:2px; }
+  .price-tier-add:hover{ background:var(--box2); }
+  input.admin-modal-input.small{
+    font-family:inherit; -moz-appearance:textfield; text-align:left;
+  }
+  input.admin-modal-input.small::-webkit-outer-spin-button,
+  input.admin-modal-input.small::-webkit-inner-spin-button{ margin-left:4px; }
+  .price-tier-price-wrap{ display:flex; align-items:center; gap:5px; }
+  .price-tier-price-wrap span{ font-size:11px; color:var(--muted); flex-shrink:0; }
+  .price-tier-price-wrap input{ flex:1; min-width:0; }
+
+  /* 상품별 연결 옵션 그룹 선택 팝업 */
+  .prod-opt-link-list{ display:flex; flex-direction:column; gap:10px; }
+  .prod-opt-link-item{
+    display:flex; align-items:flex-start; gap:8px; font-size:12.5px; color:var(--text); cursor:pointer;
+  }
+  .prod-opt-link-item input{ margin-top:2px; }
+  .prod-opt-link-desc{ display:block; font-size:10.5px; color:var(--muted); margin-top:2px; }
+
+  /* 메인페이지 추천 상품 관리 */
+  .reco-badge-btns{ display:flex; gap:4px; }
+  .reco-badge-btn{
+    font-size:9.5px; font-weight:700; padding:4px 9px; border-radius:999px;
+    background:var(--box); color:var(--muted); cursor:pointer;
+  }
+  .reco-badge-btn:hover{ background:var(--box2); }
+  .reco-badge-btn.active{ color:#fff; }
+  .reco-badge-btn.active.best{ background:var(--red); }
+  .reco-badge-btn.active.new{ background:var(--ink); }
+  .reco-badge-btn.active.none{ background:var(--muted); }
+  .reco-order-btn{ height:26px; width:26px !important; padding:0 !important; font-size:11px; cursor:pointer; }
+
+  .form-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .form-row label{ width:110px; font-size:12px; color:var(--text); flex-shrink:0; }
+  .form-row .wf-box{ flex:1; height:38px; }
+  .form-row .wf-box.tall{ height:100px; }
+
+  .steps{ display:flex; gap:8px; margin-bottom:20px; }
+  .steps div{ flex:1; text-align:center; padding:10px; font-size:12px; background:var(--box2); border-radius:var(--r-sm); color:var(--text); }
+  .steps div.on{ background:var(--navy); color:#fff; font-weight:700; }
+
+  .side-my{ width:200px; flex-shrink:0; display:flex; flex-direction:column; gap:6px; }
+  .side-my .wf-box{ height:34px; justify-content:flex-start; padding-left:12px; text-align:left; }
+  .my-summary{ display:flex; gap:10px; margin-bottom:20px; }
+  .my-summary .wf-box{ flex:1; height:70px; flex-direction:column; gap:4px; }
+
+  /* 마이페이지 - 주문배송 조회 필터/액션 (레드프린팅 마이페이지 참고) */
+  .my-filter-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:12px; padding:14px; background:var(--box); border-radius:var(--r-sm); }
+  .my-filter-row .wf-box{ height:34px; width:auto; }
+  .my-action-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .my-action-row .action-btns{ display:flex; gap:8px; }
+  .my-action-row .wf-box{ height:34px; width:auto; padding:0 14px; flex:none; font-size:11.5px; }
+  .help-note-list{ margin-top:18px; font-size:11px; color:var(--muted); line-height:1.9; }
+
+  /* 장바구니 - 요약/액션/도움말 (레드프린팅 장바구니 참고) */
+  .cart-summary-row{ display:flex; justify-content:flex-end; gap:26px; align-items:center; padding:16px 4px; margin-bottom:16px; font-size:12.5px; color:var(--text); }
+  .cart-summary-row .cart-total{ font-size:18px; font-weight:700; color:var(--navy); }
+  .cart-action-row{ display:flex; justify-content:space-between; align-items:center; }
+  .cart-action-row .cart-action-left{ display:flex; gap:8px; }
+  .cart-action-left .wf-box{ height:38px; width:auto; padding:0 14px; flex:none; font-size:11.5px; }
+  .cart-order-btn{ width:220px; height:48px; font-weight:700; }
+  .cart-item-name{ font-weight:700; color:var(--ink); margin-bottom:4px; }
+  .cart-item-opt{ color:var(--muted); font-size:11px; }
+  .cart-mini-btn{ height:28px; width:auto; font-size:11px; padding:0 10px; }
+  .cart-item-cell{ display:flex; gap:10px; align-items:flex-start; }
+  .cart-item-thumb{ position:relative; width:48px; height:48px; background:var(--ph-grad); border-radius:var(--r-sm); flex-shrink:0; }
+  .cart-item-thumb-badge{ position:absolute; bottom:-3px; right:-3px; background:var(--navy); color:#fff; font-size:9px; padding:1px 4px; border-radius:999px; line-height:1.4; }
+  .cart-item-info{ display:flex; flex-direction:column; }
+  .cart-qty-unavail{ color:var(--red); font-size:11.5px; }
+  .cart-qty-stepper{ display:inline-flex; align-items:center; background:var(--box); border-radius:var(--r-sm); overflow:hidden; }
+  .cart-qty-stepper .qty-btn{ width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; color:var(--text); background:var(--box); user-select:none; }
+  .cart-qty-stepper .qty-btn:hover{ background:var(--box2); }
+  .cart-qty-stepper .qty-val{ width:30px; text-align:center; font-size:11.5px; color:var(--text); }
+
+  /* 주문/결제 페이지 (레드프린팅 주문하기 화면 참고) */
+  .section-head{ display:flex; justify-content:space-between; align-items:center; margin:26px 0 12px; }
+  .section-head-title{ font-size:13px; font-weight:600; color:var(--navy); }
+  .check-label{ font-size:11px; color:var(--muted); cursor:pointer; }
+  .checkout-hint{ color:var(--red); font-size:11px; }
+  .phone-input-row{ flex:1; display:flex; align-items:center; gap:6px; }
+  .phone-input-row .wf-box{ height:38px; flex:1; }
+  .radio-row{ flex:1; display:flex; gap:18px; font-size:12px; color:var(--text); }
+  .radio-opt.selected{ color:var(--navy); font-weight:700; }
+  .addr-search-row{ display:flex; gap:8px; }
+  .addr-search-row .wf-box:first-child{ flex:1; height:38px; }
+  .checkbox-row{ display:flex; gap:16px; margin-top:8px; }
+  .price-info-table{ display:flex; gap:2px; background:var(--box); border-radius:var(--r-md); overflow:hidden; }
+  .price-info-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; background:#fff; }
+  .pi-label{ font-size:11px; color:var(--muted); }
+  .pi-val{ font-size:15px; font-weight:700; color:var(--text); }
+  .price-info-col.total{ background:var(--navy-light); }
+  .price-info-col.total .pi-val{ color:var(--red); font-size:18px; }
+  .checkout-cta{ width:100%; height:54px; font-size:15px; font-weight:700; margin-top:24px; }
+
+  /* 커뮤니티 페이지 (올댓프린팅 올댓커뮤니티 참고) */
+  .community-subnav{ display:flex; gap:6px; margin-bottom:22px; }
+  .community-subnav-item{ padding:10px 18px; border-radius:999px; font-size:13px; color:var(--text); cursor:pointer; }
+  .community-subnav-item.selected{ background:var(--ink); color:#fff; font-weight:700; }
+
+  .community-best-card{ height:220px; flex-direction:column; align-items:flex-start; justify-content:flex-end; position:relative; padding:0; overflow:hidden; background:#fff; border-radius:var(--r-md); box-shadow:var(--shadow-sm); }
+  .community-best-badge{ position:absolute; top:10px; left:10px; background:var(--navy-dark); color:#fff; font-size:10px; padding:3px 8px; border-radius:999px; z-index:1; }
+  .community-best-thumb{ width:100%; height:150px; background:var(--ph-grad); }
+  .community-best-cap{ padding:10px 12px; font-size:12px; color:var(--text); line-height:1.5; text-align:left; }
+  .community-best-meta{ font-size:10.5px; color:var(--muted); }
+
+  .community-point-banner{ margin:24px 0; padding:16px; background:var(--navy-light); border-radius:var(--r-sm); text-align:center; font-size:12.5px; color:var(--text); }
+  .community-point-banner strong{ color:var(--navy); }
+
+  .community-more-inline{ float:right; font-size:11px; font-weight:normal; color:var(--muted); cursor:pointer; }
+
+  .community-post-card{ height:190px; flex-direction:column; align-items:flex-start; padding:0; overflow:hidden; background:#fff; border-radius:var(--r-md); box-shadow:var(--shadow-sm); }
+  .community-post-thumb{ width:100%; height:120px; background:var(--ph-grad); }
+  .community-post-title{ padding:8px 10px 2px; font-size:12px; color:var(--text); text-align:left; }
+  .community-post-meta{ padding:0 10px 10px; display:flex; justify-content:space-between; width:100%; box-sizing:border-box; font-size:10.5px; color:var(--muted); }
+  .community-post-author{ color:var(--muted); }
+
+  .community-qna-list{ display:flex; flex-direction:column; }
+  .community-qna-item{ display:flex; gap:12px; padding:14px 4px; align-items:flex-start; }
+  .community-qna-tag{ flex-shrink:0; background:var(--navy-light); color:var(--navy); font-size:10.5px; padding:4px 8px; border-radius:999px; }
+  .community-qna-title{ font-size:12.5px; color:var(--text); margin-bottom:4px; }
+  .community-qna-meta{ font-size:10.5px; color:var(--muted); }
+
+  /* 관리자 페이지 - 고객용 헤더 대신 별도 어드민 셸(좌측 메뉴 + 우측 콘텐츠) 사용 */
+  .admin-page-wrap{ max-width:1240px; margin:24px auto 60px; background:#fff; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-md); }
+  .admin-shell{ display:flex; align-items:stretch; min-height:1700px; }
+  .admin-sidebar{ width:210px; flex-shrink:0; background:var(--navy-dark); padding:20px 0; }
+  .admin-logo{
+    font-size:15px; font-weight:700; color:#fff; padding:0 20px 16px;
+    margin-bottom:12px;
+  }
+  .admin-nav-group-title{
+    font-size:10px; color:rgba(255,255,255,.4); padding:14px 20px 6px;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+  .admin-nav-item{ padding:9px 20px; font-size:12.5px; color:rgba(255,255,255,.82); cursor:pointer; transition:background .15s ease; }
+  .admin-nav-item:hover{ background:rgba(255,255,255,.08); }
+  .admin-nav-item.active{ background:var(--navy); color:#fff; font-weight:700; }
+  .admin-main{ flex:1; padding:26px 28px; min-width:0; background:#fff; }
+  .admin-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+  .admin-topbar-title{ font-size:19px; font-weight:700; color:var(--ink); }
+  .admin-topbar-user{ font-size:12px; color:var(--muted); display:flex; align-items:center; gap:12px; }
+  .admin-summary{ display:flex; gap:12px; margin-bottom:28px; }
+  .admin-summary .wf-box{ flex:1; height:78px; flex-direction:column; gap:4px; }
+  .admin-summary .admin-num{ font-size:22px; font-weight:700; color:var(--navy); }
+  .admin-summary .admin-num-label{ font-size:11px; color:var(--muted); }
+  .admin-section{ margin-bottom:34px; }
+  .admin-section-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .admin-section-head .section-title{ margin:0; }
+  .admin-btn{
+    display:inline-flex; align-items:center; justify-content:center; background:var(--navy); color:#fff;
+    font-size:11.5px; font-weight:500; padding:8px 14px; border-radius:var(--r-sm); cursor:pointer; white-space:nowrap;
+    box-shadow:0 4px 12px rgba(204,20,24,.28); transition:background .15s ease, transform .15s ease;
+  }
+  .admin-btn:hover{ background:var(--navy-dark); transform:translateY(-1px); }
+  .admin-btn.outline{ background:var(--navy-light); color:var(--navy); }
+  .admin-btn-row{ display:flex; gap:8px; }
+  .admin-filter-row{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .admin-filter-row .wf-box{ height:32px; width:auto; padding:0 12px; flex:none; font-size:11.5px; }
+  .status-pill{ display:inline-block; font-size:10.5px; padding:3px 9px; border-radius:10px; font-weight:700; }
+  .status-pill.pending{ background:#fdf1d6; color:#a3690b; }
+  .status-pill.processing{ background:var(--navy-light); color:var(--navy); }
+  .status-pill.done{ background:#e1f0e6; color:var(--green); }
+  .status-pill.hold{ background:#fbe1e1; color:#a3312f; }
+  .admin-table-actions{ display:flex; gap:6px; }
+  .admin-table-actions .wf-box{ height:26px; width:auto; padding:0 9px; flex:none; font-size:10.5px; }
+  .admin-content-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .admin-content-card{ background:var(--box); border-radius:var(--r-md); padding:16px; }
+  .admin-content-card-title{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:10px; }
+  .admin-view{ display:none; }
+  .admin-view.active{ display:block; }
+  .admin-tree{ background:#fff; border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm); padding:2px 0; margin-bottom:10px; }
+  /* space-between 대신 이름 칸을 고정폭으로 잡아서, 뒤따르는 상태/뱃지 칼럼이 이름 길이와 무관하게
+     항상 같은 x위치에 오도록 함. 관리 버튼(admin-table-actions)은 margin-left:auto로 오른쪽 끝 고정. */
+  .admin-tree-row{
+    display:flex; align-items:center; gap:16px; padding:11px 14px; font-size:12px; color:var(--text);
+  }
+  .admin-tree-row:nth-child(even){ background:var(--box); }
+  .admin-tree-row > span:first-child{
+    flex:0 0 240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  /* sub 행은 뒤따르는 중간 칼럼이 없고 텍스트 자체가 값 목록이라 고정폭 대신 남는 공간을 그대로 채움 */
+  .admin-tree-row.sub > span:first-child{ flex:1; white-space:normal; overflow:visible; text-overflow:clip; }
+  .admin-tree-row > .admin-table-actions{ margin-left:auto; flex-shrink:0; }
+  .admin-tree-row.sub{ padding-left:32px; color:var(--muted); }
+  .admin-toggle{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; color:var(--muted); }
+  .admin-toggle .dot{ width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block; }
+  .admin-toggle.off .dot{ background:var(--line); }
+
+  /* 플로팅 버튼 - 네샤가 제공한 티스토리 스킨 코드 그대로 적용 (좌하단 SNS / 우하단 카카오상담+네비) */
+  .fixed-btn-group {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .fixed-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(30,30,30,0.82);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .fixed-btn:hover {
+    background: rgba(50,50,50,0.95);
+    transform: scale(1.1);
+  }
+  /* YouTube - 빨강 */
+  .fixed-btn:nth-child(1):hover {
+    background: #FF0000;
+    border-color: #FF0000;
+  }
+  /* Instagram - 핑크/퍼플 그라디언트 */
+  .fixed-btn:nth-child(2):hover {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    border-color: transparent;
+  }
+  /* Naver - 초록 */
+  .fixed-btn:nth-child(3):hover {
+    background: #03C75A;
+    border-color: #03C75A;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-7px); }
+  }
+  .kakao-chat-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    animation: float 2.4s ease-in-out infinite;
+  }
+  .kakao-chat-btn a {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FEE500;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+  .kakao-chat-btn a:hover {
+    animation: none;
+    transform: scale(1.1);
+    transition: transform 0.2s;
+  }
+
+  /* 플로팅 네비게이션 (맨 위로 / 홈으로 / 맨 아래로) - 카카오 버튼 바로 위에 겹치지 않게 배치 */
+  .float-nav{
+    position: fixed;
+    bottom: 104px;
+    right: 34px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .float-btn{
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .float-btn:hover{
+    background: var(--navy);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0,0,0,.22);
+  }
+  .float-tooltip{
+    position: absolute;
+    top: 50%;
+    right: 48px;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    background: #fff;
+    color: #333;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease;
+  }
+  .float-btn:hover .float-tooltip{ opacity: 1; }
+
+  .accordion-item{ border-radius:var(--r-sm); margin-bottom:8px; overflow:hidden; box-shadow:var(--shadow-sm); }
+  .accordion-head{ padding:12px; background:var(--box); font-size:12px; display:flex; justify-content:space-between; color:var(--text); }
+  .accordion-body{ padding:10px; font-size:11px; color:var(--muted); background:#fff; }
+</style>
+</head>
+<body>
+
+<div class="tabbar" id="tabbar">
+  <span class="title">굿즈 인쇄 제작 자사몰 · 와이어프레임</span>
+</div>
+<div class="frame-label" id="frame-label"></div>
+
+<!-- ================= 01 메인(홈) ================= -->
+<div class="page" id="page-home">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="main-banner" id="main-banner" onmouseenter="pauseBannerAutoplay()" onmouseleave="resumeBannerAutoplay()">
+      <div class="main-banner-track" id="main-banner-track">
+        <div class="main-banner-slide">메인 배너 1 - 기획전 프로모션</div>
+        <div class="main-banner-slide">메인 배너 2 - 신상품 런칭</div>
+        <div class="main-banner-slide">메인 배너 3 - 시즌 이벤트</div>
+        <div class="main-banner-slide">메인 배너 4 - 대량주문 할인</div>
+      </div>
+      <div class="main-banner-arrow main-banner-arrow-left" onclick="changeBannerSlide(-1)">&lt;</div>
+      <div class="main-banner-arrow main-banner-arrow-right" onclick="changeBannerSlide(1)">&gt;</div>
+      <div class="main-banner-dots" id="main-banner-dots">
+        <span class="active" onclick="goToBannerSlide(0)"></span>
+        <span onclick="goToBannerSlide(1)"></span>
+        <span onclick="goToBannerSlide(2)"></span>
+        <span onclick="goToBannerSlide(3)"></span>
+      </div>
+    </div>
+
+    <div class="section-title">카테고리 바로가기</div>
+    <div class="grid grid-4">
+      <div class="wf-box cat-banner banner-hover"><span class="cat-title">Fabric</span><span class="cat-sub">광목 · 린넨 · 쉬폰</span></div>
+      <div class="wf-box cat-banner banner-hover"><span class="cat-title">Rounding</span><span class="cat-sub">곡면 인쇄</span></div>
+      <div class="wf-box cat-banner banner-hover"><span class="cat-title">ABS</span><span class="cat-sub">사출 인쇄</span></div>
+      <div class="wf-box cat-banner banner-hover"><span class="cat-title">Material</span><span class="cat-sub">한지 · 자개 등 특수인쇄</span></div>
+    </div>
+
+    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>SHORTS</span>
+      <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
+    </div>
+    <div class="shorts-slider">
+      <div class="shorts-arrow shorts-arrow-left" onclick="slideShorts(this, -1)">&lt;</div>
+      <div class="shorts-row">
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+      </div>
+      <div class="shorts-arrow shorts-arrow-right" onclick="slideShorts(this, 1)">&gt;</div>
+    </div>
+
+    <div class="section-title">추천 상품</div>
+    <div class="grid grid-4">
+      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+    </div>
+
+    <div class="section-title">제작사례 / 고객 후기</div>
+    <div class="grid grid-4">
+      <div class="wf-box banner-hover" style="height:120px;">후기 카드 1</div>
+      <div class="wf-box banner-hover" style="height:120px;">후기 카드 2</div>
+      <div class="wf-box banner-hover" style="height:120px;">후기 카드 3</div>
+      <div class="wf-box banner-hover" style="height:120px;">후기 카드 4</div>
+    </div>
+
+    <!-- 대량주문/B2B 배너는 별도로 실제 이미지가 제작될 예정 - 이미지 플레이스홀더만 표시 -->
+    <div class="section-title">대량주문 · B2B 배너</div>
+    <div class="wf-box banner-hover" style="height:110px; background:var(--ph-grad); font-size:12px; color:var(--muted);">배너 이미지 (별도 제작 예정)</div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 02 카테고리/상품리스트 ================= -->
+<div class="page" id="page-list">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="wf-box" style="height:36px; justify-content:flex-start; padding-left:10px;">홈 &gt; 상품 &gt; Fabric &gt; 패브릭 포스터</div>
+    <div class="list-wrap" style="margin-top:14px;">
+      <div class="filter-col">
+        <div class="side-cat-title">Fabric</div>
+        <div class="side-nav-list">
+          <div class="side-nav-item active"><span>포스터</span><span class="count">(12)</span></div>
+          <div class="side-nav-item"><span>코스터</span><span class="count">(8)</span></div>
+          <div class="side-nav-item"><span>북마크</span><span class="count">(5)</span></div>
+          <div class="side-nav-item"><span>달력</span><span class="count">(6)</span></div>
+        </div>
+
+        <div class="side-divider"></div>
+        <div class="side-sub-title">주문방법</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:12.5px; color:#555;">
+          <div>☐ 파일 업로드</div>
+          <div>☐ 온라인 에디터</div>
+          <div>☐ 템플릿 선택</div>
+        </div>
+
+        <div class="side-divider"></div>
+        <div class="wf-box" style="height:60px;">기획전 / 이벤트</div>
+      </div>
+      <div style="flex:1;">
+        <div class="sort-row">
+          <div class="wf-box" style="width:150px;height:32px;">총 12건</div>
+          <div class="wf-box">정렬: 인기순/신상품순</div>
+        </div>
+        <div class="grid grid-3">
+          <div class="wf-box product-card-2 banner-hover">
+            <div class="thumb-2"><span class="wish-heart">♡</span><span class="promo-badge">BEST</span></div>
+            <div class="pc2-info">
+              <div class="pc2-path">Fabric &gt; 포스터</div>
+              <div class="pc2-name">광목 포스터</div>
+              <div class="pc2-price">12,000원 <span class="pc2-unit">/ 1매</span></div>
+            </div>
+          </div>
+          <div class="wf-box product-card-2 banner-hover">
+            <div class="thumb-2"><span class="wish-heart">♡</span></div>
+            <div class="pc2-info">
+              <div class="pc2-path">Fabric &gt; 포스터</div>
+              <div class="pc2-name">린넨 포스터</div>
+              <div class="pc2-price">13,500원 <span class="pc2-unit">/ 1매</span></div>
+            </div>
+          </div>
+          <div class="wf-box product-card-2 banner-hover">
+            <div class="thumb-2"><span class="wish-heart">♡</span><span class="promo-badge">NEW</span></div>
+            <div class="pc2-info">
+              <div class="pc2-path">Fabric &gt; 포스터</div>
+              <div class="pc2-name">쉬폰 포스터</div>
+              <div class="pc2-price">14,000원 <span class="pc2-unit">/ 1매</span></div>
+            </div>
+          </div>
+          <div class="wf-box product-card-2 banner-hover">
+            <div class="thumb-2"><span class="wish-heart">♡</span></div>
+            <div class="pc2-info">
+              <div class="pc2-path">Fabric &gt; 포스터</div>
+              <div class="pc2-name">광목 포스터 - 소형</div>
+              <div class="pc2-price">8,000원 <span class="pc2-unit">/ 1매</span></div>
+            </div>
+          </div>
+          <div class="wf-box product-card-2 banner-hover">
+            <div class="thumb-2"><span class="wish-heart">♡</span></div>
+            <div class="pc2-info">
+              <div class="pc2-path">Fabric &gt; 포스터</div>
+              <div class="pc2-name">린넨 포스터 - 세트</div>
+              <div class="pc2-price">24,000원 <span class="pc2-unit">/ 2매</span></div>
+            </div>
+          </div>
+          <div class="wf-box product-card-2 banner-hover">
+            <div class="thumb-2"><span class="wish-heart">♡</span></div>
+            <div class="pc2-info">
+              <div class="pc2-path">Fabric &gt; 포스터</div>
+              <div class="pc2-name">쉬폰 포스터 - 액자형</div>
+              <div class="pc2-price">19,000원 <span class="pc2-unit">/ 1매</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="pagination">
+          <div class="wf-box">1</div><div class="wf-box">2</div><div class="wf-box">3</div><div class="wf-box">&gt;</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 03 상품 상세 ================= -->
+<div class="page" id="page-detail">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="wf-box" style="height:32px; justify-content:flex-start; padding-left:10px;">홈 &gt; Fabric &gt; 포스터 &gt; 상품상세</div>
+
+    <div class="detail-layout" style="margin-top:14px;">
+      <!-- 좌측: 이미지 + 썸네일(올댓프린팅 참고) -->
+      <div class="detail-media">
+        <div class="detail-main-img">상품 이미지</div>
+        <div class="detail-thumb-strip">
+          <div class="thumb-arrow">&lt;</div>
+          <div class="thumb-item"></div>
+          <div class="thumb-item"></div>
+          <div class="thumb-item"></div>
+          <div class="thumb-arrow">&gt;</div>
+        </div>
+      </div>
+
+      <!-- 중앙: 상품정보 + 옵션 (올댓프린팅 아코디언/사이즈그리드 + 레드프린팅 아이콘옵션 참고) -->
+      <div class="detail-options">
+        <span class="hit-badge">BEST</span>
+        <div class="detail-title">광목 포스터</div>
+
+        <div class="info-row"><div class="info-label">판매가</div><div class="info-value price-tag">12,000원</div></div>
+        <div class="info-row"><div class="info-label">배송비</div><div class="info-value">3,000원 (50,000원 이상 구매 시 무료)</div></div>
+        <div class="info-row"><div class="info-label">가격안내</div><div class="info-value">옵션에 따라 가격이 달라질 수 있으며, 표시 가격은 기본 옵션 기준입니다.</div></div>
+        <div class="price-guide-btn">전체 가격표 보기 &gt;</div>
+
+        <div class="detail-divider"></div>
+
+        <div class="opt-label">사이즈(mm)</div>
+        <div class="size-grid" id="size-grid">
+          <div class="size-btn selected" onclick="selectSize(this)">A4 210x297</div>
+          <div class="size-btn" onclick="selectSize(this)">A3 297x420</div>
+          <div class="size-btn" onclick="selectSize(this)">B4 250x353</div>
+          <div class="size-btn" onclick="selectSize(this)">B3 364x515</div>
+          <div class="size-btn" onclick="selectSize(this)">30x40</div>
+          <div class="size-btn" onclick="selectSize(this)">40x60</div>
+          <div class="size-btn" onclick="selectSize(this)">50x70</div>
+          <div class="size-btn size-btn-custom" onclick="selectSize(this)">규격 외 직접 입력</div>
+        </div>
+        <div class="custom-size-row" id="custom-size-row">
+          <div class="custom-size-field"><label>가로</label><div class="wf-box"></div><span style="font-size:10px;color:#999;">mm</span></div>
+          <span class="custom-size-x">×</span>
+          <div class="custom-size-field"><label>세로</label><div class="wf-box"></div><span style="font-size:10px;color:#999;">mm</span></div>
+        </div>
+
+        <div class="accordion-opt">
+          <div class="accordion-opt-head">총주문수량 <span>▾</span></div>
+          <div class="accordion-opt-body">
+            <div class="wf-box" style="height:38px; width:140px; justify-content:flex-start; padding-left:10px;">수량 입력</div>
+          </div>
+        </div>
+
+        <div class="accordion-opt">
+          <div class="accordion-opt-head">원단 선택 <span>▾</span></div>
+          <div class="accordion-opt-body">
+            <div class="icon-opt-grid" id="fabric-grid">
+              <div class="icon-opt-item"><div class="icon-opt-circle selected" onclick="selectFabric(this,'gwangmok10')"></div><div class="icon-opt-label">광목 10수</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="selectFabric(this,'gwangmok14')"></div><div class="icon-opt-label">광목 14수</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="selectFabric(this,'linen10')"></div><div class="icon-opt-label">린넨 10수</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="selectFabric(this,'linen20')"></div><div class="icon-opt-label">린넨 20수</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="selectFabric(this,'linen30')"></div><div class="icon-opt-label">린넨 30수</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="selectFabric(this,'chiffon')"></div><div class="icon-opt-label">쉬폰</div></div>
+            </div>
+            <div class="opt-sub-label">색상</div>
+            <div class="icon-opt-grid" id="fabric-color-grid"></div>
+          </div>
+        </div>
+
+        <div class="accordion-opt">
+          <div class="accordion-opt-head">후가공 선택 <span>▾</span></div>
+          <div class="accordion-opt-body">
+            <div class="icon-opt-grid" id="finish-grid">
+              <div class="icon-opt-item"><div class="icon-opt-circle selected locked"></div><div class="icon-opt-label">인터로크<br><span class="opt-tag">기본 · 필수</span></div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="toggleFinishExtra(this,'loop')"></div><div class="icon-opt-label">고리마감<br><span class="opt-tag">추가</span></div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="toggleFinishExtra(this,'dowel')"></div><div class="icon-opt-label">목봉마감<br><span class="opt-tag">추가</span></div></div>
+            </div>
+            <div class="dowel-pos-row" id="dowel-pos-row">
+              <div class="opt-sub-label">목봉 위치</div>
+              <div class="icon-opt-grid">
+                <div class="icon-opt-item"><div class="icon-opt-circle selected" onclick="toggleMultiOpt(this)"></div><div class="icon-opt-label">상단</div></div>
+                <div class="icon-opt-item"><div class="icon-opt-circle" onclick="toggleMultiOpt(this)"></div><div class="icon-opt-label">하단</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-opt">
+          <div class="accordion-opt-head">부자재 선택 <span>▾</span></div>
+          <div class="accordion-opt-body">
+            <div class="icon-opt-grid">
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="toggleMultiOpt(this)"></div><div class="icon-opt-label">폴리백</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="toggleMultiOpt(this)"></div><div class="icon-opt-label">택배박스</div></div>
+              <div class="icon-opt-item"><div class="icon-opt-circle" onclick="toggleMultiOpt(this)"></div><div class="icon-opt-label">완충재</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+        <div class="opt-label">파일업로드</div>
+        <div class="file-tab-row">
+          <div class="file-tab selected" onclick="selectFileTab(this,'upload')">파일 업로드</div>
+          <div class="file-tab" onclick="selectFileTab(this,'editor')">온라인 에디터</div>
+          <div class="file-tab" onclick="selectFileTab(this,'reorder')">기존 작업 재주문</div>
+        </div>
+
+        <div class="file-tab-panel show" id="file-panel-upload">
+          <div class="file-upload-box">디자인 시안 업로드 (드래그앤드롭 / 파일첨부)</div>
+          <div class="file-panel-note">권장 형식: AI, PDF, PNG, JPG (최대 50MB)</div>
+        </div>
+
+        <div class="file-tab-panel" id="file-panel-editor">
+          <div class="wf-box" style="height:120px;">온라인 에디터 미리보기</div>
+          <div class="summary-btn primary" style="margin-top:10px; text-align:center; cursor:pointer;">온라인 에디터 바로가기</div>
+          <div class="file-panel-note">브라우저에서 바로 디자인을 제작하고 미리보기할 수 있습니다.</div>
+        </div>
+
+        <div class="file-tab-panel" id="file-panel-reorder">
+          <div class="reorder-list">
+            <div class="reorder-item">
+              <div class="wf-box" style="width:44px; height:44px; flex-shrink:0;"></div>
+              <span>주문번호 20260512 · 패브릭 포스터</span>
+              <div class="file-tab reorder-select">선택</div>
+            </div>
+            <div class="reorder-item">
+              <div class="wf-box" style="width:44px; height:44px; flex-shrink:0;"></div>
+              <span>주문번호 20260402 · ABS 키링</span>
+              <div class="file-tab reorder-select">선택</div>
+            </div>
+          </div>
+          <div class="file-panel-note">최근 6개월 이내 주문 내역만 표시됩니다.</div>
+        </div>
+      </div>
+
+      <!-- 우측: 스크롤에 따라오는 상세내역 sticky 요약(레드프린팅 참고) -->
+      <div class="detail-summary" id="detail-summary">
+        <span class="summary-close" onclick="document.getElementById('detail-summary').style.display='none';">&times;</span>
+        <div class="summary-title">상세 내역</div>
+        <div class="summary-row"><span>사이즈</span><span class="sr-val">A4 210x297</span></div>
+        <div class="summary-row"><span>원단</span><span class="sr-val">광목</span></div>
+        <div class="summary-row"><span>후가공</span><span class="sr-val">코팅</span></div>
+        <div class="summary-row"><span>수량</span><span class="sr-val">1</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-price-row"><span class="sp-label">청구금액</span><span class="sp-val">12,000원</span></div>
+        <div class="summary-btn-row">
+          <div class="summary-btn">견적서</div>
+          <div class="summary-btn" onclick="openCartModal()">장바구니</div>
+          <div class="summary-btn primary">주문하기</div>
+        </div>
+        <div class="summary-ship-note">오늘 주문 후 결제완료 시<br><strong>7/27(월) 출고 예정</strong><br>(정상 파일 접수 건에 한함)</div>
+        <div class="summary-warn">☐ 파일 검수 없이 인쇄됩니다. 업로드 전 디자인을 꼭 확인해주세요. (확인했습니다)</div>
+      </div>
+    </div>
+
+    <div class="tab-strip">
+      <div>상세정보</div><div>소재/제작안내</div><div>사이즈표</div><div>리뷰(24)</div><div>Q&amp;A</div>
+    </div>
+    <div class="wf-box desc-block dashed">상세 이미지 / 파일 규격 안내 영역</div>
+
+    <div class="section-title">함께 많이 구매한 상품</div>
+    <div class="grid grid-4">
+      <div class="wf-box product-card"><div class="thumb"></div>추천상품 1</div>
+      <div class="wf-box product-card"><div class="thumb"></div>추천상품 2</div>
+      <div class="wf-box product-card"><div class="thumb"></div>추천상품 3</div>
+      <div class="wf-box product-card"><div class="thumb"></div>추천상품 4</div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 04 장바구니 ================= -->
+<div class="page" id="page-cart">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="section-title">장바구니 (3)</div>
+    <table class="wf-table">
+      <tr><th style="width:36px;">선택</th><th>주문제품</th><th style="width:90px;">수량X디자인수<br>(건수)</th><th style="width:90px;">수량변경</th><th style="width:80px;">주문금액</th><th style="width:70px;">재편집</th><th style="width:70px;">개별주문</th><th style="width:40px;">삭제</th><th style="width:90px;">등록일자</th></tr>
+      <tr>
+        <td>☑</td>
+        <td>
+          <div class="cart-item-cell">
+            <div class="cart-item-thumb"><span class="cart-item-thumb-badge">1/3</span></div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">에코백 - Fabric</div>
+              <div class="cart-item-opt">옵션 : 광목 10수 | 화이트</div>
+              <div class="cart-item-opt">후가공 : 인터로크</div>
+            </div>
+          </div>
+        </td>
+        <td>2 x 3</td>
+        <td><span class="cart-qty-unavail">수량변경불가</span></td>
+        <td>24,000원</td>
+        <td><div class="wf-box cart-mini-btn">재편집</div></td>
+        <td><div class="wf-box cart-mini-btn">개별주문</div></td>
+        <td>[x]</td>
+        <td>2026-07-21</td>
+      </tr>
+      <tr>
+        <td>☑</td>
+        <td>
+          <div class="cart-item-cell">
+            <div class="cart-item-thumb"></div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">키링 - ABS</div>
+              <div class="cart-item-opt">옵션 : 단일 재질</div>
+              <div class="cart-item-opt">후가공 : 없음</div>
+            </div>
+          </div>
+        </td>
+        <td>50 x 1</td>
+        <td><span class="cart-qty-unavail">수량변경불가</span></td>
+        <td>65,000원</td>
+        <td><div class="wf-box cart-mini-btn">재편집</div></td>
+        <td><div class="wf-box cart-mini-btn">개별주문</div></td>
+        <td>[x]</td>
+        <td>2026-07-20</td>
+      </tr>
+      <tr>
+        <td>☑</td>
+        <td>
+          <div class="cart-item-cell">
+            <div class="cart-item-thumb"></div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">사인볼 - Rounding</div>
+              <div class="cart-item-opt">옵션 : 단일 사이즈</div>
+              <div class="cart-item-opt">후가공 : 없음</div>
+            </div>
+          </div>
+        </td>
+        <td id="cart-qty-3">1 x 1</td>
+        <td>
+          <div class="cart-qty-stepper">
+            <span class="qty-btn" onclick="changeCartQty(3,-1)">−</span>
+            <span class="qty-val" id="cart-qty-val-3">1</span>
+            <span class="qty-btn" onclick="changeCartQty(3,1)">+</span>
+          </div>
+        </td>
+        <td>18,000원</td>
+        <td><div class="wf-box cart-mini-btn">재편집</div></td>
+        <td><div class="wf-box cart-mini-btn">개별주문</div></td>
+        <td>[x]</td>
+        <td>2026-07-18</td>
+      </tr>
+    </table>
+
+    <div class="cart-summary-row">
+      <span>공급가액 <strong>97,273원</strong></span>
+      <span>부가세 <strong>9,727원</strong></span>
+      <span class="cart-total">결제예정금액 107,000원</span>
+    </div>
+
+    <div class="cart-action-row">
+      <div class="cart-action-left">
+        <div class="wf-box">선택 제품 삭제</div>
+        <div class="wf-box">선택 견적서 출력</div>
+      </div>
+      <div class="wf-box solid-dark cart-order-btn">선택 제품 주문</div>
+    </div>
+
+    <div class="help-note-list">
+      <div>· 장바구니 보관 기간 : 회원은 2주(14일)간 보관되며, 비회원은 브라우저 종료 시 저장된 정보가 사라집니다.</div>
+      <div>· 여러 제품을 한 번에 주문 시 출고일이 가장 늦는 제품에 맞춰 함께 출고됩니다. 먼저 완성된 제품을 미리 받고 싶으시다면 '개별주문'을 이용해 분리 주문해 주세요.</div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 05 주문/결제 ================= -->
+<div class="page" id="page-checkout">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="steps">
+      <div class="on">1. 주문정보</div><div>2. 결제</div><div>3. 주문완료</div>
+    </div>
+
+    <div class="section-title" style="margin-top:0;">주문 제품정보</div>
+    <table class="wf-table">
+      <tr><th style="width:36px;">번호</th><th>주문제품</th><th style="width:100px;">포장선택</th><th style="width:60px;">건수</th><th style="width:80px;">주문금액</th></tr>
+      <tr>
+        <td>1</td>
+        <td>
+          <div class="cart-item-name">에코백 - Fabric</div>
+          <div class="cart-item-opt">옵션 : 광목 10수 | 화이트</div>
+          <div class="cart-item-opt">후가공 : 인터로크</div>
+        </td>
+        <td><div class="wf-box cart-mini-btn">일반 배송</div></td>
+        <td>2 x 3</td>
+        <td>24,000원</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>
+          <div class="cart-item-name">키링 - ABS</div>
+          <div class="cart-item-opt">옵션 : 단일 재질</div>
+          <div class="cart-item-opt">후가공 : 없음</div>
+        </td>
+        <td><div class="wf-box cart-mini-btn">일반 배송</div></td>
+        <td>50 x 1</td>
+        <td>65,000원</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>
+          <div class="cart-item-name">사인볼 - Rounding</div>
+          <div class="cart-item-opt">옵션 : 단일 사이즈</div>
+          <div class="cart-item-opt">후가공 : 없음</div>
+        </td>
+        <td><div class="wf-box cart-mini-btn">일반 배송</div></td>
+        <td>1 x 1</td>
+        <td>18,000원</td>
+      </tr>
+    </table>
+
+    <div class="section-title">주문시 요청 사항</div>
+    <div class="form-row">
+      <label>요청사항</label>
+      <div class="wf-box"></div>
+      <span class="checkout-hint" style="flex-shrink:0; margin-left:10px;">배송관련 문의는 1:1채팅창에 남겨주세요.</span>
+    </div>
+
+    <div class="section-head">
+      <span class="section-head-title">보내는 고객 정보</span>
+      <label class="check-label">☐ 주문자(발송자명) 변경</label>
+    </div>
+    <div class="form-row"><label>발송자명</label><div class="wf-box" style="justify-content:flex-start; padding-left:10px;">디자인유니</div></div>
+    <div class="form-row">
+      <label>연락처</label>
+      <div class="phone-input-row"><div class="wf-box"></div><span>-</span><div class="wf-box"></div><span>-</span><div class="wf-box"></div></div>
+    </div>
+    <div class="form-row">
+      <label>주소(배송지)</label>
+      <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+        <div class="wf-box" style="width:110px; height:38px;"></div>
+        <div class="wf-box" style="height:38px;"></div>
+        <div class="wf-box" style="height:38px;"></div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <span class="section-head-title">배송지 정보</span>
+      <label class="check-label">☐ 주문자 정보와 동일</label>
+    </div>
+    <div class="form-row">
+      <label>배송방법</label>
+      <div class="radio-row">
+        <span class="radio-opt selected">● 택배</span>
+        <span class="radio-opt">○ 퀵</span>
+        <span class="radio-opt">○ 방문수령</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>배송지 주소</label>
+      <div style="flex:1;">
+        <div class="addr-search-row">
+          <div class="wf-box"></div>
+          <div class="wf-box cart-mini-btn" style="height:38px; flex:none; width:110px;">우편번호 검색</div>
+          <div class="wf-box cart-mini-btn" style="height:38px; flex:none; width:110px;">배송지 선택</div>
+        </div>
+        <div class="wf-box" style="height:38px; margin-top:8px;"></div>
+        <div class="wf-box" style="height:38px; margin-top:8px;"></div>
+        <div class="checkbox-row">
+          <label class="check-label">☐ 기본 배송지로 등록</label>
+          <label class="check-label">☐ 주소록에 배송지 저장</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-row"><label>수취인 이름</label><div class="wf-box"></div></div>
+    <div class="form-row">
+      <label>수취인 휴대전화</label>
+      <div class="phone-input-row"><div class="wf-box"></div><span>-</span><div class="wf-box"></div><span>-</span><div class="wf-box"></div></div>
+      <label class="check-label" style="margin-left:10px; flex-shrink:0;">☑ 안심번호 사용</label>
+    </div>
+    <div class="form-row"><label>배송시 요청사항</label><div class="wf-box"></div></div>
+
+    <div class="section-title">쿠폰 / 포인트 정보</div>
+    <div class="form-row"><label>쿠폰 적용</label><div class="wf-box" style="justify-content:flex-start; padding-left:10px; color:#999;">적용 가능한 쿠폰이 없습니다</div></div>
+    <div class="form-row">
+      <label>포인트 적용</label>
+      <div class="wf-box" style="width:120px; flex:none; justify-content:flex-start; padding-left:10px;">0</div>
+      <span>원</span>
+      <label class="check-label" style="margin-left:10px;">☐ 잔액 사용</label>
+      <span class="checkout-hint" style="margin-left:auto;">총 보유 포인트 : 0원</span>
+    </div>
+
+    <div class="section-title">결제금액 정보</div>
+    <div class="price-info-table">
+      <div class="price-info-col"><span class="pi-label">공급가액</span><span class="pi-val">97,273원</span></div>
+      <div class="price-info-col"><span class="pi-label">부가세</span><span class="pi-val">9,727원</span></div>
+      <div class="price-info-col"><span class="pi-label">배송비</span><span class="pi-val">3,500원</span></div>
+      <div class="price-info-col"><span class="pi-label">포장비</span><span class="pi-val">0원</span></div>
+      <div class="price-info-col"><span class="pi-label">포인트사용</span><span class="pi-val">0원</span></div>
+      <div class="price-info-col"><span class="pi-label">쿠폰사용</span><span class="pi-val">0원</span></div>
+      <div class="price-info-col total"><span class="pi-label">결제예정금액</span><span class="pi-val">110,500원</span></div>
+    </div>
+
+    <div class="section-title">결제방법 선택</div>
+    <div class="grid grid-4">
+      <div class="wf-box" style="height:56px;">네이버페이</div>
+      <div class="wf-box" style="height:56px;">카카오페이</div>
+      <div class="wf-box" style="height:56px;">신용카드</div>
+      <div class="wf-box" style="height:56px;">무통장입금</div>
+    </div>
+
+    <div class="wf-box solid-dark checkout-cta">결제하기</div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 06 마이페이지 ================= -->
+<div class="page" id="page-my">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="section-title">마이페이지</div>
+    <div class="my-summary">
+      <div class="wf-box">주문접수<br>1건</div>
+      <div class="wf-box">제작중<br>1건</div>
+      <div class="wf-box">배송중<br>0건</div>
+      <div class="wf-box">배송완료<br>2건</div>
+    </div>
+    <div class="list-wrap">
+      <div class="side-my">
+        <div class="wf-box">주문배송 조회</div>
+        <div class="wf-box">간편 재주문</div>
+        <div class="wf-box">시안 보관함</div>
+        <div class="wf-box">찜한 상품</div>
+        <div class="wf-box">최근 본 상품</div>
+        <div class="wf-box">리뷰 관리</div>
+        <div class="wf-box">1:1 상담</div>
+        <div class="wf-box">쿠폰 · 적립금</div>
+        <div class="wf-box">배송주소록 관리</div>
+        <div class="wf-box">회원정보 수정</div>
+        <div class="wf-box">회원 탈퇴</div>
+      </div>
+      <div style="flex:1;">
+        <div class="section-title" style="margin-top:0;">주문배송 조회</div>
+        <div class="my-filter-row">
+          <div class="wf-box" style="width:120px;">2026.06.21</div>
+          <span>~</span>
+          <div class="wf-box" style="width:120px;">2026.07.21</div>
+          <div class="wf-box" style="width:100px;">전체 상태</div>
+          <div class="wf-box" style="width:110px;">주문번호</div>
+          <div class="wf-box" style="width:120px;">검색어 입력</div>
+          <div class="wf-box solid-dark" style="width:60px;">조회</div>
+        </div>
+        <div class="my-action-row">
+          <div class="action-btns">
+            <div class="wf-box">거래내역 출력</div>
+            <div class="wf-box">배송정보 변경</div>
+            <div class="wf-box">주문취소</div>
+          </div>
+        </div>
+        <table class="wf-table">
+          <tr><th>주문번호</th><th>상품명</th><th>제작 상태</th><th>주문일</th><th>금액</th><th>재주문</th></tr>
+          <tr><td>20260701-01</td><td>에코백 외 2건</td><td>제작중</td><td>2026-07-01</td><td>62,000원</td><td><div class="wf-box cart-mini-btn">재주문</div></td></tr>
+          <tr><td>20260618-02</td><td>키링 50개</td><td>배송완료</td><td>2026-06-18</td><td>65,000원</td><td><div class="wf-box cart-mini-btn">재주문</div></td></tr>
+          <tr><td>20260602-03</td><td>사인볼</td><td>배송완료</td><td>2026-06-02</td><td>18,000원</td><td><div class="wf-box cart-mini-btn">재주문</div></td></tr>
+        </table>
+        <div class="help-note-list">
+          <div>· 결제 후 주문 내용과 파일에 이상이 없을 경우, 별도 연락 없이 바로 제작이 진행됩니다.</div>
+          <div>· [제작중] 상태에서는 주문 수정 및 취소가 불가합니다.</div>
+          <div>· 배송 조회는 [배송중] 상태에서 '배송조회' 버튼을 통해 확인 가능합니다.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 07 제작 가이드 ================= -->
+<div class="page" id="page-guide">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="section-title">제작 가이드</div>
+    <div class="grid grid-4">
+      <div class="wf-box" style="height:70px;">Fabric 안내</div>
+      <div class="wf-box" style="height:70px;">Rounding 안내</div>
+      <div class="wf-box" style="height:70px;">ABS 안내</div>
+      <div class="wf-box" style="height:70px;">Material 안내</div>
+    </div>
+
+    <div class="section-title">파일 규격 / 해상도 안내</div>
+    <table class="wf-table">
+      <tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>비고</th></tr>
+      <tr><td>Fabric</td><td>300dpi</td><td>AI, PDF</td><td>A3 (297×420mm) 기준</td><td><a class="ref-link" onclick="openRefModal('Fabric')">참고사항</a></td></tr>
+      <tr><td>Rounding</td><td>300dpi</td><td>AI, PNG</td><td>지름 7.4cm (야구공 기준)</td><td><a class="ref-link" onclick="openRefModal('Rounding')">참고사항</a> · 곡면 인쇄 유의</td></tr>
+      <tr><td>ABS</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><a class="ref-link" onclick="openRefModal('ABS')">참고사항</a></td></tr>
+      <tr><td>Material</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><a class="ref-link" onclick="openRefModal('Material')">참고사항</a></td></tr>
+    </table>
+
+    <div class="section-title">제작 공정 타임라인</div>
+    <div class="grid grid-4">
+      <div class="wf-box" style="height:60px;">1. 주문/시안접수</div>
+      <div class="wf-box" style="height:60px;">2. 시안 검수</div>
+      <div class="wf-box" style="height:60px;">3. 제작/인쇄</div>
+      <div class="wf-box" style="height:60px;">4. 검수/배송</div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 08 대량주문 견적문의 ================= -->
+<div class="page" id="page-quote">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="section-title">대량주문 · B2B 견적문의</div>
+    <div class="wf-box" style="height:50px;">기업/단체 전용 담당자 배정 · 맞춤 견적 안내 문구</div>
+
+    <div class="form-row"><label>회사/단체명</label><div class="wf-box"></div></div>
+    <div class="form-row"><label>담당자명 / 연락처</label><div class="wf-box"></div></div>
+    <div class="form-row"><label>희망 카테고리</label><div class="wf-box">Fabric / Rounding / ABS / Material (체크박스)</div></div>
+    <div class="form-row"><label>희망 수량</label><div class="wf-box"></div></div>
+    <div class="form-row"><label>희망 납기일</label><div class="wf-box"></div></div>
+    <div class="form-row"><label>디자인 파일 첨부</label><div class="wf-box">파일 업로드 영역</div></div>
+    <div class="form-row"><label>상세 요청사항</label><div class="wf-box tall"></div></div>
+
+    <div class="btn-row" style="margin-top:16px;">
+      <div class="wf-box solid-dark" style="height:48px;">견적 요청하기</div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 09 고객센터(FAQ) ================= -->
+<div class="page" id="page-faq">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="section-title">고객센터</div>
+    <div class="grid grid-3">
+      <div class="wf-box" style="height:60px;">FAQ</div>
+      <div class="wf-box" style="height:60px;">1:1 문의</div>
+      <div class="wf-box" style="height:60px;">배송·교환·환불 안내</div>
+    </div>
+
+    <div class="section-title">자주 묻는 질문</div>
+    <div class="tab-strip">
+      <div>전체</div><div>주문/결제</div><div>제작/시안</div><div>배송</div><div>교환/환불</div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-head">Q. 시안 업로드 파일 규격이 궁금해요 <span>+</span></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-head">Q. 대량주문 시 납기는 얼마나 걸리나요? <span>+</span></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-head">Q. 제작 완료 후 교환/환불이 가능한가요? <span>+</span></div>
+      <div class="accordion-body">답변 텍스트 영역 (펼침 상태 예시)</div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 10 로그인/회원가입 ================= -->
+<div class="page" id="page-login">
+  <header class="wf"></header>
+  <main class="wf" style="max-width:420px; margin:0 auto;">
+    <div class="section-title" style="text-align:center; border:none;">로그인</div>
+    <div class="form-row"><label>아이디</label><div class="wf-box"></div></div>
+    <div class="form-row"><label>비밀번호</label><div class="wf-box"></div></div>
+    <div class="btn-row"><div class="wf-box solid-dark" style="height:44px;">로그인</div></div>
+    <div class="grid grid-2" style="margin-top:10px;">
+      <div class="wf-box" style="height:36px;">아이디/비밀번호 찾기</div>
+      <div class="wf-box" style="height:36px;">회원가입</div>
+    </div>
+    <div class="wf-box" style="height:44px; margin-top:10px;">소셜 로그인 (간편로그인)</div>
+
+    <div class="section-title" style="margin-top:30px;">회원가입 - 유형 선택</div>
+    <div class="grid grid-2">
+      <div class="wf-box" style="height:80px;">개인 회원가입</div>
+      <div class="wf-box" style="height:80px;">기업/단체 회원가입</div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 11 커뮤니티 (올댓프린팅 올댓커뮤니티 참고) ================= -->
+<div class="page" id="page-community">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="community-subnav">
+      <div class="community-subnav-item selected">제작후기 자랑</div>
+      <div class="community-subnav-item">도안공유</div>
+      <div class="community-subnav-item">궁금해요 Q&amp;A</div>
+      <div class="community-subnav-item">이벤트 · 공모전</div>
+      <div class="community-subnav-item">디자인유니 노트</div>
+    </div>
+
+    <div class="section-title" style="margin-top:0;">이번주 베스트 컨텐츠 👍</div>
+    <div class="grid grid-4">
+      <div class="wf-box community-best-card banner-hover">
+        <span class="community-best-badge">BEST</span>
+        <div class="community-best-thumb"></div>
+        <div class="community-best-cap">에코백 굿즈 완성했어요<br><span class="community-best-meta">제작후기 자랑 · di***** 님</span></div>
+      </div>
+      <div class="wf-box community-best-card banner-hover">
+        <span class="community-best-badge">BEST</span>
+        <div class="community-best-thumb"></div>
+        <div class="community-best-cap">사인볼 도안 이렇게 만들어요<br><span class="community-best-meta">도안공유 · 33***** 님</span></div>
+      </div>
+      <div class="wf-box community-best-card banner-hover">
+        <span class="community-best-badge">BEST</span>
+        <div class="community-best-thumb"></div>
+        <div class="community-best-cap">키링 대량주문 후기 남겨요<br><span class="community-best-meta">제작후기 자랑 · 58***** 님</span></div>
+      </div>
+      <div class="wf-box community-best-card banner-hover">
+        <span class="community-best-badge">BEST</span>
+        <div class="community-best-thumb"></div>
+        <div class="community-best-cap">패브릭 포스터 색감 정말 예뻐요<br><span class="community-best-meta">제작후기 자랑 · gp***** 님</span></div>
+      </div>
+    </div>
+
+    <div class="community-point-banner">✏️ 글만 써도 <strong>3,000원</strong>, 댓글만 써도 <strong>500원</strong> 적립금이 팡팡 쏟아지는 디자인유니 커뮤니티!</div>
+
+    <div class="section-title">🔥 NEW 따끈따끈 제작후기 자랑<span class="community-more-inline">더보기</span></div>
+    <div class="grid grid-4">
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">에코백 완성! 인쇄 선명해요</div>
+        <div class="community-post-meta"><span class="community-post-author">di*****</span><span>좋아요 3 · 조회 41</span></div>
+      </div>
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">사인볼 UV인쇄 퀄리티 대만족</div>
+        <div class="community-post-meta"><span class="community-post-author">ba*****</span><span>좋아요 1 · 조회 17</span></div>
+      </div>
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">키링 50개 단체주문 후기</div>
+        <div class="community-post-meta"><span class="community-post-author">jc*****</span><span>좋아요 0 · 조회 30</span></div>
+      </div>
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">한지 족자 색감 미쳤어요</div>
+        <div class="community-post-meta"><span class="community-post-author">co*****</span><span>좋아요 4 · 조회 52</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">같이 만들자! 도안공유 새글<span class="community-more-inline">더보기</span></div>
+    <div class="grid grid-4">
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">고양이 스티커 도안 공유해요</div>
+        <div class="community-post-meta"><span class="community-post-author">ef*****</span><span>좋아요 3 · 조회 45</span></div>
+      </div>
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">체크인스틱 도안 및 제작 팁</div>
+        <div class="community-post-meta"><span class="community-post-author">강은도</span><span>좋아요 1 · 조회 204</span></div>
+      </div>
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">달력 도안 템플릿 무료 배포</div>
+        <div class="community-post-meta"><span class="community-post-author">ho*****</span><span>좋아요 0 · 조회 22</span></div>
+      </div>
+      <div class="wf-box community-post-card banner-hover">
+        <div class="community-post-thumb"></div>
+        <div class="community-post-title">코스터 원형 도안 사이즈 정리</div>
+        <div class="community-post-meta"><span class="community-post-author">34*****</span><span>좋아요 0 · 조회 11</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">궁금해요 Q&amp;A 새질문<span class="community-more-inline">더보기</span></div>
+    <div class="community-qna-list">
+      <div class="community-qna-item">
+        <span class="community-qna-tag">제작지식</span>
+        <div class="community-qna-body">
+          <div class="community-qna-title">광목 10수랑 14수 색감 차이가 큰가요?</div>
+          <div class="community-qna-meta">so***** · 5시간 전 · 좋아요 0 · 댓글 0</div>
+        </div>
+      </div>
+      <div class="community-qna-item">
+        <span class="community-qna-tag">제작지식</span>
+        <div class="community-qna-body">
+          <div class="community-qna-title">후가공 목봉마감 상단/하단 둘 다 선택해도 되나요?</div>
+          <div class="community-qna-meta">18***** · 어제 · 좋아요 2 · 댓글 1</div>
+        </div>
+      </div>
+      <div class="community-qna-item">
+        <span class="community-qna-tag">배송</span>
+        <div class="community-qna-body">
+          <div class="community-qna-title">개별주문 하면 배송비가 각각 붙나요?</div>
+          <div class="community-qna-meta">36***** · 2일 전 · 좋아요 1 · 댓글 3</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
+<!-- ================= 12 관리자 페이지 ================= -->
+<div class="page" id="page-admin">
+  <div class="admin-page-wrap">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-logo">DesignUNI 관리자</div>
+        <div class="admin-nav-group-title">대시보드</div>
+        <div class="admin-nav-item active" data-view="admin-view-dashboard" onclick="showAdminView('admin-view-dashboard','홈 대시보드')">홈 대시보드</div>
+        <div class="admin-nav-group-title">상품</div>
+        <div class="admin-nav-item" data-view="admin-view-products" onclick="showAdminView('admin-view-products','상품 관리')">상품 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-categories" onclick="showAdminView('admin-view-categories','카테고리 · 옵션 관리')">카테고리 · 옵션 관리</div>
+        <div class="admin-nav-group-title">주문</div>
+        <div class="admin-nav-item" data-view="admin-view-orders" onclick="showAdminView('admin-view-orders','주문 관리')">주문 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-quotes" onclick="showAdminView('admin-view-quotes','대량주문 견적 관리')">대량주문 견적 관리</div>
+        <div class="admin-nav-group-title">회원</div>
+        <div class="admin-nav-item" data-view="admin-view-members" onclick="showAdminView('admin-view-members','회원 관리')">회원 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-coupons" onclick="showAdminView('admin-view-coupons','쿠폰 · 적립금 관리')">쿠폰 · 적립금 관리</div>
+        <div class="admin-nav-group-title">콘텐츠</div>
+        <div class="admin-nav-item" data-view="admin-view-banners" onclick="showAdminView('admin-view-banners','메인배너 · 기획전 관리')">메인배너 · 기획전 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-guide-faq" onclick="showAdminView('admin-view-guide-faq','제작가이드 · FAQ 관리')">제작가이드 · FAQ 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-community" onclick="showAdminView('admin-view-community','커뮤니티 · 리뷰 관리')">커뮤니티 · 리뷰 관리</div>
+        <div class="admin-nav-group-title">통계</div>
+        <div class="admin-nav-item" data-view="admin-view-stats" onclick="showAdminView('admin-view-stats','매출 · 방문 통계')">매출 · 방문 통계</div>
+      </aside>
+
+      <main class="admin-main">
+        <div class="admin-topbar">
+          <div class="admin-topbar-title" id="admin-topbar-title">홈 대시보드</div>
+          <div class="admin-topbar-user">
+            <span>관리자 민대성 님</span>
+            <div class="wf-box" style="height:30px; width:auto; padding:0 12px;">로그아웃</div>
+          </div>
+        </div>
+
+        <!-- 홈 대시보드 -->
+        <div class="admin-view active" id="admin-view-dashboard">
+          <div class="admin-summary">
+            <div class="wf-box"><span class="admin-num">7건</span><span class="admin-num-label">오늘 신규 주문</span></div>
+            <div class="wf-box"><span class="admin-num">842,000원</span><span class="admin-num-label">오늘 매출</span></div>
+            <div class="wf-box"><span class="admin-num">3건</span><span class="admin-num-label">신규 회원가입</span></div>
+            <div class="wf-box"><span class="admin-num">5건</span><span class="admin-num-label">미답변 1:1문의</span></div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">최근 주문</div>
+              <div class="admin-btn-row">
+                <div class="wf-box" onclick="showAdminView('admin-view-orders','주문 관리')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">전체 주문 보기</div>
+              </div>
+            </div>
+            <table class="wf-table">
+              <tr><th>주문번호</th><th>상품</th><th>고객</th><th>금액</th><th>상태</th><th>주문일</th><th>관리</th></tr>
+              <tr>
+                <td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
+                <td><span class="status-pill pending">입금대기</span></td><td>2026-07-21</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+              <tr>
+                <td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
+                <td><span class="status-pill processing">제작중</span></td><td>2026-07-21</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+              <tr>
+                <td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
+                <td><span class="status-pill hold">파일오류</span></td><td>2026-07-20</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">상품 관리</div>
+              <div class="admin-btn-row">
+                <div class="wf-box" onclick="showAdminView('admin-view-products','상품 관리')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">상품 전체보기</div>
+              </div>
+            </div>
+            <table class="wf-table">
+              <tr><th>썸네일</th><th>상품명</th><th>카테고리</th><th>가격</th><th>판매상태</th></tr>
+              <tr>
+                <td><div class="wf-box" style="width:40px; height:40px;"></div></td>
+                <td>광목 포스터</td><td>Fabric &gt; 포스터</td><td>12,000원</td>
+                <td><span class="status-pill done">판매중</span></td>
+              </tr>
+              <tr>
+                <td><div class="wf-box" style="width:40px; height:40px;"></div></td>
+                <td>방수토이필름카메라</td><td>ABS &gt; 필름카메라</td><td>9,500원</td>
+                <td><span class="status-pill pending">품절</span></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">회원 관리</div>
+              <div class="admin-btn-row">
+                <div class="wf-box" onclick="showAdminView('admin-view-members','회원 관리')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">회원 전체보기</div>
+              </div>
+            </div>
+            <table class="wf-table">
+              <tr><th>아이디</th><th>이름</th><th>등급</th><th>누적 주문</th><th>가입일</th></tr>
+              <tr><td>seoyeon_k</td><td>김서연</td><td>일반회원</td><td>3건</td><td>2026-05-02</td></tr>
+              <tr><td>junho_p</td><td>박준호</td><td>우수회원</td><td>11건</td><td>2025-11-14</td></tr>
+            </table>
+          </div>
+
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">콘텐츠 관리</div>
+            </div>
+            <div class="admin-content-grid">
+              <div class="admin-content-card" onclick="showAdminView('admin-view-banners','메인배너 · 기획전 관리')" style="cursor:pointer;">
+                <div class="admin-content-card-title">메인배너 · 기획전</div>
+                <div class="wf-box" style="height:44px;">배너 슬라이드 4종 (3종 노출중)</div>
+              </div>
+              <div class="admin-content-card" onclick="showAdminView('admin-view-categories','카테고리 · 옵션 관리')" style="cursor:pointer;">
+                <div class="admin-content-card-title">카테고리 · 옵션</div>
+                <div class="wf-box" style="height:44px;">Fabric · Rounding · ABS · Material</div>
+              </div>
+              <div class="admin-content-card" onclick="showAdminView('admin-view-guide-faq','제작가이드 · FAQ 관리')" style="cursor:pointer;">
+                <div class="admin-content-card-title">제작가이드 · FAQ</div>
+                <div class="wf-box" style="height:44px;">가이드 3건 · FAQ 등록됨</div>
+              </div>
+              <div class="admin-content-card" onclick="showAdminView('admin-view-community','커뮤니티 · 리뷰 관리')" style="cursor:pointer;">
+                <div class="admin-content-card-title">커뮤니티 · 리뷰</div>
+                <div class="wf-box" style="height:44px;">게시글 신고 2건 대기중</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">대량주문 견적문의</div>
+              <div class="admin-btn-row">
+                <div class="wf-box" onclick="showAdminView('admin-view-quotes','대량주문 견적 관리')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">견적문의 전체보기</div>
+              </div>
+            </div>
+            <table class="wf-table">
+              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>답변상태</th></tr>
+              <tr><td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td><span class="status-pill pending">답변대기</span></td></tr>
+            </table>
+          </div>
+
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">매출 · 방문 통계</div>
+              <div class="admin-btn-row">
+                <div class="wf-box" onclick="showAdminView('admin-view-stats','매출 · 방문 통계')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">통계 자세히 보기</div>
+              </div>
+            </div>
+            <div class="grid grid-2">
+              <div class="wf-box" style="height:140px;">일별 매출 그래프 (최근 30일)</div>
+              <div class="wf-box" style="height:140px;">카테고리별 판매 비중</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상품 관리 -->
+        <div class="admin-view" id="admin-view-products">
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">상품 관리</div>
+              <div class="admin-btn-row">
+                <div class="wf-box solid-dark" style="height:32px; width:auto; padding:0 12px; cursor:pointer;" onclick="openProdEditModal('create','')">+ 상품 등록</div>
+              </div>
+            </div>
+            <div class="admin-filter-row">
+              <div class="wf-box">카테고리 전체 (Fabric · Rounding · ABS · Material)</div>
+              <div class="wf-box">판매상태 전체</div>
+              <div class="wf-box">상품명 검색</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>썸네일</th><th>상품명</th><th>카테고리</th><th>가격 정책</th><th>옵션 관리</th><th>판매상태</th><th>관리</th></tr>
+              <tr>
+                <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
+                <td>광목 포스터</td><td>Fabric &gt; 포스터</td>
+                <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','광목 포스터')">9,500~12,000원 (규격·수량별)</div></td>
+                <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdOptLinkModal('광목 포스터')">원단·후가공 옵션</div></td>
+                <td><span class="status-pill done">판매중</span></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','광목 포스터')">수정</div><div class="wf-box">삭제</div></div></td>
+              </tr>
+              <tr>
+                <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
+                <td>기념구 (야구공)</td><td>Rounding &gt; 야구공</td>
+                <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','기념구 (야구공)')">15,000~18,000원 (규격·수량별)</div></td>
+                <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdOptLinkModal('기념구 (야구공)')">사이즈 옵션</div></td>
+                <td><span class="status-pill done">판매중</span></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','기념구 (야구공)')">수정</div><div class="wf-box">삭제</div></div></td>
+              </tr>
+              <tr>
+                <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
+                <td>방수토이필름카메라</td><td>ABS &gt; 필름카메라</td>
+                <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','방수토이필름카메라')">8,800~9,500원 (규격·수량별)</div></td>
+                <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdOptLinkModal('방수토이필름카메라')">부자재 옵션</div></td>
+                <td><span class="status-pill pending">품절</span></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','방수토이필름카메라')">수정</div><div class="wf-box">삭제</div></div></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 카테고리 · 옵션 관리 -->
+        <div class="admin-view" id="admin-view-categories">
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">카테고리 구조</div>
+            </div>
+            <div class="admin-tree">
+              <div class="admin-tree-row"><span>Fabric</span></div>
+              <div class="admin-tree-row sub"><span>포스터 · 코스터 · 북마크 · 달력</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('Fabric','포스터 · 코스터 · 북마크 · 달력')">세부 편집</div></div></div>
+              <div class="admin-tree-row"><span>Rounding</span></div>
+              <div class="admin-tree-row sub"><span>야구공 · 볼풀공 · 소프트볼</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('Rounding','야구공 · 볼풀공 · 소프트볼')">세부 편집</div></div></div>
+              <div class="admin-tree-row"><span>ABS</span></div>
+              <div class="admin-tree-row sub"><span>필름카메라 · 홍보 판촉물</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('ABS','필름카메라 · 홍보 판촉물')">세부 편집</div></div></div>
+              <div class="admin-tree-row"><span>Material</span></div>
+              <div class="admin-tree-row sub"><span>한지 · 자개</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('Material','한지 · 자개')">세부 편집</div></div></div>
+            </div>
+          </div>
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">상품 옵션 관리</div>
+              <div class="admin-btn-row"><div class="wf-box" onclick="openOptEditModal('create','')">+ 옵션 등록</div></div>
+            </div>
+            <table class="wf-table">
+              <tr><th>옵션그룹</th><th>옵션값</th><th>연결 카테고리</th><th>관리</th></tr>
+              <tr>
+                <td>원단</td><td>광목10수 · 광목14수 · 린넨10수 · 린넨20수 · 린넨30수 · 쉬폰</td><td>Fabric</td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOptEditModal('edit','원단')">수정</div></div></td>
+              </tr>
+              <tr>
+                <td>후가공</td><td>인터로크(기본) · 고리마감 · 목봉마감</td><td>Fabric</td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOptEditModal('edit','후가공')">수정</div></div></td>
+              </tr>
+              <tr>
+                <td>부자재</td><td>폴리백 · 택배박스 · 완충재</td><td>전체</td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOptEditModal('edit','부자재')">수정</div></div></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 주문 관리 -->
+        <div class="admin-view" id="admin-view-orders">
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">주문 관리</div>
+              <div class="admin-btn-row"><div class="wf-box">거래내역 출력</div></div>
+            </div>
+            <div class="admin-filter-row">
+              <div class="wf-box">주문일 2026.06.21 ~ 2026.07.21</div>
+              <div class="wf-box">전체 상태</div>
+              <div class="wf-box">주문번호 · 고객명 검색</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>주문번호</th><th>상품</th><th>고객</th><th>금액</th><th>상태</th><th>주문일</th><th>관리</th></tr>
+              <tr>
+                <td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
+                <td><span class="status-pill pending">입금대기</span></td><td>2026-07-21</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+              <tr>
+                <td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
+                <td><span class="status-pill processing">제작중</span></td><td>2026-07-21</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+              <tr>
+                <td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
+                <td><span class="status-pill hold">파일오류</span></td><td>2026-07-20</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+              <tr>
+                <td>20260720-09</td><td>패브릭 포스터</td><td>최지우</td><td>24,000원</td>
+                <td><span class="status-pill done">배송완료</span></td><td>2026-07-20</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+              <tr>
+                <td>20260719-14</td><td>목봉마감 액자</td><td>정하늘</td><td>31,000원</td>
+                <td><span class="status-pill processing">배송중</span></td><td>2026-07-19</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 대량주문 견적 관리 -->
+        <div class="admin-view" id="admin-view-quotes">
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">대량주문 견적문의 관리</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>문의일</th><th>답변상태</th><th>관리</th></tr>
+              <tr>
+                <td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td>2026-07-21</td>
+                <td><span class="status-pill pending">답변대기</span></td>
+                <td><div class="admin-table-actions"><div class="wf-box">답변하기</div></div></td>
+              </tr>
+              <tr>
+                <td>Q-0719-05</td><td>서초고 학생회</td><td>120개</td><td>2026-07-19</td>
+                <td><span class="status-pill done">답변완료</span></td>
+                <td><div class="admin-table-actions"><div class="wf-box">답변보기</div></div></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 회원 관리 -->
+        <div class="admin-view" id="admin-view-members">
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">회원 관리</div>
+              <div class="admin-btn-row"><div class="wf-box">쿠폰 · 적립금 지급</div></div>
+            </div>
+            <div class="admin-filter-row">
+              <div class="wf-box">회원등급 전체</div>
+              <div class="wf-box">가입일 전체</div>
+              <div class="wf-box">이름 · 아이디 검색</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>아이디</th><th>이름</th><th>등급</th><th>누적 주문</th><th>적립금</th><th>가입일</th><th>관리</th></tr>
+              <tr>
+                <td>seoyeon_k</td><td>김서연</td><td>일반회원</td><td>3건</td><td>1,200원</td><td>2026-05-02</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">정지</div></div></td>
+              </tr>
+              <tr>
+                <td>junho_p</td><td>박준호</td><td>우수회원</td><td>11건</td><td>8,400원</td><td>2025-11-14</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">정지</div></div></td>
+              </tr>
+              <tr>
+                <td>haeun_l</td><td>이하은</td><td>기업회원</td><td>27건</td><td>0원</td><td>2025-08-30</td>
+                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">정지</div></div></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 쿠폰 · 적립금 관리 -->
+        <div class="admin-view" id="admin-view-coupons">
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">쿠폰 발급 내역</div>
+              <div class="admin-btn-row"><div class="wf-box solid-dark">+ 쿠폰 발급</div></div>
+            </div>
+            <table class="wf-table">
+              <tr><th>쿠폰명</th><th>할인</th><th>발급 대상</th><th>유효기간</th><th>사용 현황</th><th>관리</th></tr>
+              <tr>
+                <td>신규가입 쿠폰</td><td>10% 할인</td><td>신규회원 전체</td><td>가입일 +30일</td><td>128 / 340매</td>
+                <td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td>
+              </tr>
+              <tr>
+                <td>대량주문 감사쿠폰</td><td>5,000원</td><td>기업회원</td><td>2026.07.01~08.31</td><td>12 / 50매</td>
+                <td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td>
+              </tr>
+            </table>
+          </div>
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">적립금 정책</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>적립 항목</th><th>적립금액</th><th>비고</th><th>관리</th></tr>
+              <tr><td>커뮤니티 게시글 작성</td><td>3,000원</td><td>1일 1회 한도</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>커뮤니티 댓글 작성</td><td>500원</td><td>1일 3회 한도</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>구매 후기 작성</td><td>1,000원</td><td>주문 1건당 1회</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 메인배너 · 기획전 관리 -->
+        <div class="admin-view" id="admin-view-banners">
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">메인배너 슬라이드</div>
+              <div class="admin-btn-row"><div class="wf-box solid-dark">+ 배너 등록</div></div>
+            </div>
+            <div class="admin-tree">
+              <div class="admin-tree-row"><span>1. 기획전 프로모션</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
+              <div class="admin-tree-row"><span>2. 신상품 런칭</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
+              <div class="admin-tree-row"><span>3. 시즌 이벤트</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
+              <div class="admin-tree-row"><span>4. 대량주문 할인</span><span class="admin-toggle off"><span class="dot"></span>미노출</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
+            </div>
+          </div>
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">추천 상품 관리 (메인페이지 노출)</div>
+              <div class="admin-btn-row"><div class="wf-box solid-dark" onclick="openRecoSelectModal()">+ 추천 상품 추가</div></div>
+            </div>
+            <div class="help-note-list" style="margin-top:0; margin-bottom:10px;">
+              <div>· 여기서 선택 · 정렬한 순서대로 메인페이지 '추천 상품' 영역에 노출됩니다. 뱃지(Best · New · 없음)는 상품별로 지정할 수 있습니다.</div>
+            </div>
+            <div class="admin-tree" id="reco-product-list"></div>
+          </div>
+        </div>
+
+        <!-- 제작가이드 · FAQ 관리 -->
+        <div class="admin-view" id="admin-view-guide-faq">
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">제작가이드 콘텐츠</div>
+              <div class="admin-btn-row"><div class="wf-box">+ 가이드 등록</div></div>
+            </div>
+            <table class="wf-table">
+              <tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>관리</th></tr>
+              <tr><td>Fabric</td><td>300dpi</td><td>AI, PDF</td><td>A3 (297×420mm) 기준</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>Rounding</td><td>300dpi</td><td>AI, PNG</td><td>지름 7.4cm 기준</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>ABS</td><td>300dpi</td><td>AI, PDF</td><td>상품별 상이</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+            </table>
+          </div>
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">FAQ 관리</div>
+              <div class="admin-btn-row"><div class="wf-box solid-dark">+ FAQ 등록</div></div>
+            </div>
+            <table class="wf-table">
+              <tr><th>분류</th><th>질문</th><th>노출상태</th><th>관리</th></tr>
+              <tr><td>주문/결제</td><td>주문 후 옵션 변경이 가능한가요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>배송</td><td>제작 기간은 얼마나 걸리나요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 커뮤니티 · 리뷰 관리 -->
+        <div class="admin-view" id="admin-view-community">
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">신고된 게시글</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>게시판</th><th>제목</th><th>작성자</th><th>신고 사유</th><th>관리</th></tr>
+              <tr><td>제작후기 자랑</td><td>키링 50개 단체주문 후기</td><td>jc*****</td><td>광고성 게시물</td><td><div class="admin-table-actions"><div class="wf-box">확인</div><div class="wf-box">삭제</div></div></td></tr>
+              <tr><td>궁금해요 Q&amp;A</td><td>후가공 목봉마감 관련 문의</td><td>18*****</td><td>스팸 의심</td><td><div class="admin-table-actions"><div class="wf-box">확인</div><div class="wf-box">삭제</div></div></td></tr>
+            </table>
+          </div>
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">구매 후기 관리</div>
+            </div>
+            <table class="wf-table">
+              <tr><th>상품명</th><th>작성자</th><th>평점</th><th>노출상태</th><th>관리</th></tr>
+              <tr><td>에코백 - Fabric</td><td>di*****</td><td>★★★★★</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box">숨김</div></div></td></tr>
+              <tr><td>사인볼 - Rounding</td><td>ba*****</td><td>★★★★☆</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box">숨김</div></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 매출 · 방문 통계 -->
+        <div class="admin-view" id="admin-view-stats">
+          <div class="admin-section" style="margin-bottom:0;">
+            <div class="section-title" style="margin-top:0;">매출 · 방문 통계</div>
+            <div class="grid grid-2">
+              <div class="wf-box" style="height:180px;">일별 매출 그래프 (최근 30일)</div>
+              <div class="wf-box" style="height:180px;">카테고리별 판매 비중 (Fabric/Rounding/ABS/Material)</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 참고이미지 팝업 모달 ================= -->
+<div class="ref-modal-overlay" id="ref-modal">
+  <div class="ref-modal-box">
+    <div class="ref-modal-close" onclick="closeRefModal()">✕</div>
+    <div class="ref-modal-img" id="ref-modal-img">참고 이미지</div>
+    <div class="ref-modal-caption" id="ref-modal-caption">규격 참고 이미지 (예시)</div>
+  </div>
+</div>
+
+<!-- ================= 푸터: 회사소개 · 이용약관 · 개인정보처리방침 · 제휴문의 팝업 ================= -->
+<div class="admin-modal-overlay" id="footer-info-modal">
+  <div class="footer-info-modal-box">
+    <div class="admin-modal-close" onclick="closeFooterInfoModal()">✕</div>
+    <div class="footer-info-modal-title" id="footer-info-modal-title">회사소개</div>
+    <div class="footer-info-modal-body" id="footer-info-modal-body"></div>
+  </div>
+</div>
+
+<!-- ================= 장바구니 담기 완료 팝업 ================= -->
+<div class="cart-modal-overlay" id="cart-modal">
+  <div class="cart-modal-box">
+    <div class="cart-modal-text">선택하신 상품이 장바구니에 담겼습니다.<br>장바구니로 이동하시겠습니까?</div>
+    <div class="cart-modal-btn-row">
+      <div class="cart-modal-btn outline" onclick="closeCartModal()">쇼핑 계속하기</div>
+      <div class="cart-modal-btn solid" onclick="goToCartFromModal()">장바구니 확인</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SHORTS 재생 팝업 ================= -->
+<div class="shorts-modal-overlay" id="shorts-modal">
+  <div class="shorts-modal-box">
+    <div class="shorts-modal-close" onclick="closeShortsModal()">✕</div>
+    <div class="shorts-modal-player">
+      <div class="shorts-modal-top">
+        <span class="shorts-modal-badge">UNI</span>
+        <div>
+          <div class="shorts-modal-title" id="shorts-modal-title">숏폼 콘텐츠 제목</div>
+          <div class="shorts-modal-subtitle">디자인유니 채널</div>
+        </div>
+      </div>
+      <div class="shorts-modal-play-icon">▶</div>
+      <div class="shorts-modal-watermark">▷ Shorts</div>
+    </div>
+    <a class="shorts-modal-yt-btn" href="https://www.youtube.com/channel/UC9fCg2eixR9xuVTkKiHhzOQ" target="_blank">디자인유니 유튜브 보러가기</a>
+  </div>
+</div>
+
+<!-- ================= 관리자: 카테고리 세부 편집 팝업 ================= -->
+<div class="admin-modal-overlay" id="cat-edit-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeCatEditModal()">✕</div>
+    <div class="admin-modal-title" id="cat-edit-modal-title">Fabric 세부 카테고리 편집</div>
+    <div class="admin-modal-field">
+      <label>세부 카테고리</label>
+      <div class="admin-modal-input admin-modal-textarea" id="cat-edit-text" contenteditable="true">포스터 · 코스터 · 북마크 · 달력</div>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeCatEditModal()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeCatEditModal()">저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 상품 등록/수정 팝업 (규격별 · 수량구간별 단가표) ================= -->
+<div class="admin-modal-overlay" id="prod-edit-modal">
+  <div class="admin-modal-box admin-modal-box-wide">
+    <div class="admin-modal-close" onclick="closeProdEditModal()">✕</div>
+    <div class="admin-modal-title" id="prod-edit-modal-title">상품 등록</div>
+    <div class="admin-modal-row2">
+      <div class="admin-modal-field">
+        <label>상품명</label>
+        <div class="admin-modal-input" id="prod-edit-name" contenteditable="true"></div>
+      </div>
+      <div class="admin-modal-field">
+        <label>카테고리</label>
+        <div class="admin-modal-input" id="prod-edit-category" contenteditable="true"></div>
+      </div>
+    </div>
+    <div class="admin-modal-row2">
+      <div class="admin-modal-field">
+        <label>썸네일</label>
+        <div class="wf-box" style="width:60px; height:60px;">이미지</div>
+      </div>
+      <div class="admin-modal-field">
+        <label>판매상태</label>
+        <div class="admin-modal-input" id="prod-edit-status" contenteditable="true">판매중</div>
+      </div>
+    </div>
+    <div class="admin-modal-field">
+      <label>가격 정책 - 규격별 · 수량구간별 단가표 (예시)</label>
+      <div class="price-spec-list" id="price-spec-list"></div>
+      <div class="wf-box admin-modal-add-row" onclick="addPriceSpecBlock()">+ 규격 추가</div>
+    </div>
+    <div class="help-note-list" style="margin-top:0;">
+      <div>· 같은 규격 안에서 수량 구간이 늘어날수록 개당 단가가 낮아지는 방식(대량 할인)입니다. 반대로 소량 구간에 더 높은 단가를 넣으면 소량 할증으로도 쓸 수 있습니다.</div>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeProdEditModal()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeProdEditModal()">저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 상품별 연결 옵션 그룹 선택 팝업 ================= -->
+<div class="admin-modal-overlay" id="prod-opt-link-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeProdOptLinkModal()">✕</div>
+    <div class="admin-modal-title" id="prod-opt-link-title">연결 옵션 선택</div>
+    <div class="admin-modal-field">
+      <label>이 상품에 적용할 옵션 그룹을 선택하세요.</label>
+      <div class="prod-opt-link-list" id="prod-opt-link-list"></div>
+    </div>
+    <div class="help-note-list" style="margin-top:0;">
+      <div>· 옵션 그룹의 실제 옵션값(이미지 · 설명 · 필수선택 등)은 <b>카테고리 · 옵션 관리</b>에서 수정합니다.</div>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeProdOptLinkModal()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeProdOptLinkModal()">저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 메인페이지 추천 상품 선택 팝업 ================= -->
+<div class="admin-modal-overlay" id="reco-select-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeRecoSelectModal()">✕</div>
+    <div class="admin-modal-title">추천 상품 선택</div>
+    <div class="admin-modal-field">
+      <label>메인페이지 '추천 상품' 영역에 노출할 상품을 선택하세요.</label>
+      <div class="prod-opt-link-list" id="reco-select-list"></div>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeRecoSelectModal()">취소</div>
+      <div class="wf-box solid-dark" onclick="saveRecoSelection()">저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 상품 옵션 등록/수정 팝업 (상품상세 페이지 원단/색상/후가공 선택 UI에 대응) ================= -->
+<div class="admin-modal-overlay" id="opt-edit-modal">
+  <div class="admin-modal-box admin-modal-box-wide">
+    <div class="admin-modal-close" onclick="closeOptEditModal()">✕</div>
+    <div class="admin-modal-title" id="opt-edit-modal-title">옵션 그룹 등록</div>
+    <div class="admin-modal-row2">
+      <div class="admin-modal-field">
+        <label>옵션그룹명</label>
+        <div class="admin-modal-input" id="opt-edit-group" contenteditable="true">원단</div>
+      </div>
+      <div class="admin-modal-field">
+        <label>연결 카테고리</label>
+        <div class="admin-modal-input" id="opt-edit-category" contenteditable="true">Fabric</div>
+      </div>
+    </div>
+    <div class="admin-modal-field">
+      <label>옵션값 목록 (상세페이지에 노출되는 이미지 · 옵션명 · 설명 · 필수선택 여부)</label>
+      <div class="opt-value-table" id="opt-edit-value-table"></div>
+      <div class="wf-box admin-modal-add-row" onclick="addOptEditRow()">+ 옵션값 추가</div>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeOptEditModal()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeOptEditModal()">저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 플로팅 버튼 (좌하단 SNS / 우하단 유틸리티+카카오상담) - 전 페이지 공통 노출 ================= -->
+<!-- 좌하단: SNS 아이콘 버튼 묶음 -->
+<div class="fixed-btn-group">
+  <a class="fixed-btn" href="https://www.youtube.com/channel/UC9fCg2eixR9xuVTkKiHhzOQ" target="_blank" title="YouTube">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  </a>
+  <a class="fixed-btn" href="https://www.instagram.com/design_uni" target="_blank" title="Instagram">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+    </svg>
+  </a>
+  <a class="fixed-btn" href="https://blog.naver.com/from-uni" target="_blank" title="Naver Blog">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+      <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z"/>
+    </svg>
+  </a>
+</div>
+
+<!-- 우하단: 카카오톡 상담 버튼 -->
+<div class="kakao-chat-btn">
+  <a href="https://pf.kakao.com/_GvXId/chat" target="_blank" title="카카오톡 문의">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" width="36" height="36">
+      <path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.85 1.67 5.37 4.24 6.93l-.9 3.28a.5.5 0 0 0 .73.57l3.84-2.43c.67.1 1.36.15 2.09.15 5.52 0 10-3.69 10-8.25S17.52 3 12 3z"/>
+    </svg>
+  </a>
+</div>
+
+<!-- 우하단(카카오 버튼 위): 플로팅 네비게이션 -->
+<div class="float-nav">
+  <button class="float-btn" id="floatTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="5" x2="19" y2="5"/>
+      <line x1="12" y1="19" x2="12" y2="9"/>
+      <polyline points="8 13 12 8 16 13"/>
+    </svg>
+    <span class="float-tooltip">맨 위로</span>
+  </button>
+  <button class="float-btn" id="floatHome" onclick="goHomeFloating()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="float-tooltip">홈으로</span>
+  </button>
+  <button class="float-btn" id="floatBottom" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="15"/>
+      <polyline points="8 11 12 16 16 11"/>
+      <line x1="5" y1="19" x2="19" y2="19"/>
+    </svg>
+    <span class="float-tooltip">맨 아래로</span>
+  </button>
+</div>
+
+<script>
+  // ---- 전 페이지 공통 상단 영역 (유틸바 + 헤더행 + GNB/메가메뉴) ----
+  // 홈 화면 메인배너 슬라이드보다 위에 있는 요소를 모든 페이지에 동일하게 주입한다.
+  const categoryMenus = [
+    { key:'fabric', label:'Fabric', thumbTitle:'패브릭 포스터', thumbDesc:'광목 · 린넨 · 쉬폰 소재 위에<br>감성을 더하다', groups:[
+        { title:'포스터', items:[{text:'광목 포스터', badge:'BEST'},{text:'린넨 포스터'},{text:'쉬폰 포스터'}] },
+        { title:'코스터', items:[{text:'원형 코스터'},{text:'사각 코스터'}] },
+        { title:'북마크', items:[{text:'패브릭 북마크'}] },
+        { title:'달력', items:[{text:'탁상 달력'},{text:'벽걸이 달력', badge:'NEW'}] },
+    ]},
+    { key:'rounding', label:'Rounding', thumbTitle:'야구공 기념구', thumbDesc:'곡면도 왜곡 없이<br>선명하게', groups:[
+        { title:'야구공', items:[{text:'기념구', badge:'BEST'},{text:'사인볼'}] },
+        { title:'볼풀공', items:[{text:'컬러 볼풀공'}] },
+        { title:'소프트볼', items:[{text:'소프트볼 인쇄'}] },
+    ]},
+    { key:'abs', label:'ABS', thumbTitle:'방수토이필름카메라', thumbDesc:'브랜드 아이덴티티를<br>선명하게 구현', groups:[
+        { title:'필름카메라', items:[{text:'방수토이필름카메라', badge:'BEST'}] },
+        { title:'홍보 판촉물', items:[{text:'키링 / 뱃지'},{text:'스탠드 / 케이스'}] },
+    ]},
+    { key:'material', label:'Material', thumbTitle:'한지 족자', thumbDesc:'소재의 경계를<br>넘어선 인쇄', groups:[
+        { title:'한지', items:[{text:'한지 족자', badge:'BEST'},{text:'한지 카드'}] },
+        { title:'자개', items:[{text:'자개 코스터'},{text:'자개 책갈피'}] },
+        { title:'가죽', items:[{text:'가죽 소품'}] },
+    ]},
+  ];
+
+  function buildHeader(prefix){
+    const catsHtml = categoryMenus.map(c =>
+      `<div class="gnb-cat" data-menu="${prefix}-${c.key}">${c.label}</div>`
+    ).join('');
+
+    const menusHtml = categoryMenus.map(c => {
+      const colsHtml = c.groups.map(g => `
+        <div class="mega-col"><div class="mega-group"><div class="mega-group-title">${g.title}<span class="chev">&gt;</span></div>${
+          g.items.map(it => `<div class="mega-item">${it.text}${it.badge ? ` <span class="mm-badge${it.badge==='NEW' ? ' mm-new' : ''}">${it.badge}</span>` : ''}</div>`).join('')
+        }</div></div>`).join('');
+      return `
+        <div class="mega-menu" id="mega-${prefix}-${c.key}">
+          <div class="mega-menu-inner">
+            <div class="mega-thumb-wrap">
+              <div class="mega-thumb-img">${c.label}<br>제품 이미지</div>
+              <div class="mega-thumb-dots"><span></span><span></span><span></span></div>
+              <div class="mega-thumb-title">${c.thumbTitle}</div>
+              <div class="mega-thumb-desc">${c.thumbDesc}</div>
+            </div>
+            ${colsHtml}
+          </div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="wf-header-inner">
+      <div class="wf-top-util">로그인 · 회원가입 · 고객센터</div>
+      <div class="wf-header-row">
+        <div class="wf-box wf-logo">LOGO</div>
+        <div class="wf-header-spacer"></div>
+        <div class="wf-icon-row">
+          <div class="wf-icon-item"><div class="icon-circle"></div><div class="icon-label">검색</div></div>
+          <div class="wf-icon-item"><div class="icon-circle"></div><div class="icon-label">마이페이지</div></div>
+          <div class="wf-icon-item"><div class="icon-circle"><span class="cart-badge">0</span></div><div class="icon-label">장바구니</div></div>
+          <div class="wf-icon-item"><div class="icon-circle"></div><div class="icon-label">제작가이드</div></div>
+        </div>
+      </div>
+      <div class="wf-gnb-wrap">
+        <div class="wf-gnb">
+          ${catsHtml}
+          <div class="gnb-static">주문제작 가이드</div><div class="gnb-static">대량주문 견적</div><div class="gnb-static">제작사례</div><div class="gnb-static">고객센터</div>
+        </div>
+        ${menusHtml}
+      </div>
+      </div>`;
+  }
+
+  /* 레드프린팅 하단 푸터 참고: 연락처 + 링크 컬럼 + SNS + 사업자정보 구조 */
+  function buildFooter(){
+    return `
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-contact">
+            <div class="footer-contact-title">고객센터</div>
+            <div class="footer-contact-phone">1600-0000</div>
+            <div class="footer-contact-desc">평일 10:00 ~ 18:00 · 점심시간 12:00 ~ 13:00<br>토/일/공휴일 휴무 · cs@designuni.co.kr (예시)</div>
+          </div>
+          <div class="footer-cols">
+            <div>
+              <div class="footer-col-title">고객센터</div>
+              <div class="footer-col-item">공지사항</div>
+              <div class="footer-col-item">자주 묻는 질문</div>
+              <div class="footer-col-item">1:1 상담</div>
+            </div>
+            <div>
+              <div class="footer-col-title">제작안내</div>
+              <div class="footer-col-item">주문제작 가이드</div>
+              <div class="footer-col-item">대량주문 견적</div>
+              <div class="footer-col-item">제작사례</div>
+            </div>
+            <div>
+              <div class="footer-col-title">회사</div>
+              <div class="footer-col-item footer-link" onclick="openFooterInfoModal('회사소개')">회사소개</div>
+              <div class="footer-col-item footer-link" onclick="openFooterInfoModal('제휴문의')">제휴문의</div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-sns-row">
+          <div class="footer-sns-icon">IG</div>
+          <div class="footer-sns-icon">YT</div>
+          <div class="footer-sns-icon">blog</div>
+        </div>
+        <div class="footer-legal">
+          <div class="footer-legal-links">
+            <span class="footer-link" onclick="openFooterInfoModal('이용약관')">이용약관</span>
+            <span class="footer-link" onclick="openFooterInfoModal('개인정보처리방침')">개인정보처리방침</span>
+          </div>
+          디자인유니 · 대표: 홍길동 · 광주광역시 OO구 OO로 00 (예시)<br>
+          사업자등록번호: 000-00-00000 · 통신판매업신고: 제2026-광주OO-00000호 (예시)<br>
+          © 2026 DesignUNI. All rights reserved.
+        </div>
+      </div>`;
+  }
+
+  document.querySelectorAll('.page').forEach(page => {
+    const header = page.querySelector('header.wf');
+    if (header) {
+      const prefix = page.id.replace('page-', '');
+      header.innerHTML = buildHeader(prefix);
+    }
+    const footer = page.querySelector('footer.wf');
+    if (footer) {
+      footer.innerHTML = buildFooter();
+    }
+  });
+
+  const pages = [
+    {id:'page-home', label:'01. 메인(홈)'},
+    {id:'page-list', label:'02. 카테고리/상품리스트'},
+    {id:'page-detail', label:'03. 상품 상세'},
+    {id:'page-cart', label:'04. 장바구니'},
+    {id:'page-checkout', label:'05. 주문/결제'},
+    {id:'page-my', label:'06. 마이페이지'},
+    {id:'page-guide', label:'07. 제작 가이드'},
+    {id:'page-quote', label:'08. 대량주문 견적문의'},
+    {id:'page-faq', label:'09. 고객센터(FAQ)'},
+    {id:'page-login', label:'10. 로그인/회원가입'},
+    {id:'page-community', label:'11. 커뮤니티'},
+    {id:'page-admin', label:'12. 관리자 페이지'},
+  ];
+  const tabbar = document.getElementById('tabbar');
+  const frameLabel = document.getElementById('frame-label');
+
+  pages.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tabbtn' + (i===0 ? ' active' : '');
+    btn.textContent = p.label.replace(/^\d+\.\s*/, '');
+    btn.onclick = () => showPage(p.id, btn);
+    tabbar.appendChild(btn);
+  });
+
+  function showPage(id, btnEl){
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+    const p = pages.find(pg => pg.id === id);
+    frameLabel.textContent = p.label + ' — 와이어프레임 (저해상도 레이아웃 시안)';
+  }
+
+  // 초기 표시
+  document.getElementById('page-home').classList.add('active');
+  frameLabel.textContent = pages[0].label + ' — 와이어프레임 (저해상도 레이아웃 시안)';
+
+  // 메가메뉴 hover 토글 (GNB 카테고리 hover 시 세부 카테고리 노출)
+  document.querySelectorAll('.wf-gnb-wrap').forEach(wrap => {
+    const catItems = wrap.querySelectorAll('.gnb-cat');
+    catItems.forEach(cat => {
+      cat.addEventListener('mouseenter', () => {
+        wrap.querySelectorAll('.mega-menu').forEach(m => m.classList.remove('show'));
+        const target = document.getElementById('mega-' + cat.dataset.menu);
+        if (target) target.classList.add('show');
+      });
+    });
+    wrap.addEventListener('mouseleave', () => {
+      wrap.querySelectorAll('.mega-menu').forEach(m => m.classList.remove('show'));
+    });
+  });
+
+  // 제작가이드 표 "참고사항" 링크 -> 참고 이미지 팝업
+  function openRefModal(label){
+    document.getElementById('ref-modal-img').textContent = label + ' 참고 이미지';
+    document.getElementById('ref-modal-caption').textContent = label + ' 규격 참고 이미지 (예시)';
+    document.getElementById('ref-modal').classList.add('show');
+  }
+  function closeRefModal(){
+    document.getElementById('ref-modal').classList.remove('show');
+  }
+  document.getElementById('ref-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'ref-modal') closeRefModal();
+  });
+
+  // 푸터 하단 링크(회사소개 · 이용약관 · 개인정보처리방침 · 제휴문의) 클릭 시 팝업으로 노출
+  const FOOTER_INFO = {
+    '회사소개': '디자인유니는 광주에 위치한 UV프린팅 기반 커스텀 굿즈 제조사입니다.\n자개코스터, 패브릭포스터, 한지족자, 필름카메라 등 다양한 소재에 고객의 디자인을 인쇄해 제작합니다. (예시 텍스트)',
+    '이용약관': '제1조(목적) 이 약관은 디자인유니(이하 "회사")가 운영하는 쇼핑몰에서 제공하는 서비스 이용과 관련하여 회사와 이용자의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.\n(이하 약관 본문 - 예시 텍스트)',
+    '개인정보처리방침': '회사는 이용자의 개인정보를 중요시하며, 「개인정보 보호법」 등 관련 법령을 준수합니다.\n수집 항목, 이용 목적, 보유 기간 등 세부 내용은 실제 서비스 오픈 시 법무 검토 후 확정됩니다. (예시 텍스트)',
+    '제휴문의': '제휴 · 대량주문 · B2B 협업 문의는 아래로 연락 주세요.\n\n· 이메일: partner@designuni.co.kr (예시)\n· 카카오톡 채널: pf.kakao.com/_GvXId'
+  };
+  function openFooterInfoModal(key){
+    document.getElementById('footer-info-modal-title').textContent = key;
+    document.getElementById('footer-info-modal-body').textContent = FOOTER_INFO[key] || '';
+    document.getElementById('footer-info-modal').classList.add('show');
+  }
+  function closeFooterInfoModal(){
+    document.getElementById('footer-info-modal').classList.remove('show');
+  }
+  document.getElementById('footer-info-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'footer-info-modal') closeFooterInfoModal();
+  });
+
+  // 장바구니 담기 완료 팝업
+  function openCartModal(){
+    document.getElementById('cart-modal').classList.add('show');
+  }
+  function closeCartModal(){
+    document.getElementById('cart-modal').classList.remove('show');
+  }
+  // 우하단 플로팅 버튼 - 홈으로 이동
+  // 관리자 페이지 - 좌측 사이드 메뉴 클릭 시 해당 세부 관리 화면으로 전환
+  function showAdminView(viewId, title){
+    document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(viewId);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+    const navEl = document.querySelector('.admin-nav-item[data-view="' + viewId + '"]');
+    if (navEl) navEl.classList.add('active');
+    const titleEl = document.getElementById('admin-topbar-title');
+    if (titleEl) titleEl.textContent = title;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goHomeFloating(){
+    const idx = pages.findIndex(p => p.id === 'page-home');
+    const btn = tabbar.children[idx + 1]; // +1: 첫 자식은 타이틀 span
+    if (btn) showPage('page-home', btn);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToCartFromModal(){
+    closeCartModal();
+    const idx = pages.findIndex(p => p.id === 'page-cart');
+    const btn = tabbar.children[idx + 1]; // +1: 첫 자식은 타이틀 span
+    if (btn) showPage('page-cart', btn);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.getElementById('cart-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'cart-modal') closeCartModal();
+  });
+
+  // SHORTS 카드 클릭 시 유튜브 쇼츠 재생 팝업처럼 노출 (제목은 클릭한 카드 기준으로 반영)
+  function openShortsModal(cardEl){
+    const title = cardEl.querySelector('.shorts-title').textContent;
+    document.getElementById('shorts-modal-title').textContent = title;
+    document.getElementById('shorts-modal').classList.add('show');
+  }
+  function closeShortsModal(){
+    document.getElementById('shorts-modal').classList.remove('show');
+  }
+  document.getElementById('shorts-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'shorts-modal') closeShortsModal();
+  });
+
+  // ===== 관리자: 카테고리 세부 편집 팝업 =====
+  function openCatEditModal(categoryName, itemsText){
+    document.getElementById('cat-edit-modal-title').textContent = categoryName + ' 세부 카테고리 편집';
+    document.getElementById('cat-edit-text').textContent = itemsText || '';
+    document.getElementById('cat-edit-modal').classList.add('show');
+  }
+  function closeCatEditModal(){
+    document.getElementById('cat-edit-modal').classList.remove('show');
+  }
+  document.getElementById('cat-edit-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'cat-edit-modal') closeCatEditModal();
+  });
+
+  // ===== 관리자: 상품 옵션 등록/수정 팝업 (옵션값별 이미지 · 옵션명 · 설명 · 필수선택) =====
+  // 기존 등록된 옵션그룹 데이터 (상품상세 페이지 원단/후가공 선택 UI와 동일한 값 기준)
+  const OPTION_GROUPS = {
+    '원단': { category: 'Fabric', rows: [
+      { name:'광목10수', desc:'', required:false },
+      { name:'광목14수', desc:'', required:false },
+      { name:'린넨10수', desc:'', required:false },
+      { name:'린넨20수', desc:'', required:false },
+      { name:'린넨30수', desc:'', required:false },
+      { name:'쉬폰', desc:'', required:false }
+    ]},
+    '후가공': { category: 'Fabric', rows: [
+      { name:'인터로크', desc:'기본 · 필수', required:true },
+      { name:'고리마감', desc:'추가', required:false },
+      { name:'목봉마감', desc:'추가', required:false }
+    ]},
+    '부자재': { category: '전체', rows: [
+      { name:'폴리백', desc:'', required:false },
+      { name:'택배박스', desc:'', required:false },
+      { name:'완충재', desc:'', required:false }
+    ]}
+  };
+  function buildOptValueRow(name, desc, required){
+    const row = document.createElement('div');
+    row.className = 'opt-value-row';
+    row.innerHTML =
+      '<div class="wf-box opt-value-thumb">이미지</div>' +
+      '<div class="admin-modal-input small" contenteditable="true">' + (name || '') + '</div>' +
+      '<div class="admin-modal-input small" contenteditable="true">' + (desc || '') + '</div>' +
+      '<label class="opt-value-required"><input type="checkbox"' + (required ? ' checked' : '') + '>필수</label>' +
+      '<div class="opt-value-remove" onclick="this.parentElement.remove()">✕</div>';
+    return row;
+  }
+  function renderOptValueRows(rows){
+    const wrap = document.getElementById('opt-edit-value-table');
+    wrap.innerHTML = '<div class="opt-value-header"><span>이미지</span><span>옵션값명</span><span>설명</span><span>필수선택</span><span></span></div>';
+    (rows || []).forEach(r => wrap.appendChild(buildOptValueRow(r.name, r.desc, r.required)));
+  }
+  function addOptEditRow(){
+    document.getElementById('opt-edit-value-table').appendChild(buildOptValueRow('', '', false));
+  }
+  function openOptEditModal(mode, groupName){
+    const preset = groupName ? OPTION_GROUPS[groupName] : null;
+    document.getElementById('opt-edit-modal-title').textContent = (mode === 'create') ? '옵션 그룹 등록' : '옵션 그룹 수정';
+    document.getElementById('opt-edit-group').textContent = groupName || '';
+    document.getElementById('opt-edit-category').textContent = preset ? preset.category : '';
+    renderOptValueRows(preset ? preset.rows : []);
+    document.getElementById('opt-edit-modal').classList.add('show');
+  }
+  function closeOptEditModal(){
+    document.getElementById('opt-edit-modal').classList.remove('show');
+  }
+  document.getElementById('opt-edit-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'opt-edit-modal') closeOptEditModal();
+  });
+
+  // ===== 관리자: 상품 등록/수정 팝업 (규격별 · 수량구간별 단가표) =====
+  // 예시 데이터: 실제 계산에 쓰일 수 있도록 수량구간(min/max)과 단가는 숫자(number) 필드로 관리
+  // max가 null이면 "이 수량 이상은 전부"를 의미 (예: 50개~)
+  const PRODUCT_PRICE_DATA = {
+    '광목 포스터': { category:'Fabric > 포스터', status:'판매중', specs:[
+      { name:'40×60cm', tiers:[ {min:1, max:9, price:12000}, {min:10, max:49, price:11000}, {min:50, max:null, price:9500} ] }
+    ]},
+    '기념구 (야구공)': { category:'Rounding > 야구공', status:'판매중', specs:[
+      { name:'정품 규격', tiers:[ {min:1, max:19, price:18000}, {min:20, max:49, price:16500}, {min:50, max:null, price:15000} ] }
+    ]},
+    '방수토이필름카메라': { category:'ABS > 필름카메라', status:'품절', specs:[
+      { name:'기본형', tiers:[ {min:1, max:29, price:9500}, {min:30, max:null, price:8800} ] }
+    ]}
+  };
+  function buildPriceTierRow(min, max, price){
+    const row = document.createElement('div');
+    row.className = 'price-tier-row';
+    row.innerHTML =
+      '<input type="number" class="admin-modal-input small" placeholder="최소수량" value="' + (min != null ? min : '') + '">' +
+      '<input type="number" class="admin-modal-input small" placeholder="제한없음(이상)" value="' + (max != null ? max : '') + '">' +
+      '<div class="price-tier-price-wrap"><input type="number" class="admin-modal-input small" placeholder="단가" value="' + (price != null ? price : '') + '"><span>원</span></div>' +
+      '<div class="opt-value-remove" onclick="this.parentElement.remove()">✕</div>';
+    return row;
+  }
+  function addPriceTierRow(btnEl){
+    const table = btnEl.previousElementSibling;
+    table.appendChild(buildPriceTierRow(null, null, null));
+  }
+  function buildPriceSpecBlock(specName, tiers){
+    const block = document.createElement('div');
+    block.className = 'price-spec-block';
+    const head = document.createElement('div');
+    head.className = 'price-spec-head';
+    head.innerHTML =
+      '<label>규격명</label>' +
+      '<div class="admin-modal-input small" contenteditable="true">' + (specName || '') + '</div>' +
+      '<div class="price-spec-remove" onclick="this.closest(\'.price-spec-block\').remove()">✕</div>';
+    block.appendChild(head);
+    const tierHeader = document.createElement('div');
+    tierHeader.className = 'price-tier-header';
+    tierHeader.innerHTML = '<span>최소수량(개)</span><span>최대수량(개)</span><span>개당 단가</span><span></span>';
+    block.appendChild(tierHeader);
+    const tierTable = document.createElement('div');
+    tierTable.className = 'price-tier-table';
+    (tiers || []).forEach(t => tierTable.appendChild(buildPriceTierRow(t.min, t.max, t.price)));
+    block.appendChild(tierTable);
+    const addBtn = document.createElement('div');
+    addBtn.className = 'wf-box price-tier-add';
+    addBtn.textContent = '+ 수량 구간 추가';
+    addBtn.onclick = function(){ addPriceTierRow(addBtn); };
+    block.appendChild(addBtn);
+    return block;
+  }
+  function addPriceSpecBlock(){
+    document.getElementById('price-spec-list').appendChild(buildPriceSpecBlock('', [{min:null, max:null, price:null}]));
+  }
+  function renderPriceSpecList(specs){
+    const wrap = document.getElementById('price-spec-list');
+    wrap.innerHTML = '';
+    (specs && specs.length ? specs : [{ name:'', tiers:[{min:null, max:null, price:null}] }]).forEach(s => {
+      wrap.appendChild(buildPriceSpecBlock(s.name, s.tiers));
+    });
+  }
+  function openProdEditModal(mode, productName){
+    const data = productName ? PRODUCT_PRICE_DATA[productName] : null;
+    document.getElementById('prod-edit-modal-title').textContent = (mode === 'create') ? '상품 등록' : '상품 수정';
+    document.getElementById('prod-edit-name').textContent = productName || '';
+    document.getElementById('prod-edit-category').textContent = data ? data.category : '';
+    document.getElementById('prod-edit-status').textContent = data ? data.status : '판매중';
+    renderPriceSpecList(data ? data.specs : null);
+    document.getElementById('prod-edit-modal').classList.add('show');
+  }
+  function closeProdEditModal(){
+    document.getElementById('prod-edit-modal').classList.remove('show');
+  }
+  document.getElementById('prod-edit-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'prod-edit-modal') closeProdEditModal();
+  });
+
+  // ===== 관리자: 상품별 연결 옵션 그룹 선택 팝업 =====
+  // 상품상세 페이지에서 실제로 쓰이는 옵션 그룹 전체 목록 (원단·색상·후가공·사이즈·부자재)
+  const PRODUCT_OPTION_GROUP_CATALOG = ['원단', '색상', '후가공', '사이즈', '부자재'];
+  const PRODUCT_OPTION_LINKS = {
+    '광목 포스터': ['원단', '후가공'],
+    '기념구 (야구공)': ['사이즈'],
+    '방수토이필름카메라': ['부자재']
+  };
+  function openProdOptLinkModal(productName){
+    const linked = PRODUCT_OPTION_LINKS[productName] || [];
+    document.getElementById('prod-opt-link-title').textContent = productName + ' - 연결 옵션 선택';
+    const wrap = document.getElementById('prod-opt-link-list');
+    wrap.innerHTML = '';
+    PRODUCT_OPTION_GROUP_CATALOG.forEach(group => {
+      const label = document.createElement('label');
+      label.className = 'prod-opt-link-item';
+      const checked = linked.indexOf(group) !== -1 ? ' checked' : '';
+      label.innerHTML = '<input type="checkbox"' + checked + '><span>' + group + ' 옵션 그룹<span class="prod-opt-link-desc">' + (OPTION_GROUPS[group] ? OPTION_GROUPS[group].rows.map(r => r.name).join(' · ') : '값은 카테고리 · 옵션 관리에서 등록') + '</span></span>';
+      wrap.appendChild(label);
+    });
+    document.getElementById('prod-opt-link-modal').classList.add('show');
+  }
+  function closeProdOptLinkModal(){
+    document.getElementById('prod-opt-link-modal').classList.remove('show');
+  }
+  document.getElementById('prod-opt-link-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'prod-opt-link-modal') closeProdOptLinkModal();
+  });
+
+  // ===== 관리자: 메인페이지 추천 상품 관리 (선택 · 순서 · 뱃지) =====
+  const RECO_CATALOG = ['광목 포스터', '기념구 (야구공)', '방수토이필름카메라', '자개 코스터', '한지 족자', '자개 북마크', '패브릭 코스터'];
+  let recoProducts = [
+    { name:'광목 포스터', badge:'best' },
+    { name:'기념구 (야구공)', badge:'new' },
+    { name:'방수토이필름카메라', badge:'none' }
+  ];
+  const RECO_BADGE_OPTIONS = ['best', 'new', 'none'];
+  const RECO_BADGE_LABEL = { best:'Best', new:'New', none:'뱃지없음' };
+  function setRecoBadge(idx, badge){
+    recoProducts[idx].badge = badge;
+    renderRecoList();
+  }
+  function moveRecoItem(idx, dir){
+    const target = idx + dir;
+    if (target < 0 || target >= recoProducts.length) return;
+    const tmp = recoProducts[idx];
+    recoProducts[idx] = recoProducts[target];
+    recoProducts[target] = tmp;
+    renderRecoList();
+  }
+  function removeRecoItem(idx){
+    recoProducts.splice(idx, 1);
+    renderRecoList();
+  }
+  function renderRecoList(){
+    const wrap = document.getElementById('reco-product-list');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    recoProducts.forEach((p, idx) => {
+      const row = document.createElement('div');
+      row.className = 'admin-tree-row';
+      const badgeBtns = RECO_BADGE_OPTIONS.map(opt =>
+        '<div class="reco-badge-btn ' + opt + (p.badge === opt ? ' active' : '') + '" onclick="setRecoBadge(' + idx + ',\'' + opt + '\')">' + RECO_BADGE_LABEL[opt] + '</div>'
+      ).join('');
+      row.innerHTML =
+        '<span>' + (idx + 1) + '. ' + p.name + '</span>' +
+        '<div class="reco-badge-btns">' + badgeBtns + '</div>' +
+        '<div class="admin-table-actions">' +
+          '<div class="wf-box reco-order-btn" onclick="moveRecoItem(' + idx + ',-1)">↑</div>' +
+          '<div class="wf-box reco-order-btn" onclick="moveRecoItem(' + idx + ',1)">↓</div>' +
+          '<div class="wf-box" onclick="removeRecoItem(' + idx + ')">삭제</div>' +
+        '</div>';
+      wrap.appendChild(row);
+    });
+  }
+  function openRecoSelectModal(){
+    const wrap = document.getElementById('reco-select-list');
+    wrap.innerHTML = '';
+    const selectedNames = recoProducts.map(p => p.name);
+    RECO_CATALOG.forEach(name => {
+      const label = document.createElement('label');
+      label.className = 'prod-opt-link-item';
+      const checked = selectedNames.indexOf(name) !== -1 ? ' checked' : '';
+      label.innerHTML = '<input type="checkbox" value="' + name + '"' + checked + '><span>' + name + '</span>';
+      wrap.appendChild(label);
+    });
+    document.getElementById('reco-select-modal').classList.add('show');
+  }
+  function closeRecoSelectModal(){
+    document.getElementById('reco-select-modal').classList.remove('show');
+  }
+  function saveRecoSelection(){
+    const checked = document.querySelectorAll('#reco-select-list input[type="checkbox"]:checked');
+    const existing = {};
+    recoProducts.forEach(p => { existing[p.name] = p.badge; });
+    recoProducts = Array.from(checked).map(cb => ({ name: cb.value, badge: existing[cb.value] || 'none' }));
+    renderRecoList();
+    closeRecoSelectModal();
+  }
+  document.getElementById('reco-select-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'reco-select-modal') closeRecoSelectModal();
+  });
+  renderRecoList();
+
+  // 상품상세 사이즈 선택 (규격 외 직접 입력 선택 시 가로/세로 입력창 노출)
+  function selectSize(el){
+    const grid = document.getElementById('size-grid');
+    grid.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    const customRow = document.getElementById('custom-size-row');
+    if (el.classList.contains('size-btn-custom')) {
+      customRow.classList.add('show');
+    } else {
+      customRow.classList.remove('show');
+    }
+  }
+
+  // 원단 선택 → 색상 옵션 연동 (참고 차트 기준: 광목10수/린넨10수/린넨30수=화이트,오트밀 / 광목14수=소프트웜 / 린넨20수·쉬폰=화이트)
+  const fabricColors = {
+    gwangmok10: ['화이트','오트밀'],
+    gwangmok14: ['소프트웜'],
+    linen10: ['화이트','오트밀'],
+    linen20: ['화이트'],
+    linen30: ['화이트','오트밀'],
+    chiffon: ['화이트']
+  };
+  function renderFabricColors(key){
+    const colorGrid = document.getElementById('fabric-color-grid');
+    if (!colorGrid) return;
+    const colors = fabricColors[key] || [];
+    colorGrid.innerHTML = colors.map((c, i) => `
+      <div class="icon-opt-item">
+        <div class="icon-opt-circle${i === 0 ? ' selected' : ''}" onclick="selectColorChip(this)"></div>
+        <div class="icon-opt-label">${c}</div>
+      </div>`).join('');
+  }
+  function selectFabric(el, key){
+    const grid = document.getElementById('fabric-grid');
+    grid.querySelectorAll('.icon-opt-circle').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    renderFabricColors(key);
+  }
+  function selectColorChip(el){
+    el.closest('.icon-opt-grid').querySelectorAll('.icon-opt-circle').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  renderFabricColors('gwangmok10');
+
+  // 후가공 선택: 인터로크는 기본/필수로 항상 선택된 상태(해제 불가)
+  // 고리마감·목봉마감은 둘 중 하나만 선택 가능(같은 그룹 내 배타적 선택), 목봉마감 선택 시 상단/하단 위치 선택 노출
+  function toggleFinishExtra(el, key){
+    const wasSelected = el.classList.contains('selected');
+    const grid = document.getElementById('finish-grid');
+    grid.querySelectorAll('.icon-opt-item .icon-opt-circle:not(.locked)').forEach(c => c.classList.remove('selected'));
+    const dowelRow = document.getElementById('dowel-pos-row');
+    if (wasSelected) {
+      dowelRow.classList.remove('show');
+      return;
+    }
+    el.classList.add('selected');
+    if (key === 'dowel') {
+      dowelRow.classList.add('show');
+    } else {
+      dowelRow.classList.remove('show');
+    }
+  }
+
+  // 목봉 위치(상단/하단), 부자재 등 다중 선택 가능한 아이콘 옵션 토글
+  function toggleMultiOpt(el){
+    el.classList.toggle('selected');
+  }
+
+  // 장바구니 수량변경 가능 옵션 예시 (제작 시작 전 제품은 수량 조정 가능, 나머지는 수량변경불가로 고정)
+  function changeCartQty(rowId, delta){
+    const valEl = document.getElementById('cart-qty-val-' + rowId);
+    const cellEl = document.getElementById('cart-qty-' + rowId);
+    let qty = parseInt(valEl.textContent, 10) + delta;
+    if (qty < 1) qty = 1;
+    valEl.textContent = qty;
+    cellEl.textContent = qty + ' x 1';
+  }
+
+  // 파일업로드 방식 선택: 파일 업로드 / 온라인 에디터 / 기존 작업 재주문 — 탭별로 다른 콘텐츠 노출
+  function selectFileTab(el, key){
+    el.parentElement.querySelectorAll('.file-tab').forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+    document.querySelectorAll('.file-tab-panel').forEach(p => p.classList.remove('show'));
+    const target = document.getElementById('file-panel-' + key);
+    if (target) target.classList.add('show');
+  }
+
+  // 메인 배너 슬라이드 (4초 간격 자동 전환 + 좌우 화살표 + 도트 클릭 이동, 마우스 올리면 일시정지)
+  let bannerIndex = 0;
+  const bannerSlideCount = 4;
+  let bannerTimer = null;
+
+  function renderBannerSlide(){
+    const track = document.getElementById('main-banner-track');
+    if (!track) return;
+    track.style.transform = 'translateX(' + (-bannerIndex * 100) + '%)';
+    document.querySelectorAll('#main-banner-dots span').forEach((dot, i) => {
+      dot.classList.toggle('active', i === bannerIndex);
+    });
+  }
+  function changeBannerSlide(delta){
+    bannerIndex = (bannerIndex + delta + bannerSlideCount) % bannerSlideCount;
+    renderBannerSlide();
+    restartBannerAutoplay();
+  }
+  function goToBannerSlide(idx){
+    bannerIndex = idx;
+    renderBannerSlide();
+    restartBannerAutoplay();
+  }
+  function startBannerAutoplay(){
+    bannerTimer = setInterval(() => {
+      bannerIndex = (bannerIndex + 1) % bannerSlideCount;
+      renderBannerSlide();
+    }, 4000);
+  }
+  function restartBannerAutoplay(){
+    pauseBannerAutoplay();
+    startBannerAutoplay();
+  }
+  function pauseBannerAutoplay(){
+    if (bannerTimer) { clearInterval(bannerTimer); bannerTimer = null; }
+  }
+  function resumeBannerAutoplay(){
+    if (!bannerTimer) startBannerAutoplay();
+  }
+  startBannerAutoplay();
+
+  // SHORTS 슬라이드 화살표 (좌/우 클릭 시 카드 1개 폭만큼 스크롤)
+  function slideShorts(arrowEl, dir){
+    const row = arrowEl.parentElement.querySelector('.shorts-row');
+    const card = row.querySelector('.shorts-card');
+    const step = card.offsetWidth + 12; // 카드 너비 + gap
+    row.scrollBy({ left: dir * step, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
