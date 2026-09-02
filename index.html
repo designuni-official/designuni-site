@@ -71,14 +71,14 @@
   .tabbtn.active{ background:#fff; color:var(--navy); font-weight:700; }
 
   /* 배경을 전부 흰색으로 통일 - 더 이상 회색 바탕 위에 뜬 카드가 아니라
-     페이지 자체가 흰 화면이고, 콘텐츠만 1080px 폭으로 정렬된다. */
+     페이지 자체가 흰 화면이고, 콘텐츠만 1180px 폭으로 정렬된다. */
   .page{
-    display:none; max-width:1080px; margin:0 auto; background:#fff;
+    display:none; max-width:1180px; margin:0 auto; background:#fff;
   }
   .page.active{ display:block; }
 
   .frame-label{
-    max-width:1080px; margin:16px auto 0; padding:0 4px;
+    max-width:1180px; margin:16px auto 0; padding:0 4px;
     font-size:13px; color:var(--navy); font-weight:700;
   }
 
@@ -98,7 +98,7 @@
   }
   .wf-box.solid-dark:hover{ background:var(--navy-dark); transform:translateY(-1px); box-shadow:0 6px 16px rgba(204,20,24,.34); }
 
-  /* 레드프린팅 참고: 메뉴바 구분선이 카드 폭(1080px)이 아니라 화면 최대 크기를
+  /* 레드프린팅 참고: 메뉴바 구분선이 카드 폭(1180px)이 아니라 화면 최대 크기를
      그대로 따라가도록, 헤더 자체를 뷰포트 전체 너비로 브레이크아웃한다. */
   /* GNB 바로 아래 구분선을 header.wf 자체(뷰포트 전체 폭)에 둬서 화면 끝까지 이어지게 한다 */
   header.wf{
@@ -107,8 +107,8 @@
     position:relative; left:50%; width:100vw; margin-left:-50vw; z-index:310;
     border-bottom:1px solid var(--line-light);
   }
-  /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1080px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
-  .wf-header-inner{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1180px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
+  .wf-header-inner{ max-width:1180px; margin:0 auto; padding:0 32px; }
   .wf-header-row{
     display:flex; align-items:center; gap:16px;
   }
@@ -153,10 +153,10 @@
     border-bottom:1px solid var(--line-light);
   }
   .mega-menu.show{ display:block; }
-  /* 메가메뉴 안쪽 콘텐츠(썸네일+컬럼)는 화면 전체가 아니라 헤더와 같은 1080px 폭에 맞춰 정렬 */
+  /* 메가메뉴 안쪽 콘텐츠(썸네일+컬럼)는 화면 전체가 아니라 헤더와 같은 1180px 폭에 맞춰 정렬 */
   .mega-menu-inner{
     display:flex; gap:44px; text-align:left;
-    max-width:1080px; margin:0 auto; padding:32px 24px 40px;
+    max-width:1180px; margin:0 auto; padding:32px 32px 40px;
   }
   /* 메가메뉴가 열려있는 동안 헤더/메가메뉴 아래 나머지 화면을 어둡게 눌러주는 딤 처리 */
   .mega-dim{
@@ -207,7 +207,9 @@
   /* 화살표를 배너 바깥(좌우 여백)에 두기 위한 래퍼. .main-banner 자체는 트랙을 잘라야 해서
      overflow:hidden 이라 그 안에 화살표를 두면 밖으로 못 나간다. */
   .main-banner-wrap{ position:relative; margin-bottom:18px; }
-  .main-banner{ position:relative; width:100%; height:200px; overflow:hidden; border-radius:var(--r-md); }
+  /* 프론트(designuni.netlify.app) 배너 실측 1214x298. 높이를 절대값 그대로 298px에 맞춘다
+     (우리 콘텐츠 폭이 1116이라 폭은 프론트보다 98px 좁고, 그만큼 비율은 4.07 -> 3.74) */
+  .main-banner{ position:relative; width:100%; height:298px; overflow:hidden; border-radius:var(--r-md); }
   .main-banner-track{ display:flex; height:100%; transition:transform .5s ease; }
   .main-banner-slide{
     flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center;
@@ -229,7 +231,7 @@
   .main-banner-dots{ position:absolute; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:2; }
   .main-banner-dots span{ width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; }
   .main-banner-dots span.active{ background:var(--ink); }
-  .grid{ display:grid; gap:14px; }
+  .grid{ display:grid; gap:16px; }
   .grid-4{ grid-template-columns:repeat(4,1fr); }
   .grid-3{ grid-template-columns:repeat(3,1fr); }
   .grid-2{ grid-template-columns:repeat(2,1fr); }
@@ -243,7 +245,7 @@
     gap:0; padding:0; position:relative; background:#fff; text-align:left;
     border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm);
   }
-  .product-card .thumb{ width:100%; height:200px; background:var(--ph-grad); }
+  .product-card .thumb{ width:100%; height:173px; background:var(--ph-grad); }
   /* 실제 배포된 duni 프론트(designuni.netlify.app) 기준: 기울임 없이 평평한 원형 뱃지 */
   .product-badge{
     position:absolute; top:10px; left:10px; width:42px; height:42px; border-radius:50%;
@@ -254,13 +256,41 @@
   .product-badge.best{ background:var(--red); }
   .product-badge.new{ background:var(--ink); }
   .product-name{ display:block; padding:13px 14px; color:var(--ink); font-weight:700; font-size:14px; }
+
+  /* 창작자 리뷰 카드 - 리뷰 섹션 레퍼런스 참고:
+     정사각 이미지 → 별점 → 2줄 요약 → 작성자/구매인증 → 상품 정보 순으로 쌓인다 */
+  .review-card{
+    height:auto; flex-direction:column; align-items:stretch; justify-content:flex-start;
+    gap:0; padding:0; background:#fff; text-align:left; cursor:pointer;
+    border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm);
+  }
+  .review-card .review-thumb{ width:100%; aspect-ratio:1/1; background:var(--ph-grad); }
+  .review-card .review-body{ display:flex; flex-direction:column; gap:7px; padding:12px 13px 13px; }
+  .review-stars{ font-size:12px; color:var(--navy); letter-spacing:1.5px; line-height:1; }
+  .review-text{
+    font-size:12px; font-weight:500; color:var(--ink); line-height:1.5; min-height:36px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .review-meta{ display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--muted); }
+  .review-badge{
+    margin-left:auto; flex-shrink:0; font-size:9.5px; font-weight:700; color:var(--muted);
+    background:var(--box); border-radius:4px; padding:3px 6px; white-space:nowrap;
+  }
+  .review-product{
+    display:flex; flex-direction:column; gap:2px; min-width:0;
+    margin-top:3px; padding-top:10px; border-top:1px solid var(--line-light);
+  }
+  .review-product-name{ font-size:11px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .review-product-stat{ font-size:10px; color:var(--muted); }
   .cat-banner{
-    height:150px; flex-direction:column; align-items:flex-start; justify-content:flex-end;
+    height:137px; flex-direction:column; align-items:flex-start; justify-content:flex-end;
     padding:16px 18px; text-align:left; gap:4px; background:var(--ph-grad);
     border-radius:var(--r-md);
   }
   .cat-banner .cat-title{ font-size:18px; font-weight:600; color:var(--ink); }
   .cat-banner .cat-sub{ font-size:11.5px; color:var(--muted); }
+  a.cat-banner{ text-decoration:none; }
+
 
   /* 배너 hover 강조 애니메이션 */
   .banner-hover{
@@ -282,8 +312,9 @@
     scroll-snap-type:x mandatory;
   }
   .shorts-row::-webkit-scrollbar{ display:none; }
+  /* 프론트 실제 구현(designuni.netlify.app) 실측: 카드 270x478 (9:16), gap 12 */
   .shorts-card{
-    width:190px; flex-shrink:0; height:280px; flex-direction:column; cursor:pointer;
+    width:270px; flex-shrink:0; height:480px; flex-direction:column; cursor:pointer;
     align-items:flex-start; justify-content:flex-end; padding:14px; text-align:left;
     background:var(--ph-grad-dark); border-radius:var(--r-md); box-shadow:var(--shadow-sm);
     scroll-snap-align:start;
@@ -303,14 +334,14 @@
   .shorts-card .shorts-channel{ font-size:10.5px; color:rgba(255,255,255,.72); }
   /* 레드프린팅 하단 푸터 참고: 진한 회색 바 하나가 아니라, 연한 배경 위에
      연락처 + 링크 컬럼들 + SNS + 사업자 정보 순으로 쌓이는 구조 */
-  /* 레드프린팅처럼 배경(회색)은 화면 끝까지, 콘텐츠만 1080px로 가운데 정렬 */
+  /* 레드프린팅처럼 배경(회색)은 화면 끝까지, 콘텐츠만 1180px로 가운데 정렬 */
   footer.wf{
     margin-top:34px;
     background:var(--bg);
     font-size:11px; color:var(--muted);
     position:relative; left:50%; width:100vw; margin-left:-50vw;
   }
-  .footer-inner{ max-width:1080px; margin:0 auto; padding:36px 24px 0; }
+  .footer-inner{ max-width:1180px; margin:0 auto; padding:36px 32px 0; }
   .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:28px; }
   .footer-contact-title{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:10px; }
   .footer-contact-phone{ font-size:20px; font-weight:700; color:var(--ink); margin-bottom:6px; letter-spacing:-.3px; }
@@ -1008,12 +1039,67 @@
       <div class="main-banner-arrow main-banner-arrow-right" onclick="changeBannerSlide(1)">&gt;</div>
     </div>
 
-    <div class="section-title">카테고리 바로가기</div>
+    <div class="section-title">추천 상품</div>
     <div class="grid grid-4">
-      <div class="wf-box cat-banner banner-hover"><span class="cat-title">Fabric</span><span class="cat-sub">광목 · 린넨 · 쉬폰</span></div>
-      <div class="wf-box cat-banner banner-hover"><span class="cat-title">Rounding</span><span class="cat-sub">곡면 인쇄</span></div>
-      <div class="wf-box cat-banner banner-hover"><span class="cat-title">ABS</span><span class="cat-sub">사출 인쇄</span></div>
-      <div class="wf-box cat-banner banner-hover"><span class="cat-title">Material</span><span class="cat-sub">한지 · 자개 등 특수인쇄</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+    </div>
+
+    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>창작자 리뷰</span>
+      <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
+    </div>
+    <div class="grid grid-4">
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
@@ -1033,25 +1119,17 @@
       <div class="shorts-arrow shorts-arrow-right" onclick="slideShorts(this, 1)">&gt;</div>
     </div>
 
-    <div class="section-title">추천 상품</div>
+    <div class="section-title">사례보기</div>
     <div class="grid grid-4">
-      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-    </div>
-
-    <div class="section-title">제작사례 / 고객 후기</div>
-    <div class="grid grid-4">
-      <div class="wf-box banner-hover" style="height:120px;">후기 카드 1</div>
-      <div class="wf-box banner-hover" style="height:120px;">후기 카드 2</div>
-      <div class="wf-box banner-hover" style="height:120px;">후기 카드 3</div>
-      <div class="wf-box banner-hover" style="height:120px;">후기 카드 4</div>
+      <a class="wf-box cat-banner banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener"><span class="cat-title">Fabric</span><span class="cat-sub">광목 · 린넨 · 쉬폰</span></a>
+      <a class="wf-box cat-banner banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener"><span class="cat-title">Rounding</span><span class="cat-sub">곡면 인쇄</span></a>
+      <a class="wf-box cat-banner banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener"><span class="cat-title">ABS</span><span class="cat-sub">사출 인쇄</span></a>
+      <a class="wf-box cat-banner banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener"><span class="cat-title">Material</span><span class="cat-sub">한지 · 자개 등 특수인쇄</span></a>
     </div>
 
     <!-- 대량주문/B2B 배너는 별도로 실제 이미지가 제작될 예정 - 이미지 플레이스홀더만 표시 -->
     <div class="section-title">대량주문 · B2B 배너</div>
-    <div class="wf-box banner-hover" style="height:110px; background:var(--ph-grad); font-size:12px; color:var(--muted);">배너 이미지 (별도 제작 예정)</div>
+    <div class="wf-box banner-hover" style="height:298px; background:var(--ph-grad); font-size:12px; color:var(--muted);">배너 이미지 (별도 제작 예정)</div>
   </main>
   <footer class="wf"></footer>
 </div>
