@@ -327,12 +327,10 @@
   /* 프론트 실제 구현(designuni.netlify.app) 실측: 카드 270x478 (9:16), gap 12 */
   .shorts-card{
     width:270px; flex-shrink:0; height:480px; flex-direction:column; cursor:pointer;
-    align-items:flex-start; justify-content:flex-end; padding:14px; text-align:left;
+    align-items:center; justify-content:center; padding:0;
     background:var(--ph-grad-dark); border-radius:var(--r-md); box-shadow:var(--shadow-sm);
     scroll-snap-align:start;
   }
-  .shorts-card .shorts-title{ font-size:12.5px; font-weight:700; color:#fff; }
-  .shorts-card .shorts-channel{ font-size:10.5px; color:rgba(255,255,255,.72); }
   /* 레드프린팅 하단 푸터 참고: 진한 회색 바 하나가 아니라, 연한 배경 위에
      연락처 + 링크 컬럼들 + SNS + 사업자 정보 순으로 쌓이는 구조 */
   /* 레드프린팅처럼 배경(회색)은 화면 끝까지, 콘텐츠만 1228px로 가운데 정렬 */
@@ -1162,12 +1160,12 @@
     <div class="shorts-slider">
       <div class="shorts-arrow shorts-arrow-left" onclick="slideRow(this, -1)">&lt;</div>
       <div class="shorts-row">
-        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
-        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
-        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
-        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
-        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
-        <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"></div>
+        <div class="wf-box shorts-card" onclick="openShortsModal(this)"></div>
       </div>
       <div class="shorts-arrow shorts-arrow-right" onclick="slideRow(this, 1)">&gt;</div>
     </div>
@@ -2905,10 +2903,10 @@
     if (e.target.id === 'cart-modal') closeCartModal();
   });
 
-  // SHORTS 카드 클릭 시 유튜브 쇼츠 재생 팝업처럼 노출 (제목은 클릭한 카드 기준으로 반영)
+  // SHORTS 카드 클릭 시 유튜브 쇼츠 재생 팝업처럼 노출
+  // (카드에서 제목 텍스트를 뺐으므로 모달 제목은 고정 플레이스홀더를 쓴다)
   function openShortsModal(cardEl){
-    const title = cardEl.querySelector('.shorts-title').textContent;
-    document.getElementById('shorts-modal-title').textContent = title;
+    document.getElementById('shorts-modal-title').textContent = '숏폼 콘텐츠 제목';
     document.getElementById('shorts-modal').classList.add('show');
   }
   function closeShortsModal(){
