@@ -216,18 +216,19 @@
     background:var(--ph-grad);
     color:var(--muted); font-size:14px; font-weight:600; box-sizing:border-box;
   }
-  /* 레드프린팅 참고: 원형 버튼 없이 배너 바깥 여백에 큰 홑화살표만 놓는다 */
-  .main-banner-arrow{
+  /* 배너 / SHORTS / 창작자 리뷰 공통 화살표.
+     원형 버튼 없이 콘텐츠 바깥 여백에 큰 홑화살표만 놓는다. */
+  .main-banner-arrow, .shorts-arrow, .review-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
-    width:26px; height:56px; display:flex; align-items:center; justify-content:center;
+    width:34px; height:80px; display:flex; align-items:center; justify-content:center;
     background:none; border:none; box-shadow:none; border-radius:0;
-    font-size:30px; font-weight:300; line-height:1; color:var(--muted);
+    font-size:48px; font-weight:300; line-height:1; color:var(--muted);
     cursor:pointer; z-index:2; user-select:none;
     transition:color .15s ease;
   }
-  .main-banner-arrow:hover{ color:var(--ink); background:none; }
-  .main-banner-arrow-left{ left:-28px; }
-  .main-banner-arrow-right{ right:-28px; }
+  .main-banner-arrow:hover, .shorts-arrow:hover, .review-arrow:hover{ color:var(--ink); background:none; }
+  .main-banner-arrow-left, .shorts-arrow-left, .review-arrow-left{ left:-36px; }
+  .main-banner-arrow-right, .shorts-arrow-right, .review-arrow-right{ right:-36px; }
   .main-banner-dots{ position:absolute; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:2; }
   .main-banner-dots span{ width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; }
   .main-banner-dots span.active{ background:var(--ink); }
@@ -259,8 +260,15 @@
 
   /* 창작자 리뷰 카드 - 리뷰 섹션 레퍼런스 참고:
      정사각 이미지 → 별점 → 2줄 요약 → 작성자/구매인증 → 상품 정보 순으로 쌓인다 */
+  .review-slider{ position:relative; }
+  .review-row{
+    display:flex; gap:16px; overflow-x:auto; scroll-behavior:smooth;
+    scroll-snap-type:x mandatory;
+  }
+  .review-row::-webkit-scrollbar{ display:none; }
   .review-card{
-    height:auto; flex-direction:column; align-items:stretch; justify-content:flex-start;
+    width:267px; flex-shrink:0; scroll-snap-align:start;
+    height:auto; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start;
     gap:0; padding:0; background:#fff; text-align:left; cursor:pointer;
     border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm);
   }
@@ -319,17 +327,6 @@
     background:var(--ph-grad-dark); border-radius:var(--r-md); box-shadow:var(--shadow-sm);
     scroll-snap-align:start;
   }
-  .shorts-arrow{
-    position:absolute; top:50%; transform:translateY(-50%);
-    width:26px; height:56px; display:flex; align-items:center; justify-content:center;
-    background:none; border:none; box-shadow:none; border-radius:0;
-    font-size:30px; font-weight:300; line-height:1; color:var(--muted);
-    cursor:pointer; z-index:2; user-select:none;
-    transition:color .15s ease;
-  }
-  .shorts-arrow:hover{ color:var(--ink); background:none; }
-  .shorts-arrow-left{ left:-28px; }
-  .shorts-arrow-right{ right:-28px; }
   .shorts-card .shorts-title{ font-size:12.5px; font-weight:700; color:#fff; }
   .shorts-card .shorts-channel{ font-size:10.5px; color:rgba(255,255,255,.72); }
   /* 레드프린팅 하단 푸터 참고: 진한 회색 바 하나가 아니라, 연한 배경 위에
@@ -1051,55 +1048,107 @@
       <span>창작자 리뷰</span>
       <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
     </div>
-    <div class="grid grid-4">
-      <div class="review-card banner-hover">
-        <div class="review-thumb"></div>
-        <div class="review-body">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
-          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
-          <div class="review-product">
-            <span class="review-product-name">제품명</span>
-            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+    <div class="review-slider">
+      <div class="review-arrow review-arrow-left" onclick="slideRow(this, -1)">&lt;</div>
+      <div class="review-row">
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
+          </div>
+        </div>
+        <div class="review-card banner-hover">
+          <div class="review-thumb"></div>
+          <div class="review-body">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+            <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+            <div class="review-product">
+              <span class="review-product-name">제품명</span>
+              <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+            </div>
           </div>
         </div>
       </div>
-      <div class="review-card banner-hover">
-        <div class="review-thumb"></div>
-        <div class="review-body">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
-          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
-          <div class="review-product">
-            <span class="review-product-name">제품명</span>
-            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
-          </div>
-        </div>
-      </div>
-      <div class="review-card banner-hover">
-        <div class="review-thumb"></div>
-        <div class="review-body">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
-          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
-          <div class="review-product">
-            <span class="review-product-name">제품명</span>
-            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
-          </div>
-        </div>
-      </div>
-      <div class="review-card banner-hover">
-        <div class="review-thumb"></div>
-        <div class="review-body">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
-          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
-          <div class="review-product">
-            <span class="review-product-name">제품명</span>
-            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
-          </div>
-        </div>
-      </div>
+      <div class="review-arrow review-arrow-right" onclick="slideRow(this, 1)">&gt;</div>
     </div>
 
     <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
@@ -1107,7 +1156,7 @@
       <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
     </div>
     <div class="shorts-slider">
-      <div class="shorts-arrow shorts-arrow-left" onclick="slideShorts(this, -1)">&lt;</div>
+      <div class="shorts-arrow shorts-arrow-left" onclick="slideRow(this, -1)">&lt;</div>
       <div class="shorts-row">
         <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
         <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
@@ -1116,7 +1165,7 @@
         <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
         <div class="wf-box shorts-card" onclick="openShortsModal(this)"><span class="shorts-title">숏폼 콘텐츠 제목</span><span class="shorts-channel">디자인유니 채널</span></div>
       </div>
-      <div class="shorts-arrow shorts-arrow-right" onclick="slideShorts(this, 1)">&gt;</div>
+      <div class="shorts-arrow shorts-arrow-right" onclick="slideRow(this, 1)">&gt;</div>
     </div>
 
     <div class="section-title">사례보기</div>
@@ -3245,12 +3294,13 @@
   }
   startBannerAutoplay();
 
-  // SHORTS 슬라이드 화살표 (좌/우 클릭 시 카드 1개 폭만큼 스크롤)
-  function slideShorts(arrowEl, dir){
-    const row = arrowEl.parentElement.querySelector('.shorts-row');
-    const card = row.querySelector('.shorts-card');
-    const step = card.offsetWidth + 12; // 카드 너비 + gap
-    row.scrollBy({ left: dir * step, behavior: 'smooth' });
+  // 가로 슬라이더 공통 화살표 (SHORTS / 창작자 리뷰) - 카드 1개 폭 + gap 만큼 스크롤
+  function slideRow(arrowEl, dir){
+    const row = arrowEl.parentElement.querySelector('.shorts-row, .review-row');
+    const card = row.firstElementChild;
+    if (!card) return;
+    const gap = parseFloat(getComputedStyle(row).columnGap) || 12;
+    row.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: 'smooth' });
   }
 </script>
 </body>
