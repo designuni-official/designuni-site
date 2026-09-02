@@ -71,14 +71,14 @@
   .tabbtn.active{ background:#fff; color:var(--navy); font-weight:700; }
 
   /* 배경을 전부 흰색으로 통일 - 더 이상 회색 바탕 위에 뜬 카드가 아니라
-     페이지 자체가 흰 화면이고, 콘텐츠만 1180px 폭으로 정렬된다. */
+     페이지 자체가 흰 화면이고, 콘텐츠만 1228px 폭으로 정렬된다. */
   .page{
-    display:none; max-width:1180px; margin:0 auto; background:#fff;
+    display:none; max-width:1228px; margin:0 auto; background:#fff;
   }
   .page.active{ display:block; }
 
   .frame-label{
-    max-width:1180px; margin:16px auto 0; padding:0 4px;
+    max-width:1228px; margin:16px auto 0; padding:0 4px;
     font-size:13px; color:var(--navy); font-weight:700;
   }
 
@@ -98,7 +98,7 @@
   }
   .wf-box.solid-dark:hover{ background:var(--navy-dark); transform:translateY(-1px); box-shadow:0 6px 16px rgba(204,20,24,.34); }
 
-  /* 레드프린팅 참고: 메뉴바 구분선이 카드 폭(1180px)이 아니라 화면 최대 크기를
+  /* 레드프린팅 참고: 메뉴바 구분선이 카드 폭(1228px)이 아니라 화면 최대 크기를
      그대로 따라가도록, 헤더 자체를 뷰포트 전체 너비로 브레이크아웃한다. */
   /* GNB 바로 아래 구분선을 header.wf 자체(뷰포트 전체 폭)에 둬서 화면 끝까지 이어지게 한다 */
   header.wf{
@@ -107,8 +107,8 @@
     position:relative; left:50%; width:100vw; margin-left:-50vw; z-index:310;
     border-bottom:1px solid var(--line-light);
   }
-  /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1180px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
-  .wf-header-inner{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1228px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
+  .wf-header-inner{ max-width:1228px; margin:0 auto; padding:0 56px; }
   .wf-header-row{
     display:flex; align-items:center; gap:16px;
   }
@@ -153,10 +153,10 @@
     border-bottom:1px solid var(--line-light);
   }
   .mega-menu.show{ display:block; }
-  /* 메가메뉴 안쪽 콘텐츠(썸네일+컬럼)는 화면 전체가 아니라 헤더와 같은 1180px 폭에 맞춰 정렬 */
+  /* 메가메뉴 안쪽 콘텐츠(썸네일+컬럼)는 화면 전체가 아니라 헤더와 같은 1228px 폭에 맞춰 정렬 */
   .mega-menu-inner{
     display:flex; gap:44px; text-align:left;
-    max-width:1180px; margin:0 auto; padding:32px 32px 40px;
+    max-width:1228px; margin:0 auto; padding:32px 56px 40px;
   }
   /* 메가메뉴가 열려있는 동안 헤더/메가메뉴 아래 나머지 화면을 어둡게 눌러주는 딤 처리 */
   .mega-dim{
@@ -197,7 +197,7 @@
   .mm-badge{ font-size:9px; font-weight:700; color:#fff; background:var(--ink); padding:1px 5px; border-radius:999px; }
   .mm-badge.mm-new{ background:var(--red); }
 
-  main.wf{ padding:28px 32px; }
+  main.wf{ padding:28px 56px; }
 
   .wf-banner{ width:100%; height:180px; margin-bottom:16px; font-size:14px; }
 
@@ -227,8 +227,11 @@
     transition:color .15s ease;
   }
   .main-banner-arrow:hover, .shorts-arrow:hover, .review-arrow:hover{ color:var(--ink); background:none; }
-  .main-banner-arrow-left, .shorts-arrow-left, .review-arrow-left{ left:-36px; }
-  .main-banner-arrow-right, .shorts-arrow-right, .review-arrow-right{ right:-36px; }
+  /* 리뷰 카드는 이미지 아래 텍스트 블록이 길어 카드 전체 중앙이 한참 아래로 내려간다.
+     썸네일(정사각) 기준 중앙으로 올려 배너/쇼츠와 시각적으로 같은 위치가 되게 한다. */
+  .review-arrow{ top:calc(var(--review-card-w) / 2); }
+  .main-banner-arrow-left, .shorts-arrow-left, .review-arrow-left{ left:-50px; }
+  .main-banner-arrow-right, .shorts-arrow-right, .review-arrow-right{ right:-50px; }
   .main-banner-dots{ position:absolute; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:2; }
   .main-banner-dots span{ width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; }
   .main-banner-dots span.active{ background:var(--ink); }
@@ -260,14 +263,15 @@
 
   /* 창작자 리뷰 카드 - 리뷰 섹션 레퍼런스 참고:
      정사각 이미지 → 별점 → 2줄 요약 → 작성자/구매인증 → 상품 정보 순으로 쌓인다 */
-  .review-slider{ position:relative; }
+  /* 카드 폭 = 정사각 썸네일 높이. 화살표를 썸네일 기준 중앙에 두는 계산에도 쓴다 */
+  .review-slider{ position:relative; --review-card-w:267px; }
   .review-row{
     display:flex; gap:16px; overflow-x:auto; scroll-behavior:smooth;
     scroll-snap-type:x mandatory;
   }
   .review-row::-webkit-scrollbar{ display:none; }
   .review-card{
-    width:267px; flex-shrink:0; scroll-snap-align:start;
+    width:var(--review-card-w); flex-shrink:0; scroll-snap-align:start;
     height:auto; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start;
     gap:0; padding:0; background:#fff; text-align:left; cursor:pointer;
     border-radius:var(--r-md); overflow:hidden; box-shadow:var(--shadow-sm);
@@ -331,14 +335,14 @@
   .shorts-card .shorts-channel{ font-size:10.5px; color:rgba(255,255,255,.72); }
   /* 레드프린팅 하단 푸터 참고: 진한 회색 바 하나가 아니라, 연한 배경 위에
      연락처 + 링크 컬럼들 + SNS + 사업자 정보 순으로 쌓이는 구조 */
-  /* 레드프린팅처럼 배경(회색)은 화면 끝까지, 콘텐츠만 1180px로 가운데 정렬 */
+  /* 레드프린팅처럼 배경(회색)은 화면 끝까지, 콘텐츠만 1228px로 가운데 정렬 */
   footer.wf{
     margin-top:34px;
     background:var(--bg);
     font-size:11px; color:var(--muted);
     position:relative; left:50%; width:100vw; margin-left:-50vw;
   }
-  .footer-inner{ max-width:1180px; margin:0 auto; padding:36px 32px 0; }
+  .footer-inner{ max-width:1228px; margin:0 auto; padding:36px 56px 0; }
   .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:28px; }
   .footer-contact-title{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:10px; }
   .footer-contact-phone{ font-size:20px; font-weight:700; color:var(--ink); margin-bottom:6px; letter-spacing:-.3px; }
