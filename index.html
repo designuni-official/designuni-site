@@ -103,28 +103,24 @@
   /* GNB 바로 아래 구분선을 header.wf 자체(뷰포트 전체 폭)에 둬서 화면 끝까지 이어지게 한다 */
   header.wf{
     background:#fff;
-    padding:16px 0 0;
+    padding:20px 0 0;
     position:relative; left:50%; width:100vw; margin-left:-50vw; z-index:310;
     border-bottom:1px solid var(--line-light);
   }
   /* 실제 콘텐츠(로고/GNB)는 이 안에서 기존 1080px 폭 그대로 정렬 - 흰 배경만 화면 전체로 퍼진다 */
   .wf-header-inner{ max-width:1080px; margin:0 auto; padding:0 24px; }
-  .wf-top-util{
-    display:flex; justify-content:flex-end; gap:12px; font-size:11px; color:var(--muted); margin-bottom:10px;
-  }
   .wf-header-row{
     display:flex; align-items:center; gap:16px;
   }
   .wf-logo{ width:110px; height:38px; flex-shrink:0; font-weight:700; color:var(--navy); letter-spacing:-.2px; }
   .wf-header-spacer{ flex:1; }
-  .wf-icon-row{ display:flex; align-items:center; gap:24px; flex-shrink:0; }
-  .wf-icon-item{ display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; }
+  .wf-icon-row{ display:flex; align-items:center; gap:18px; flex-shrink:0; }
+  .wf-icon-item{ display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer; }
   .wf-icon-item .icon-circle{
     width:34px; height:34px; border-radius:50%; background:var(--box); position:relative;
     transition:background .15s ease;
   }
   .wf-icon-item:hover .icon-circle{ background:var(--navy-light); }
-  .wf-icon-item .icon-label{ font-size:9px; color:var(--muted); white-space:nowrap; }
   .cart-badge{
     position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9px; font-weight:700;
     width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -208,22 +204,28 @@
   /* 메인 배너 슬라이드 (자동 전환 + 좌우 화살표 + 도트 인디케이터)
      레드프린팅 실제 메인배너 참고: 컬러 그라디언트로 꾸미지 않고 실제 상품/프로모션 사진이
      꽉 차게 들어가는 방식이라, 사진 없는 지금은 은은한 회색조 플레이스홀더로만 둔다. */
-  .main-banner{ position:relative; width:100%; height:200px; margin-bottom:18px; overflow:hidden; border-radius:var(--r-md); }
+  /* 화살표를 배너 바깥(좌우 여백)에 두기 위한 래퍼. .main-banner 자체는 트랙을 잘라야 해서
+     overflow:hidden 이라 그 안에 화살표를 두면 밖으로 못 나간다. */
+  .main-banner-wrap{ position:relative; margin-bottom:18px; }
+  .main-banner{ position:relative; width:100%; height:200px; overflow:hidden; border-radius:var(--r-md); }
   .main-banner-track{ display:flex; height:100%; transition:transform .5s ease; }
   .main-banner-slide{
     flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center;
     background:var(--ph-grad);
     color:var(--muted); font-size:14px; font-weight:600; box-sizing:border-box;
   }
+  /* 레드프린팅 참고: 원형 버튼 없이 배너 바깥 여백에 큰 홑화살표만 놓는다 */
   .main-banner-arrow{
-    position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%;
-    background:#fff; display:flex; align-items:center; justify-content:center;
-    font-size:14px; color:var(--ink); cursor:pointer; box-shadow:var(--shadow-sm); z-index:2;
-    transition:background .15s ease, color .15s ease;
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:26px; height:56px; display:flex; align-items:center; justify-content:center;
+    background:none; border:none; box-shadow:none; border-radius:0;
+    font-size:30px; font-weight:300; line-height:1; color:var(--muted);
+    cursor:pointer; z-index:2; user-select:none;
+    transition:color .15s ease;
   }
-  .main-banner-arrow:hover{ background:var(--ink); color:#fff; }
-  .main-banner-arrow-left{ left:14px; }
-  .main-banner-arrow-right{ right:14px; }
+  .main-banner-arrow:hover{ color:var(--ink); background:none; }
+  .main-banner-arrow-left{ left:-28px; }
+  .main-banner-arrow-right{ right:-28px; }
   .main-banner-dots{ position:absolute; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:2; }
   .main-banner-dots span{ width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; }
   .main-banner-dots span.active{ background:var(--ink); }
@@ -272,10 +274,12 @@
     position: relative;
   }
 
-  .shorts-slider{ display:flex; align-items:center; gap:10px; }
+  /* 화살표를 flex 아이템으로 두면 그만큼 카드 영역이 좁아져 다른 섹션과 좌우가 안 맞는다.
+     absolute로 바깥에 빼서 .shorts-row가 본문 폭을 그대로 쓰게 한다. */
+  .shorts-slider{ position:relative; }
   .shorts-row{
     display:flex; gap:12px; overflow-x:auto; scroll-behavior:smooth;
-    scroll-snap-type:x mandatory; flex:1;
+    scroll-snap-type:x mandatory;
   }
   .shorts-row::-webkit-scrollbar{ display:none; }
   .shorts-card{
@@ -285,11 +289,16 @@
     scroll-snap-align:start;
   }
   .shorts-arrow{
-    flex-shrink:0; width:34px; height:34px; border-radius:50%; background:#fff;
-    border:none; display:flex; align-items:center; justify-content:center;
-    font-size:14px; color:var(--navy); cursor:pointer; box-shadow:var(--shadow-sm);
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:26px; height:56px; display:flex; align-items:center; justify-content:center;
+    background:none; border:none; box-shadow:none; border-radius:0;
+    font-size:30px; font-weight:300; line-height:1; color:var(--muted);
+    cursor:pointer; z-index:2; user-select:none;
+    transition:color .15s ease;
   }
-  .shorts-arrow:hover{ background:var(--navy); color:#fff; }
+  .shorts-arrow:hover{ color:var(--ink); background:none; }
+  .shorts-arrow-left{ left:-28px; }
+  .shorts-arrow-right{ right:-28px; }
   .shorts-card .shorts-title{ font-size:12.5px; font-weight:700; color:#fff; }
   .shorts-card .shorts-channel{ font-size:10.5px; color:rgba(255,255,255,.72); }
   /* 레드프린팅 하단 푸터 참고: 진한 회색 바 하나가 아니라, 연한 배경 위에
@@ -980,21 +989,23 @@
 <div class="page" id="page-home">
   <header class="wf"></header>
   <main class="wf">
-    <div class="main-banner" id="main-banner" onmouseenter="pauseBannerAutoplay()" onmouseleave="resumeBannerAutoplay()">
-      <div class="main-banner-track" id="main-banner-track">
-        <div class="main-banner-slide">메인 배너 1 - 기획전 프로모션</div>
-        <div class="main-banner-slide">메인 배너 2 - 신상품 런칭</div>
-        <div class="main-banner-slide">메인 배너 3 - 시즌 이벤트</div>
-        <div class="main-banner-slide">메인 배너 4 - 대량주문 할인</div>
+    <div class="main-banner-wrap" onmouseenter="pauseBannerAutoplay()" onmouseleave="resumeBannerAutoplay()">
+      <div class="main-banner" id="main-banner">
+        <div class="main-banner-track" id="main-banner-track">
+          <div class="main-banner-slide">메인 배너 1 - 기획전 프로모션</div>
+          <div class="main-banner-slide">메인 배너 2 - 신상품 런칭</div>
+          <div class="main-banner-slide">메인 배너 3 - 시즌 이벤트</div>
+          <div class="main-banner-slide">메인 배너 4 - 대량주문 할인</div>
+        </div>
+        <div class="main-banner-dots" id="main-banner-dots">
+          <span class="active" onclick="goToBannerSlide(0)"></span>
+          <span onclick="goToBannerSlide(1)"></span>
+          <span onclick="goToBannerSlide(2)"></span>
+          <span onclick="goToBannerSlide(3)"></span>
+        </div>
       </div>
       <div class="main-banner-arrow main-banner-arrow-left" onclick="changeBannerSlide(-1)">&lt;</div>
       <div class="main-banner-arrow main-banner-arrow-right" onclick="changeBannerSlide(1)">&gt;</div>
-      <div class="main-banner-dots" id="main-banner-dots">
-        <span class="active" onclick="goToBannerSlide(0)"></span>
-        <span onclick="goToBannerSlide(1)"></span>
-        <span onclick="goToBannerSlide(2)"></span>
-        <span onclick="goToBannerSlide(3)"></span>
-      </div>
     </div>
 
     <div class="section-title">카테고리 바로가기</div>
@@ -2558,21 +2569,19 @@
 
     return `
       <div class="wf-header-inner">
-      <div class="wf-top-util">로그인 · 회원가입 · 고객센터</div>
       <div class="wf-header-row">
         <div class="wf-box wf-logo">LOGO</div>
         <div class="wf-header-spacer"></div>
         <div class="wf-icon-row">
-          <div class="wf-icon-item"><div class="icon-circle"></div><div class="icon-label">검색</div></div>
-          <div class="wf-icon-item"><div class="icon-circle"></div><div class="icon-label">마이페이지</div></div>
-          <div class="wf-icon-item"><div class="icon-circle"><span class="cart-badge">0</span></div><div class="icon-label">장바구니</div></div>
-          <div class="wf-icon-item"><div class="icon-circle"></div><div class="icon-label">제작가이드</div></div>
+          <div class="wf-icon-item" title="검색"><div class="icon-circle"></div></div>
+          <div class="wf-icon-item" title="마이페이지"><div class="icon-circle"></div></div>
+          <div class="wf-icon-item" title="장바구니"><div class="icon-circle"><span class="cart-badge">0</span></div></div>
         </div>
       </div>
       <div class="wf-gnb-wrap">
         <div class="wf-gnb">
           ${catsHtml}
-          <div class="gnb-static">주문제작 가이드</div><div class="gnb-static">대량주문 견적</div><div class="gnb-static">제작사례</div><div class="gnb-static">고객센터</div>
+          <div class="gnb-static">제작 가이드</div><div class="gnb-static">대량주문 견적</div><div class="gnb-static">제작사례</div><div class="gnb-static">고객센터</div>
         </div>
         ${menusHtml}
       </div>
