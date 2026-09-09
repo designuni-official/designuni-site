@@ -294,6 +294,54 @@
   }
   .review-product-name{ font-size:11px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .review-product-stat{ font-size:10px; color:var(--muted); }
+
+  /* ===== 13 검색 결과 ===== */
+  /* 검색어 재입력 바 + 결과 건수 요약 */
+  .search-head{ display:flex; flex-direction:column; gap:14px; margin-bottom:6px; }
+  .search-bar{
+    display:flex; align-items:center; gap:10px; height:52px; padding:0 18px;
+    background:#fff; border:2px solid var(--ink); border-radius:var(--r-md);
+  }
+  .search-bar .search-term{ flex:1; font-size:15px; font-weight:600; color:var(--ink); }
+  .search-bar .search-icon{ width:22px; height:22px; border-radius:50%; background:var(--box); flex-shrink:0; }
+  .search-summary{ font-size:13px; color:var(--muted); }
+  .search-summary strong{ color:var(--ink); font-weight:700; }
+
+  /* 결과 유형 탭 */
+  .search-tabs{ display:flex; gap:8px; margin:18px 0 4px; border-bottom:1px solid var(--line-light); }
+  .search-tab{
+    padding:10px 16px 12px; font-size:13px; color:var(--muted); cursor:pointer;
+    border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .search-tab:hover{ color:var(--ink); }
+  .search-tab.selected{ color:var(--ink); font-weight:700; border-bottom-color:var(--ink); }
+  .search-tab .cnt{ margin-left:5px; color:var(--navy); font-weight:700; }
+
+  /* 그리드 안에서는 리뷰 카드가 컬럼 폭을 그대로 채우게 (슬라이더의 고정폭 해제) */
+  .grid .review-card{ width:100%; }
+
+  /* 연관 포스팅 - 블로그 썸네일 + 제목 + 미리보기 몇 줄 */
+  .post-list{ display:flex; flex-direction:column; gap:12px; }
+  .post-item{
+    display:flex; gap:18px; padding:16px; text-decoration:none;
+    background:#fff; border:1px solid var(--line-light); border-radius:var(--r-md);
+  }
+  .post-thumb{ width:190px; height:126px; flex-shrink:0; background:var(--ph-grad); border-radius:var(--r-sm); }
+  .post-body{ display:flex; flex-direction:column; gap:8px; min-width:0; flex:1; }
+  .post-title{ font-size:15px; font-weight:700; color:var(--ink); }
+  .post-excerpt{
+    font-size:12.5px; color:var(--text); line-height:1.65; opacity:.75;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .post-meta{ margin-top:auto; display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); }
+  .post-source{ font-weight:700; color:#03c75a; }
+
+  /* 결과 없음 안내 */
+  .search-empty{
+    padding:46px 20px; text-align:center; font-size:13px; color:var(--muted);
+    background:var(--box); border-radius:var(--r-md);
+  }
   .cat-banner{
     height:137px; flex-direction:column; align-items:flex-start; justify-content:flex-end;
     padding:16px 18px; text-align:left; gap:4px; background:var(--ph-grad);
@@ -2646,6 +2694,133 @@
   </button>
 </div>
 
+<!-- ================= 13 검색 결과 ================= -->
+<div class="page" id="page-search">
+  <header class="wf"></header>
+  <main class="wf">
+    <div class="search-head">
+      <div class="search-bar">
+        <div class="search-term">키링</div>
+        <div class="search-icon"></div>
+      </div>
+      <div class="search-summary">'<strong>키링</strong>' 검색 결과 <strong>128</strong>건</div>
+    </div>
+
+    <div class="search-tabs">
+      <div class="search-tab selected">전체<span class="cnt">128</span></div>
+      <div class="search-tab">제품<span class="cnt">42</span></div>
+      <div class="search-tab">리뷰<span class="cnt">61</span></div>
+      <div class="search-tab">포스팅<span class="cnt">25</span></div>
+    </div>
+
+    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>연관 제품</span>
+      <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
+    </div>
+    <div class="grid grid-4">
+      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+    </div>
+
+    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>연관 리뷰</span>
+      <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
+    </div>
+    <div class="grid grid-4">
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가면 말줄임으로 처리됩니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card banner-hover">
+        <div class="review-thumb"></div>
+        <div class="review-body">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">리뷰 내용은 이렇게 최대 두 줄까지 노출되고, 두 줄을 넘어가는 긴 리뷰는 이렇게 뒷부분이 말줄임으로 잘려서 표시됩니다. 전체 내용은 리뷰 상세에서 확인할 수 있습니다.</div>
+          <div class="review-meta"><span>작성자</span><span>·</span><span>작성일</span><span class="review-badge">구매 인증</span></div>
+          <div class="review-product">
+            <span class="review-product-name">제품명</span>
+            <span class="review-product-stat">★ 0.0 · 리뷰 000개</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>연관 포스팅</span>
+      <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
+    </div>
+    <div class="post-list">
+      <a class="post-item banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener">
+        <div class="post-thumb"></div>
+        <div class="post-body">
+          <div class="post-title">포스팅 제목</div>
+          <div class="post-excerpt">포스팅 미리보기 텍스트입니다. 블로그 본문 앞부분이 이렇게 최대 세 줄까지 노출되고, 세 줄을 넘어가는 긴 글은 뒷부분이 말줄임으로 잘려서 표시됩니다. 썸네일은 왼쪽에 고정 크기로 붙고 제목과 미리보기, 출처·작성일이 오른쪽에 세로로 쌓이는 구조라 글 길이가 달라져도 카드 높이가 흔들리지 않습니다. 실제 포스팅에서는 굿즈 제작 과정이나 사용 후기, 소재별 특징과 주문 팁 같은 내용이 이 자리에 들어가게 되고, 검색어와 일치하는 단어가 포함된 문단이 우선 노출되도록 잡아두면 사용자가 원하는 글을 더 빨리 찾을 수 있습니다. 전체 내용은 카드를 눌러 원문에서 확인할 수 있습니다.</div>
+          <div class="post-meta"><span class="post-source">네이버 블로그</span><span>·</span><span>작성일</span></div>
+        </div>
+      </a>
+      <a class="post-item banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener">
+        <div class="post-thumb"></div>
+        <div class="post-body">
+          <div class="post-title">포스팅 제목</div>
+          <div class="post-excerpt">포스팅 미리보기 텍스트입니다. 블로그 본문 앞부분이 이렇게 최대 세 줄까지 노출되고, 세 줄을 넘어가는 긴 글은 뒷부분이 말줄임으로 잘려서 표시됩니다. 썸네일은 왼쪽에 고정 크기로 붙고 제목과 미리보기, 출처·작성일이 오른쪽에 세로로 쌓이는 구조라 글 길이가 달라져도 카드 높이가 흔들리지 않습니다. 실제 포스팅에서는 굿즈 제작 과정이나 사용 후기, 소재별 특징과 주문 팁 같은 내용이 이 자리에 들어가게 되고, 검색어와 일치하는 단어가 포함된 문단이 우선 노출되도록 잡아두면 사용자가 원하는 글을 더 빨리 찾을 수 있습니다. 전체 내용은 카드를 눌러 원문에서 확인할 수 있습니다.</div>
+          <div class="post-meta"><span class="post-source">네이버 블로그</span><span>·</span><span>작성일</span></div>
+        </div>
+      </a>
+      <a class="post-item banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener">
+        <div class="post-thumb"></div>
+        <div class="post-body">
+          <div class="post-title">포스팅 제목</div>
+          <div class="post-excerpt">포스팅 미리보기 텍스트입니다. 블로그 본문 앞부분이 이렇게 최대 세 줄까지 노출되고, 세 줄을 넘어가는 긴 글은 뒷부분이 말줄임으로 잘려서 표시됩니다. 썸네일은 왼쪽에 고정 크기로 붙고 제목과 미리보기, 출처·작성일이 오른쪽에 세로로 쌓이는 구조라 글 길이가 달라져도 카드 높이가 흔들리지 않습니다. 실제 포스팅에서는 굿즈 제작 과정이나 사용 후기, 소재별 특징과 주문 팁 같은 내용이 이 자리에 들어가게 되고, 검색어와 일치하는 단어가 포함된 문단이 우선 노출되도록 잡아두면 사용자가 원하는 글을 더 빨리 찾을 수 있습니다. 전체 내용은 카드를 눌러 원문에서 확인할 수 있습니다.</div>
+          <div class="post-meta"><span class="post-source">네이버 블로그</span><span>·</span><span>작성일</span></div>
+        </div>
+      </a>
+      <a class="post-item banner-hover" href="https://blog.naver.com/from-uni" target="_blank" rel="noopener">
+        <div class="post-thumb"></div>
+        <div class="post-body">
+          <div class="post-title">포스팅 제목</div>
+          <div class="post-excerpt">포스팅 미리보기 텍스트입니다. 블로그 본문 앞부분이 이렇게 최대 세 줄까지 노출되고, 세 줄을 넘어가는 긴 글은 뒷부분이 말줄임으로 잘려서 표시됩니다. 썸네일은 왼쪽에 고정 크기로 붙고 제목과 미리보기, 출처·작성일이 오른쪽에 세로로 쌓이는 구조라 글 길이가 달라져도 카드 높이가 흔들리지 않습니다. 실제 포스팅에서는 굿즈 제작 과정이나 사용 후기, 소재별 특징과 주문 팁 같은 내용이 이 자리에 들어가게 되고, 검색어와 일치하는 단어가 포함된 문단이 우선 노출되도록 잡아두면 사용자가 원하는 글을 더 빨리 찾을 수 있습니다. 전체 내용은 카드를 눌러 원문에서 확인할 수 있습니다.</div>
+          <div class="post-meta"><span class="post-source">네이버 블로그</span><span>·</span><span>작성일</span></div>
+        </div>
+      </a>
+    </div>
+  </main>
+  <footer class="wf"></footer>
+</div>
+
 <script>
   // ---- 전 페이지 공통 상단 영역 (유틸바 + 헤더행 + GNB/메가메뉴) ----
   // 홈 화면 메인배너 슬라이드보다 위에 있는 요소를 모든 페이지에 동일하게 주입한다.
@@ -2789,6 +2964,7 @@
     {id:'page-login', label:'10. 로그인/회원가입'},
     {id:'page-community', label:'11. 커뮤니티'},
     {id:'page-admin', label:'12. 관리자 페이지'},
+    {id:'page-search', label:'13. 검색 결과'},
   ];
   const tabbar = document.getElementById('tabbar');
   const frameLabel = document.getElementById('frame-label');
