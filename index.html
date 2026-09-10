@@ -3051,6 +3051,7 @@
     const EASE = 0.15;        // 관성. 작을수록 늦게 따라온다
     const STRETCH = 0.85;     // 남은 거리에 비례한 늘어남
     const MAX_STRETCH = 52;
+    const MIN_W = 60;         // 최소 기준폭. 'ABS'처럼 짧은 글자에서 라인이 너무 짧아지는 것을 막는다
 
     let targetX = 0, targetW = 0, curX = 0, curW = 0, raf = null;
 
@@ -3062,7 +3063,7 @@
       const w = wrap.getBoundingClientRect();
       const center = t.left - w.left + t.width / 2;
       targetX = center + ((cursorX - w.left) - center) * PULL;
-      targetW = t.width + 10;
+      targetW = Math.max(t.width + 10, MIN_W);
     };
 
     const loop = () => {
