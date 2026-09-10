@@ -337,6 +337,17 @@
   .post-meta{ margin-top:auto; display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); }
   .post-source{ font-weight:700; color:#03c75a; }
 
+  /* 섹션 타이틀 아래 포인트 밑줄.
+     ::after + absolute라 flex 행(타이틀 / 더보기) 정렬에는 영향을 주지 않는다.
+     길이만 바꾸고 싶으면 width 한 줄만 고치면 된다. */
+  #page-search .section-title{ position:relative; padding-bottom:16px; }
+  #page-search .section-title::after{
+    content:''; position:absolute; left:0; bottom:0;
+    width:170px; height:3px; background:var(--navy);
+  }
+  /* 선이 생긴 만큼 섹션 사이 간격도 함께 넓혀야 구분이 산다 */
+  #page-search .section-title{ margin-top:52px; }
+
   /* 결과 없음 안내 */
   .search-empty{
     padding:46px 20px; text-align:center; font-size:13px; color:var(--muted);
@@ -2718,10 +2729,10 @@
       <span style="font-size:11px; color:#888; font-weight:normal;">더보기 +</span>
     </div>
     <div class="grid grid-4">
-      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-      <div class="wf-box product-card banner-hover"><span class="product-badge best">Best</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
-      <div class="wf-box product-card banner-hover"><span class="product-badge new">New</span><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><div class="thumb"></div><span class="product-name">상품명</span></div>
+      <div class="wf-box product-card banner-hover"><div class="thumb"></div><span class="product-name">상품명</span></div>
     </div>
 
     <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
