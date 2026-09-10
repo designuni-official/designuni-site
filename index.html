@@ -143,18 +143,6 @@
   .gnb-static{ cursor:pointer; transition:font-weight .12s ease; }
   .gnb-static:hover{ font-weight:700; }
 
-  /* GNB 슬라이딩 인디케이터: 항목 사이를 미끄러지며 호버를 따라오는 라인.
-     헤더 하단 구분선 위에 얹히고, 폭은 각 항목의 실제 글자 폭에 맞춘다.
-     ease-out 계열 커브라 출발이 빠르고 도착에서 부드럽게 감속한다. */
-  .gnb-indicator{
-    position:absolute; left:0; bottom:0; width:0; height:2px;
-    background:var(--navy); opacity:0; pointer-events:none;
-    transition:transform .34s cubic-bezier(.22,.61,.36,1),
-               width .34s cubic-bezier(.22,.61,.36,1),
-               opacity .18s ease;
-  }
-  .gnb-indicator.show{ opacity:1; }
-
   /* 레드프린팅 참고: 팝업이 흰 배경 + 큰 그림자로 붕 뜬 카드처럼 보이지 않도록,
      그림자·둥근모서리 없이 흰 배경 면으로 헤더 바로 아래에 이어 붙이고,
      대신 메가메뉴 아래쪽 페이지 전체를 살짝 암전시켜 포커스를 준다. */
@@ -3031,44 +3019,6 @@
       wrap.querySelectorAll('.mega-menu').forEach(m => m.classList.remove('show'));
       if (megaDim) megaDim.classList.remove('show');
     });
-  });
-
-  // GNB 슬라이딩 인디케이터 (호버한 메뉴를 따라 라인이 미끄러진다)
-  document.querySelectorAll('.wf-gnb-wrap').forEach(wrap => {
-    const gnb = wrap.querySelector('.wf-gnb');
-    if (!gnb) return;
-    const items = gnb.querySelectorAll('.gnb-cat, .gnb-static');
-    if (!items.length) return;
-
-    const bar = document.createElement('div');
-    bar.className = 'gnb-indicator';
-    wrap.appendChild(bar);
-
-    // 항목은 flex:1이라 칸이 글자보다 훨씬 넓다. Range로 글자 자체의 폭을 잰다.
-    const textBox = el => {
-      const r = document.createRange();
-      r.selectNodeContents(el);
-      return r.getBoundingClientRect();
-    };
-
-    const place = (el, animate) => {
-      const t = textBox(el), w = wrap.getBoundingClientRect();
-      if (!animate) bar.style.transition = 'none';
-      bar.style.width = (t.width + 10) + 'px';
-      bar.style.transform = 'translateX(' + (t.left - w.left - 5) + 'px)';
-      if (!animate) { void bar.offsetWidth; bar.style.transition = ''; }
-    };
-
-    items.forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        // 처음 나타날 때는 왼쪽 끝에서 날아오지 않도록 애니메이션 없이 자리를 잡는다
-        place(el, bar.classList.contains('show'));
-        bar.classList.add('show');
-      });
-    });
-
-    // 메가메뉴 안으로 들어가면 mouseleave가 안 뜨므로, 열려 있는 동안 라인이 유지된다
-    wrap.addEventListener('mouseleave', () => bar.classList.remove('show'));
   });
 
   // 제작가이드 표 "참고사항" 링크 -> 참고 이미지 팝업
