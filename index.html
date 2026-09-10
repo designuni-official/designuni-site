@@ -143,6 +143,18 @@
   .gnb-static{ cursor:pointer; transition:font-weight .12s ease; }
   .gnb-static:hover{ font-weight:700; }
 
+  /* GNB 유동 인디케이터.
+     위치/폭은 JS의 rAF 루프가 매 프레임 보간하므로 여기에 transition을 걸지 않는다
+     (걸면 CSS 이징과 보간이 겹쳐서 뭉개진다). opacity만 CSS로 처리. */
+  .gnb-indicator{
+    position:absolute; left:0; bottom:0; width:0; height:2px;
+    background:var(--navy); border-radius:2px;
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+    will-change:transform, width;
+  }
+  .gnb-indicator.show{ opacity:1; }
+
   /* 레드프린팅 참고: 팝업이 흰 배경 + 큰 그림자로 붕 뜬 카드처럼 보이지 않도록,
      그림자·둥근모서리 없이 흰 배경 면으로 헤더 바로 아래에 이어 붙이고,
      대신 메가메뉴 아래쪽 페이지 전체를 살짝 암전시켜 포커스를 준다. */
@@ -3019,6 +3031,64 @@
       wrap.querySelectorAll('.mega-menu').forEach(m => m.classList.remove('show'));
       if (megaDim) megaDim.classList.remove('show');
     });
+  });
+
+  // GNB 유동 인디케이터
+  // 항목 중앙으로 스냅하지 않고, 커서 쪽으로 끌려온 지점을 목표로 삼아
+  // rAF 루프에서 매 프레임 조금씩 따라간다(관성). 남은 거리에 비례해 폭이
+  // 늘어났다가 도착하면서 줄어들어 점탄성 있는 느낌을 만든다.
+  document.querySelectorAll('.wf-gnb-wrap').forEach(wrap => {
+    const gnb = wrap.querySelector('.wf-gnb');
+    if (!gnb) return;
+    const items = [...gnb.querySelectorAll('.gnb-cat, .gnb-static')];
+    if (!items.length) return;
+
+    const bar = document.createElement('div');
+    bar.className = 'gnb-indicator';
+    wrap.appendChild(bar);
+
+    const PULL = 0.42;        // 커서 쪽으로 끌려오는 비율 (0=항목 중앙 고정, 1=커서에 딱 붙음)
+    const EASE = 0.15;        // 관성. 작을수록 늦게 따라온다
+    const STRETCH = 0.85;     // 남은 거리에 비례한 늘어남
+    const MAX_STRETCH = 52;
+
+    let targetX = 0, targetW = 0, curX = 0, curW = 0, raf = null;
+
+    // 항목 칸은 글자보다 훨씬 넓다(flex:1). Range로 글자 자체의 폭·중심을 잡는다
+    const measure = (el, cursorX) => {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      const t = r.getBoundingClientRect();
+      const w = wrap.getBoundingClientRect();
+      const center = t.left - w.left + t.width / 2;
+      targetX = center + ((cursorX - w.left) - center) * PULL;
+      targetW = t.width + 10;
+    };
+
+    const loop = () => {
+      const dx = targetX - curX;
+      const stretch = Math.min(Math.abs(dx) * STRETCH, MAX_STRETCH);
+      const dw = (targetW + stretch) - curW;
+      curX += dx * EASE;
+      curW += dw * EASE;
+      bar.style.transform = 'translateX(' + (curX - curW / 2) + 'px)';
+      bar.style.width = curW + 'px';
+      raf = (Math.abs(dx) > 0.3 || Math.abs(dw) > 0.3) ? requestAnimationFrame(loop) : null;
+    };
+
+    items.forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const first = !bar.classList.contains('show');
+        measure(el, e.clientX);
+        // 숨어 있다가 다시 들어올 때는 이전 위치에서 날아오지 않도록 그 자리에서 시작
+        if (first) { curX = targetX; curW = targetW; }
+        bar.classList.add('show');
+        if (!raf) raf = requestAnimationFrame(loop);
+      });
+    });
+
+    // 메가메뉴로 내려가도 유지되도록 wrap 기준
+    wrap.addEventListener('mouseleave', () => bar.classList.remove('show'));
   });
 
   // 제작가이드 표 "참고사항" 링크 -> 참고 이미지 팝업
