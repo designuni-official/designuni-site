@@ -340,13 +340,15 @@
   /* 섹션 타이틀 아래 포인트 밑줄.
      ::after + absolute라 flex 행(타이틀 / 더보기) 정렬에는 영향을 주지 않는다.
      길이만 바꾸고 싶으면 width 한 줄만 고치면 된다. */
-  #page-search .section-title{ position:relative; padding-bottom:16px; }
+  /* 선을 타이틀에 바짝 붙이고(9px), 아래 콘텐츠와는 넉넉히 띄운다(22px).
+     위아래 간격이 비슷하면 선이 타이틀 것인지 카드 것인지 애매해진다. */
+  #page-search .section-title{
+    position:relative; margin-top:52px; margin-bottom:22px; padding-bottom:9px;
+  }
   #page-search .section-title::after{
     content:''; position:absolute; left:0; bottom:0;
     width:170px; height:3px; background:var(--navy);
   }
-  /* 선이 생긴 만큼 섹션 사이 간격도 함께 넓혀야 구분이 산다 */
-  #page-search .section-title{ margin-top:52px; }
 
   /* 결과 없음 안내 */
   .search-empty{
