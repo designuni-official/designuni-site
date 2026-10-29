@@ -745,6 +745,14 @@
     width:44px; height:44px; border-radius:var(--r-sm); background:var(--ph-grad); font-size:9px; flex-shrink:0; cursor:pointer;
   }
   .admin-modal-input.small{ height:30px; padding:0 8px; font-size:11px; }
+  /* select도 기존 입력칸과 같은 모양으로 (기본 화살표는 남기되 여백만 확보) */
+  select.admin-modal-input{
+    appearance:none; -webkit-appearance:none; border:none; font-family:inherit; cursor:pointer;
+    padding-right:26px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%238a8a8a' stroke-width='1.6'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 10px center; background-size:10px auto;
+  }
+  .admin-modal-row2.cat-row{ gap:10px; }
   .opt-value-required{ display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px; color:var(--muted); }
   .opt-value-required input{ margin:0; }
   .opt-value-remove{ cursor:pointer; color:var(--muted); font-size:12px; text-align:center; }
@@ -803,6 +811,7 @@
   }
   .prod-opt-link-item input{ margin-top:2px; }
   .prod-opt-link-desc{ display:block; font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .prod-opt-readonly{ font-size:11px; color:var(--muted); }
   .prod-opt-mode{ font-size:9.5px; font-weight:700; color:var(--navy); background:var(--navy-light);
     padding:2px 6px; border-radius:999px; margin-left:4px; }
 
@@ -2314,11 +2323,12 @@
               <div class="wf-box">상품명 검색</div>
             </div>
             <table class="wf-table">
-              <tr><th>썸네일</th><th>상품명</th><th>카테고리</th><th>가격 정책</th><th>판매상태</th><th>관리</th></tr>
+              <tr><th>썸네일</th><th>상품명</th><th>카테고리</th><th>가격 정책</th><th>옵션 관리</th><th>판매상태</th><th>관리</th></tr>
               <tr>
                 <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
                 <td>광목 포스터</td><td>Fabric &gt; 포스터</td>
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','광목 포스터')">9,500~12,000원 (규격·수량별)</div></td>
+                <td class="prod-opt-readonly" data-product="광목 포스터"></td>
                 <td><span class="status-pill done">판매중</span></td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','광목 포스터')">수정</div><div class="wf-box" onclick="duplicateProduct('광목 포스터')">복제</div><div class="wf-box">삭제</div></div></td>
               </tr>
@@ -2326,6 +2336,7 @@
                 <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
                 <td>기념구 (야구공)</td><td>Rounding &gt; 야구공</td>
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','기념구 (야구공)')">15,000~18,000원 (규격·수량별)</div></td>
+                <td class="prod-opt-readonly" data-product="기념구 (야구공)"></td>
                 <td><span class="status-pill done">판매중</span></td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','기념구 (야구공)')">수정</div><div class="wf-box" onclick="duplicateProduct('기념구 (야구공)')">복제</div><div class="wf-box">삭제</div></div></td>
               </tr>
@@ -2333,6 +2344,7 @@
                 <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
                 <td>방수토이필름카메라</td><td>ABS &gt; 필름카메라</td>
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','방수토이필름카메라')">8,800~9,500원 (규격·수량별)</div></td>
+                <td class="prod-opt-readonly" data-product="방수토이필름카메라"></td>
                 <td><span class="status-pill pending">품절</span></td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','방수토이필름카메라')">수정</div><div class="wf-box" onclick="duplicateProduct('방수토이필름카메라')">복제</div><div class="wf-box">삭제</div></div></td>
               </tr>
@@ -2718,7 +2730,10 @@
       </div>
       <div class="admin-modal-field">
         <label>카테고리</label>
-        <div class="admin-modal-input" id="prod-edit-category" contenteditable="true"></div>
+        <div class="admin-modal-row2 cat-row" style="margin-bottom:0;">
+          <select class="admin-modal-input" id="prod-edit-cat1"></select>
+          <select class="admin-modal-input" id="prod-edit-cat2"></select>
+        </div>
       </div>
     </div>
     <div class="admin-modal-row2">
@@ -3475,6 +3490,46 @@
       wrap.appendChild(buildPriceSpecBlock(s.name, s.tiers));
     });
   }
+  // ----- 상품 모달: 카테고리 대/소 드롭다운 -----
+  // 선택지는 GNB·메가메뉴가 쓰는 categoryMenus를 그대로 재사용한다(출처 단일화).
+  function fillProdCat2(big, selected){
+    const sel2 = document.getElementById('prod-edit-cat2');
+    const cat = categoryMenus.find(c => c.label === big);
+    sel2.innerHTML = '';
+    (cat ? cat.groups : []).forEach(g => {
+      const o = document.createElement('option');
+      o.value = g.title; o.textContent = g.title;
+      if (g.title === selected) o.selected = true;
+      sel2.appendChild(o);
+    });
+  }
+  function initProdCatSelects(){
+    const sel1 = document.getElementById('prod-edit-cat1');
+    sel1.innerHTML = '';
+    categoryMenus.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.label; o.textContent = c.label;
+      sel1.appendChild(o);
+    });
+    // 대카테고리를 바꾸면 소카테고리 목록을 다시 채운다
+    sel1.addEventListener('change', function(){ fillProdCat2(this.value, null); });
+  }
+  // 'Fabric > 포스터' 형태의 문자열을 두 드롭다운에 반영
+  function setProdCategory(str){
+    const parts = (str || '').split('>').map(t => t.trim());
+    const big = parts[0] || categoryMenus[0].label;
+    document.getElementById('prod-edit-cat1').value = big;
+    fillProdCat2(big, parts[1] || null);
+  }
+
+  // ----- 상품 목록: 연결된 옵션 그룹 읽기 전용 표시 -----
+  function renderProdOptReadonly(){
+    document.querySelectorAll('.prod-opt-readonly').forEach(td => {
+      const linked = PRODUCT_OPTION_LINKS[td.dataset.product] || [];
+      td.textContent = linked.length ? linked.join(' · ') : '연결 없음';
+    });
+  }
+
   // ----- 상품 모달: 이 상품에 적용할 옵션 그룹 '선택' -----
   // 옵션값/이미지/단독선택은 카테고리 · 옵션 관리에서 그룹 단위로 정의하고,
   // 여기서는 그 그룹을 쓸지 말지만 고른다.
@@ -3499,7 +3554,7 @@
     const data = productName ? PRODUCT_PRICE_DATA[productName] : null;
     document.getElementById('prod-edit-modal-title').textContent = (mode === 'create') ? '상품 등록' : '상품 수정';
     document.getElementById('prod-edit-name').textContent = productName || '';
-    document.getElementById('prod-edit-category').textContent = data ? data.category : '';
+    setProdCategory(data ? data.category : '');
     document.getElementById('prod-edit-status').textContent = data ? data.status : '판매중';
     renderPriceSpecList(data ? data.specs : null);
     renderProdOptionPicker(productName ? PRODUCT_OPTION_LINKS[productName] : []);
@@ -3512,7 +3567,7 @@
     if (!src) return;
     document.getElementById('prod-edit-modal-title').textContent = '상품 복제';
     document.getElementById('prod-edit-name').textContent = sourceName + ' (복사본)';
-    document.getElementById('prod-edit-category').textContent = src.category;
+    setProdCategory(src.category);
     document.getElementById('prod-edit-status').textContent = '판매중지';
     renderPriceSpecList(src.specs);
     renderProdOptionPicker(PRODUCT_OPTION_LINKS[sourceName] || []);
@@ -3743,6 +3798,12 @@
     const gap = parseFloat(getComputedStyle(row).columnGap) || 12;
     row.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: 'smooth' });
   }
+
+  // 관리자 상품 화면 초기화.
+  // PRODUCT_OPTION_LINKS 등이 const라 선언 전 호출하면 TDZ 에러로 스크립트가 통째로 멈춘다.
+  // 반드시 모든 선언이 평가된 스크립트 끝에서 호출할 것.
+  initProdCatSelects();
+  renderProdOptReadonly();
 </script>
 </body>
 </html>
