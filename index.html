@@ -1015,6 +1015,16 @@
   .status-pill.hold{ background:#fbe1e1; color:#a3312f; }
   .admin-table-actions{ display:flex; gap:6px; }
   .admin-table-actions .wf-box{ height:26px; width:auto; padding:0 9px; flex:none; font-size:10.5px; }
+  /* 카테고리 구조: 프론트와 동일하게 대분류 4장을 가로로 */
+  .cat-struct-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .cat-struct-card{
+    background:#fff; border:1px solid #ededed; border-radius:7px; padding:16px;
+    display:flex; flex-direction:column; gap:7px;
+  }
+  .cat-struct-name{ font-size:13px; font-weight:700; color:var(--ink); }
+  .cat-struct-subs{ font-size:11px; color:var(--muted); line-height:1.6; }
+  .cat-struct-edit{ font-size:11.5px; font-weight:700; color:var(--navy); cursor:pointer; margin-top:2px; }
+  .cat-struct-edit:hover{ text-decoration:underline; }
   .admin-content-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
   .admin-content-card{ background:#fff; border:1px solid #ededed; border-radius:7px; padding:16px; }
 
@@ -2402,16 +2412,7 @@
             <div class="admin-section-head">
               <div class="section-title" style="margin-top:0;">카테고리 구조</div>
             </div>
-            <div class="admin-tree">
-              <div class="admin-tree-row"><span>Fabric</span></div>
-              <div class="admin-tree-row sub"><span>포스터 · 코스터 · 북마크 · 달력</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('Fabric','포스터 · 코스터 · 북마크 · 달력')">세부 편집</div></div></div>
-              <div class="admin-tree-row"><span>Rounding</span></div>
-              <div class="admin-tree-row sub"><span>야구공 · 볼풀공 · 소프트볼</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('Rounding','야구공 · 볼풀공 · 소프트볼')">세부 편집</div></div></div>
-              <div class="admin-tree-row"><span>ABS</span></div>
-              <div class="admin-tree-row sub"><span>필름카메라 · 홍보 판촉물</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('ABS','필름카메라 · 홍보 판촉물')">세부 편집</div></div></div>
-              <div class="admin-tree-row"><span>Material</span></div>
-              <div class="admin-tree-row sub"><span>한지 · 자개</span><div class="admin-table-actions"><div class="wf-box" onclick="openCatEditModal('Material','한지 · 자개')">세부 편집</div></div></div>
-            </div>
+            <div class="cat-struct-grid" id="cat-struct-grid"></div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
             <div class="admin-section-head">
@@ -3930,6 +3931,24 @@
   }
   const catLabel = g => (g.cats && g.cats.length) ? g.cats.join(' · ') : '전체';
 
+  // 카테고리 구조 카드. 정적 markup이면 메가메뉴와 어긋나므로 categoryMenus에서 그린다.
+  function renderCatStruct(){
+    const wrap = document.getElementById('cat-struct-grid');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    categoryMenus.forEach(function(c){
+      const subs = c.groups.map(g => g.title).join(' · ');
+      const card = document.createElement('div');
+      card.className = 'cat-struct-card';
+      card.innerHTML =
+        '<div class="cat-struct-name">' + c.label + '</div>' +
+        '<div class="cat-struct-subs">' + subs + '</div>' +
+        '<div class="cat-struct-edit">세부 편집</div>';
+      card.querySelector('.cat-struct-edit').onclick = function(){ openCatEditModal(c.label, subs); };
+      wrap.appendChild(card);
+    });
+  }
+
   function renderOptGroupRows(){
     const tb = document.getElementById('opt-group-rows');
     if (!tb) return;
@@ -4230,6 +4249,7 @@
   initProdCatSelects();
   renderProdOptReadonly();
   renderOptGroupRows();
+  renderCatStruct();
   updateOrderBulkCount();
 </script>
 </body>
