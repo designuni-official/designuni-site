@@ -845,6 +845,11 @@
   .info-box.total span:last-child{ margin-left:auto; color:var(--navy); }
   /* 상세 모달은 닫기 버튼 하나가 전체 폭을 쓴다 */
   .admin-modal-btn-row.single .wf-box{ flex:1; }
+  /* 이용정지처럼 되돌리기 어려운 동작은 저장 버튼과 구분되게 아웃라인 경고색으로 */
+  .wf-box.danger{
+    background:#fff; border:1px solid var(--navy); color:var(--navy); font-weight:700;
+  }
+  .wf-box.danger:hover{ background:var(--navy-light); }
   .opt-cat-picker{ background:var(--box); border-radius:var(--r-sm); padding:10px 12px; max-height:190px; overflow-y:auto; }
   .opt-cat-group{ margin-bottom:10px; }
   .opt-cat-group:last-child{ margin-bottom:0; }
@@ -2517,15 +2522,15 @@
               <tr><th>아이디</th><th>이름</th><th>등급</th><th>누적 주문</th><th>적립금</th><th>가입일</th><th>관리</th></tr>
               <tr>
                 <td>seoyeon_k</td><td>김서연</td><td>일반회원</td><td>3건</td><td>1,200원</td><td>2026-05-02</td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('seoyeon_k')">상세</div><div class="wf-box">정지</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('seoyeon_k')">상세</div></div></td>
               </tr>
               <tr>
                 <td>junho_p</td><td>박준호</td><td>일반회원</td><td>11건</td><td>8,400원</td><td>2025-11-14</td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('junho_p')">상세</div><div class="wf-box">정지</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('junho_p')">상세</div></div></td>
               </tr>
               <tr>
                 <td>haeun_l</td><td>이하은</td><td>기업회원</td><td>27건</td><td>0원</td><td>2025-08-30</td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('haeun_l')">상세</div><div class="wf-box">정지</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('haeun_l')">상세</div></div></td>
               </tr>
             </table>
           </div>
@@ -2854,9 +2859,7 @@
     <div class="admin-modal-close" onclick="closeAdminInfo()">✕</div>
     <div class="admin-modal-title" id="admin-info-title">상세</div>
     <div id="admin-info-body"></div>
-    <div class="admin-modal-btn-row single">
-      <div class="wf-box solid-dark" onclick="closeAdminInfo()">닫기</div>
-    </div>
+    <div class="admin-modal-btn-row single" id="admin-info-btns"></div>
   </div>
 </div>
 
@@ -2926,6 +2929,26 @@
     <div class="admin-modal-btn-row">
       <div class="wf-box" onclick="closeGuideEdit()">취소</div>
       <div class="wf-box solid-dark" onclick="closeGuideEdit()">수정 저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 회원 이용정지 확인 ================= -->
+<div class="admin-modal-overlay" id="member-stop-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeMemberStop()">✕</div>
+    <div class="admin-modal-title">회원 이용정지</div>
+    <div class="info-box" style="margin-bottom:16px;">
+      <strong id="member-stop-name"></strong> 님의 계정을 이용정지 처리합니다.<br>
+      정지된 회원은 로그인과 주문이 제한됩니다.
+    </div>
+    <div class="admin-modal-field"><label>정지 사유</label>
+      <select class="admin-modal-input"><option>약관 위반</option><option>부정 주문</option><option>결제 분쟁</option><option>기타</option></select></div>
+    <div class="admin-modal-field"><label>정지 기간</label>
+      <select class="admin-modal-input"><option>7일</option><option>30일</option><option>무기한</option></select></div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeMemberStop()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeMemberStop()">이용정지 적용</div>
     </div>
   </div>
 </div>
@@ -3783,9 +3806,13 @@
   function infoTotal(label, val){
     return '<div class="info-box total"><span>' + label + '</span><span>' + val + '</span></div>';
   }
-  function openAdminInfo(title, html){
+  // actions: 닫기 왼쪽에 들어갈 추가 버튼 HTML (없으면 닫기가 전체 폭)
+  function openAdminInfo(title, html, actions){
     document.getElementById('admin-info-title').textContent = title;
     document.getElementById('admin-info-body').innerHTML = html;
+    const row = document.getElementById('admin-info-btns');
+    row.innerHTML = (actions || '') + '<div class="wf-box solid-dark" onclick="closeAdminInfo()">닫기</div>';
+    row.classList.toggle('single', !actions);
     document.getElementById('admin-info-modal').classList.add('show');
   }
   function closeAdminInfo(){ document.getElementById('admin-info-modal').classList.remove('show'); }
@@ -3812,8 +3839,16 @@
   }
   function openMemberDetail(id){
     const d = MEMBER_DETAILS[id] || MEMBER_DETAILS['seoyeon_k'];
-    openAdminInfo('회원 상세정보', infoStrip(d.name, d.id, d.grade, 'done') + infoGrid(d.rows));
+    // 이용정지는 목록에서 바로 눌리면 위험해서 상세 안으로 옮겼다
+    const stop = '<div class="wf-box danger" onclick="suspendMember(\'' + d.name + '\')">이용정지</div>';
+    openAdminInfo('회원 상세정보',
+      infoStrip(d.name, d.id, d.grade, 'done') + infoGrid(d.rows), stop);
   }
+  function suspendMember(name){
+    document.getElementById('member-stop-name').textContent = name;
+    document.getElementById('member-stop-modal').classList.add('show');
+  }
+  function closeMemberStop(){ document.getElementById('member-stop-modal').classList.remove('show'); }
   function openOrderStatus(no, summary, cur){
     document.getElementById('order-status-head').textContent = no + ' · ' + summary;
     document.getElementById('order-status-select').value = cur;
@@ -3908,7 +3943,7 @@
   [['admin-info-modal',closeAdminInfo],['order-status-modal',closeOrderStatus],
    ['banner-edit-modal',closeBannerEdit],['guide-edit-modal',closeGuideEdit],
    ['coupon-edit-modal',closeCouponEdit],['faq-edit-modal',closeFaqEdit],
-   ['point-edit-modal',closePointEdit]].forEach(([id,fn]) => {
+   ['point-edit-modal',closePointEdit],['member-stop-modal',closeMemberStop]].forEach(([id,fn]) => {
     document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) fn(); });
   });
 
