@@ -2702,22 +2702,23 @@
         <div class="admin-view" id="admin-view-community">
           <div class="admin-section">
             <div class="admin-section-head">
-              <div class="section-title" style="margin-top:0;">신고된 게시글</div>
+              <div class="section-title" style="margin-top:0;">구매 후기 관리</div>
+            </div>
+            <div class="help-note-list" style="margin-top:0; margin-bottom:10px;">
+              <div>· 회원이 등록한 후기는 <strong>승인대기(비노출)</strong> 상태로 들어옵니다. 관리자가 승인해야 상품 상세에 노출됩니다.</div>
             </div>
             <table class="wf-table">
-              <tr><th>게시판</th><th>제목</th><th>작성자</th><th>신고 사유</th><th>관리</th></tr>
-              <tr><td>제작후기 자랑</td><td>키링 50개 단체주문 후기</td><td>jc*****</td><td>광고성 게시물</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openReport('제작후기 자랑','키링 50개 단체주문 후기','jc*****','광고성 게시물')">확인</div></div></td></tr>
-              <tr><td>궁금해요 Q&amp;A</td><td>후가공 목봉마감 관련 문의</td><td>18*****</td><td>스팸 의심</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openReport('궁금해요 Q&A','후가공 목봉마감 관련 문의','18*****','스팸 의심')">확인</div></div></td></tr>
+              <thead><tr><th>카테고리</th><th>제목</th><th>작성자</th><th>상품명</th><th>평점</th><th>노출상태</th><th>관리</th></tr></thead>
+              <tbody id="review-rows"></tbody>
             </table>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
             <div class="admin-section-head">
-              <div class="section-title" style="margin-top:0;">구매 후기 관리</div>
+              <div class="section-title" style="margin-top:0;">신고된 게시글</div>
             </div>
             <table class="wf-table">
-              <tr><th>상품명</th><th>작성자</th><th>평점</th><th>노출상태</th><th>관리</th></tr>
-              <tr><td>에코백 - Fabric</td><td>di*****</td><td>★★★★★</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box" onclick="hideReview('에코백 - Fabric','di*****')">숨김</div></div></td></tr>
-              <tr><td>사인볼 - Rounding</td><td>ba*****</td><td>★★★★☆</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box" onclick="hideReview('사인볼 - Rounding','ba*****')">숨김</div></div></td></tr>
+              <thead><tr><th>카테고리</th><th>제목</th><th>작성자</th><th>상품명</th><th>평점</th><th>신고 사유</th><th>관리</th></tr></thead>
+              <tbody id="report-rows"></tbody>
             </table>
           </div>
         </div>
@@ -3984,21 +3985,83 @@
   function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('show'); }
 
   // ----- 신고 게시글 확인 -----
-  function openReport(board, title, who, reason){
+  function openReport(i){
+    const r = REPORT_LIST[i];
     document.getElementById('report-body').innerHTML =
-      infoStrip(title, board + ' · ' + who, reason, 'hold') +
-      infoGrid([['게시판',board],['작성자',who],['신고 사유',reason],['신고 접수','2026-07-21']]) +
+      infoStrip(r.title, r.cat + ' · ' + r.who, r.reason, 'hold') +
+      infoGrid([['카테고리',r.cat],['작성자',r.who],['상품명',r.product],['평점',reviewStars(r.rate)],['신고 사유',r.reason],['신고 접수','2026-07-21']]) +
       infoBox('게시글 내용', '신고된 게시글의 본문이 이 자리에 표시됩니다.');
     document.getElementById('report-del').onclick = function(){
       closeReport();
-      openConfirm('게시글 삭제', '<strong>' + title + '</strong> 게시글을 삭제합니다.<br>삭제한 글은 되돌릴 수 없습니다.', '삭제', null);
+      openConfirm('게시글 삭제', '<strong>' + r.title + '</strong> 게시글을 삭제합니다.<br>삭제한 글은 되돌릴 수 없습니다.', '삭제', null);
     };
     document.getElementById('report-modal').classList.add('show');
   }
   function closeReport(){ document.getElementById('report-modal').classList.remove('show'); }
 
-  function hideReview(product, who){
-    openConfirm('후기 숨김', '<strong>' + product + '</strong> · ' + who + ' 님의 후기를 숨깁니다.<br>숨긴 후기는 상품 상세에 노출되지 않습니다.', '숨김', null);
+  // 후기는 회원 등록(승인대기 · 비노출) -> 관리자 승인 -> 노출중 순서로 간다.
+  const REVIEW_STATE = { pending:['승인대기','pending'], live:['노출중','done'], hidden:['비노출','hold'] };
+  let adminReviews = [
+    { cat:'Fabric',   title:'색감이 시안 그대로 나왔어요', who:'di*****', product:'에코백 - Fabric',       rate:5, date:'2026-07-21', state:'pending' },
+    { cat:'ABS',      title:'각인 선명하게 잘 받았습니다', who:'kw*****', product:'기념구 (야구공) - ABS',  rate:5, date:'2026-07-20', state:'pending' },
+    { cat:'Rounding', title:'재주문했습니다',             who:'ba*****', product:'사인볼 - Rounding',      rate:4, date:'2026-07-18', state:'live' },
+    { cat:'Fabric',   title:'사이즈가 생각보다 작아요',    who:'sm*****', product:'패브릭 포스터 - Fabric', rate:3, date:'2026-07-15', state:'hidden' }
+  ];
+  const REPORT_LIST = [
+    { cat:'제작후기 자랑', title:'키링 50개 단체주문 후기',  who:'jc*****', product:'키링 - ABS', rate:5,    reason:'광고성 게시물' },
+    { cat:'궁금해요 Q&A',  title:'후가공 목봉마감 관련 문의', who:'18*****', product:'-',          rate:null, reason:'스팸 의심' }
+  ];
+  function reviewStars(n){ return n == null ? '-' : '★'.repeat(n) + '☆'.repeat(5 - n); }
+  function renderAdminReviews(){
+    const tb = document.getElementById('review-rows');
+    if (!tb) return;
+    tb.innerHTML = adminReviews.map(function(r, i){
+      const st = REVIEW_STATE[r.state];
+      let act;
+      if (r.state === 'pending')   act = '<div class="wf-box solid-dark" onclick="setReviewState(' + i + ',\'live\')">승인</div>';
+      else if (r.state === 'live') act = '<div class="wf-box" onclick="setReviewState(' + i + ',\'hidden\')">숨김</div>';
+      else                         act = '<div class="wf-box" onclick="setReviewState(' + i + ',\'live\')">노출</div>';
+      return '<tr><td>' + r.cat + '</td><td>' + r.title + '</td><td>' + r.who + '</td><td>' + r.product + '</td>' +
+        '<td>' + reviewStars(r.rate) + '</td>' +
+        '<td><span class="status-pill ' + st[1] + '">' + st[0] + '</span></td>' +
+        '<td><div class="admin-table-actions"><div class="wf-box" onclick="openReviewDetail(' + i + ')">상세</div>' + act + '</div></td></tr>';
+    }).join('');
+  }
+  function renderAdminReports(){
+    const tb = document.getElementById('report-rows');
+    if (!tb) return;
+    tb.innerHTML = REPORT_LIST.map(function(r, i){
+      return '<tr><td>' + r.cat + '</td><td>' + r.title + '</td><td>' + r.who + '</td><td>' + r.product + '</td>' +
+        '<td>' + reviewStars(r.rate) + '</td><td>' + r.reason + '</td>' +
+        '<td><div class="admin-table-actions"><div class="wf-box" onclick="openReport(' + i + ')">확인</div></div></td></tr>';
+    }).join('');
+  }
+  // 승인 / 숨김 / 재노출 - 어느 쪽이든 재확인을 거친다.
+  function setReviewState(i, next){
+    const r = adminReviews[i];
+    const approving = (r.state === 'pending');
+    const title  = next === 'hidden' ? '후기 숨김' : (approving ? '후기 승인' : '후기 재노출');
+    const okText = next === 'hidden' ? '숨김'      : (approving ? '승인'      : '노출');
+    const tail   = next === 'hidden'
+      ? '숨긴 후기는 상품 상세에 노출되지 않습니다.'
+      : '승인하면 상품 상세와 메인 창작자 리뷰에 노출됩니다.';
+    openConfirm(title, '<strong>' + r.product + '</strong> · ' + r.who + ' 님의 후기<br>' + tail, okText, function(){
+      r.state = next;
+      renderAdminReviews();
+    });
+  }
+  function openReviewDetail(i){
+    const r = adminReviews[i];
+    const st = REVIEW_STATE[r.state];
+    openAdminInfo('구매 후기 상세',
+      infoStrip(r.title, r.product + ' · ' + r.who, st[0], st[1]) +
+      infoGrid([['카테고리',r.cat],['상품명',r.product],['작성자',r.who],['평점',reviewStars(r.rate)],['작성일',r.date],['노출상태',st[0]]]) +
+      infoBox('후기 내용', '회원이 작성한 후기 본문이 이 자리에 표시됩니다. 첨부 사진이 있으면 함께 노출됩니다.'),
+      r.state === 'pending'
+        ? '<div class="wf-box" onclick="closeAdminInfo(); setReviewState(' + i + ',\'live\')">승인</div>'
+        : (r.state === 'live'
+            ? '<div class="wf-box" onclick="closeAdminInfo(); setReviewState(' + i + ',\'hidden\')">숨김</div>'
+            : '<div class="wf-box" onclick="closeAdminInfo(); setReviewState(' + i + ',\'live\')">노출</div>'));
   }
   function deleteProduct(){
     const name = document.getElementById('prod-edit-name').textContent;
@@ -4633,6 +4696,8 @@
   updateOrderBulkCount();
   renderPointRows();
   renderGuideTables();
+  renderAdminReviews();
+  renderAdminReports();
   enableRowDrag(document.getElementById('main-banner-list'), renumberBannerRows);
   enableRowDrag(document.getElementById('faq-rows'), function(listEl){
     Array.from(listEl.children).forEach(function(tr, i){
