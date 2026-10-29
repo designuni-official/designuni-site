@@ -891,7 +891,6 @@
   .reco-badge-btn.active.best{ background:var(--red); }
   .reco-badge-btn.active.new{ background:var(--ink); }
   .reco-badge-btn.active.none{ background:var(--muted); }
-  .reco-order-btn{ height:26px; width:26px !important; padding:0 !important; font-size:11px; cursor:pointer; }
 
   .form-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
   .form-row label{ width:110px; font-size:12px; color:var(--text); flex-shrink:0; }
@@ -1108,6 +1107,27 @@
   .admin-tree-row.sub > span:first-child{ flex:1; white-space:normal; overflow:visible; text-overflow:clip; }
   .admin-tree-row > .admin-table-actions{ margin-left:auto; flex-shrink:0; }
   .admin-tree-row.sub{ padding-left:32px; color:var(--muted); }
+  /* 배너 · 추천상품 목록 - 프론트(manage) 기준: 썸네일이 있는 흰 카드, 얼룩무늬 없이 얇은 구분선 */
+  .banner-list{
+    background:#fff; border-radius:var(--r-md); box-shadow:var(--shadow-sm);
+    overflow:hidden; margin-bottom:10px;
+  }
+  .banner-row{
+    display:flex; align-items:center; gap:16px; padding:10px 14px;
+    font-size:12px; color:var(--text); border-top:1px solid #f1f1f1; background:#fff;
+  }
+  .banner-row:first-child{ border-top:none; }
+  .banner-row.dragging{ opacity:.35; }
+  .banner-no{ flex:0 0 18px; color:var(--muted); }
+  .banner-name{ flex:0 0 200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* 번호 칸이 없는 단일 배너 행 - 번호+간격만큼 넓혀 썸네일 x위치를 맞춤 */
+  .banner-name.wide{ flex:0 0 234px; }
+  /* 추천상품 행은 썸네일이 없어 뱃지 칼럼이 너무 왼쪽에 붙는다 */
+  .banner-name.reco{ flex:0 0 420px; }
+  .banner-thumb{ width:96px; height:54px; border-radius:var(--r-sm); background:var(--ph-grad); flex-shrink:0; }
+  .banner-row > .admin-table-actions{ margin-left:auto; flex-shrink:0; }
+  .wf-box.drag-handle{ cursor:grab; }
+  .wf-box.drag-handle::before{ content:'\283F'; margin-right:5px; color:var(--muted); font-size:12px; }
   .admin-toggle{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; color:var(--muted); }
   .admin-toggle .dot{ width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block; }
   .admin-toggle.off .dot{ background:var(--line); }
@@ -2590,23 +2610,23 @@
               <div class="section-title" style="margin-top:0;">메인배너 슬라이드</div>
               <div class="admin-btn-row"><div class="wf-box">순서 저장</div><div class="wf-box solid-dark">+ 배너 등록</div></div>
             </div>
-            <div class="admin-tree">
-              <div class="admin-tree-row"><span>1. 기획전 프로모션</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('기획전 프로모션',1)">수정</div></div></div>
-              <div class="admin-tree-row"><span>2. 신상품 런칭</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('신상품 런칭',1)">수정</div></div></div>
-              <div class="admin-tree-row"><span>3. 시즌 이벤트</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('시즌 이벤트',1)">수정</div></div></div>
-              <div class="admin-tree-row"><span>4. 대량주문 할인</span><span class="admin-toggle off"><span class="dot"></span>미노출</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('대량주문 할인',0)">수정</div></div></div>
+            <div class="banner-list" id="main-banner-list">
+              <div class="banner-row"><span class="banner-no">1.</span><span class="banner-name">기획전 프로모션</span><div class="banner-thumb"></div><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box drag-handle">순서</div><div class="wf-box" onclick="openBannerEdit('기획전 프로모션',1)">수정</div></div></div>
+              <div class="banner-row"><span class="banner-no">2.</span><span class="banner-name">신상품 런칭</span><div class="banner-thumb"></div><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box drag-handle">순서</div><div class="wf-box" onclick="openBannerEdit('신상품 런칭',1)">수정</div></div></div>
+              <div class="banner-row"><span class="banner-no">3.</span><span class="banner-name">시즌 이벤트</span><div class="banner-thumb"></div><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box drag-handle">순서</div><div class="wf-box" onclick="openBannerEdit('시즌 이벤트',1)">수정</div></div></div>
+              <div class="banner-row"><span class="banner-no">4.</span><span class="banner-name">대량주문 할인</span><div class="banner-thumb"></div><span class="admin-toggle off"><span class="dot"></span>미노출</span><div class="admin-table-actions"><div class="wf-box drag-handle">순서</div><div class="wf-box" onclick="openBannerEdit('대량주문 할인',0)">수정</div></div></div>
             </div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
             <div class="section-title" style="margin-top:0;">커뮤니티 배너 관리</div>
-            <div class="admin-tree">
-              <div class="admin-tree-row"><span>커뮤니티 배너</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box" onclick="openBannerEdit('커뮤니티 배너',1)">수정</div></div></div>
+            <div class="banner-list">
+              <div class="banner-row"><span class="banner-name wide">커뮤니티 배너</span><div class="banner-thumb"></div><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box" onclick="openBannerEdit('커뮤니티 배너',1)">수정</div></div></div>
             </div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
             <div class="section-title" style="margin-top:0;">글쓰기 배너 관리</div>
-            <div class="admin-tree">
-              <div class="admin-tree-row"><span>글쓰기 배너</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box" onclick="openBannerEdit('글쓰기 배너',1)">수정</div></div></div>
+            <div class="banner-list">
+              <div class="banner-row"><span class="banner-name wide">글쓰기 배너</span><div class="banner-thumb"></div><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box" onclick="openBannerEdit('글쓰기 배너',1)">수정</div></div></div>
             </div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
@@ -2614,10 +2634,7 @@
               <div class="section-title" style="margin-top:0;">추천 상품 관리 (메인페이지 노출)</div>
               <div class="admin-btn-row"><div class="wf-box">순서 저장</div><div class="wf-box solid-dark" onclick="openRecoSelectModal()">+ 추천 상품 추가</div></div>
             </div>
-            <div class="help-note-list" style="margin-top:0; margin-bottom:10px;">
-              <div>· 여기서 선택 · 정렬한 순서대로 메인페이지 '추천 상품' 영역에 노출됩니다. 뱃지(Best · New · 없음)는 상품별로 지정할 수 있습니다.</div>
-            </div>
-            <div class="admin-tree" id="reco-product-list"></div>
+            <div class="banner-list" id="reco-product-list"></div>
           </div>
         </div>
 
@@ -4263,17 +4280,13 @@
     recoProducts[idx].badge = badge;
     renderRecoList();
   }
-  function moveRecoItem(idx, dir){
-    const target = idx + dir;
-    if (target < 0 || target >= recoProducts.length) return;
-    const tmp = recoProducts[idx];
-    recoProducts[idx] = recoProducts[target];
-    recoProducts[target] = tmp;
-    renderRecoList();
-  }
+  // 목록에서 바로 지워지지 않도록 재확인을 거친다 (위험 동작 모달화 규칙).
   function removeRecoItem(idx){
-    recoProducts.splice(idx, 1);
-    renderRecoList();
+    const name = recoProducts[idx].name;
+    openConfirm('추천 상품 제외', '<strong>' + name + '</strong>을(를) 메인페이지 추천 상품에서 제외합니다.', '제외', function(){
+      recoProducts.splice(idx, 1);
+      renderRecoList();
+    });
   }
   function renderRecoList(){
     const wrap = document.getElementById('reco-product-list');
@@ -4281,19 +4294,66 @@
     wrap.innerHTML = '';
     recoProducts.forEach((p, idx) => {
       const row = document.createElement('div');
-      row.className = 'admin-tree-row';
+      row.className = 'banner-row';
+      row.dataset.name = p.name;
       const badgeBtns = RECO_BADGE_OPTIONS.map(opt =>
         '<div class="reco-badge-btn ' + opt + (p.badge === opt ? ' active' : '') + '" onclick="setRecoBadge(' + idx + ',\'' + opt + '\')">' + RECO_BADGE_LABEL[opt] + '</div>'
       ).join('');
       row.innerHTML =
-        '<span>' + (idx + 1) + '. ' + p.name + '</span>' +
+        '<span class="banner-no">' + (idx + 1) + '.</span>' +
+        '<span class="banner-name reco">' + p.name + '</span>' +
         '<div class="reco-badge-btns">' + badgeBtns + '</div>' +
         '<div class="admin-table-actions">' +
-          '<div class="wf-box reco-order-btn" onclick="moveRecoItem(' + idx + ',-1)">↑</div>' +
-          '<div class="wf-box reco-order-btn" onclick="moveRecoItem(' + idx + ',1)">↓</div>' +
+          '<div class="wf-box drag-handle">순서</div>' +
           '<div class="wf-box" onclick="removeRecoItem(' + idx + ')">삭제</div>' +
         '</div>';
       wrap.appendChild(row);
+    });
+    enableRowDrag(wrap, function(){
+      // DOM 순서를 그대로 데이터에 반영한 뒤 번호를 다시 매긴다.
+      const order = Array.from(wrap.children).map(r => r.dataset.name);
+      recoProducts.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
+      renderRecoList();
+    });
+  }
+
+  // '순서' 핸들을 잡고 행을 끌어 순서를 바꾼다 (프론트 manage의 드래그 정렬과 동일).
+  function enableRowDrag(listEl, onDrop){
+    if (!listEl || listEl.dataset.dragReady) return;
+    listEl.dataset.dragReady = '1';
+    let src = null;
+    listEl.addEventListener('mousedown', function(e){
+      const h = e.target.closest('.drag-handle');
+      src = h ? h.closest('.banner-row') : null;
+      if (src) src.draggable = true;
+    });
+    listEl.addEventListener('dragstart', function(e){
+      if (!src) { e.preventDefault(); return; }
+      src.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', '');
+    });
+    listEl.addEventListener('dragover', function(e){
+      if (!src) return;
+      e.preventDefault();
+      const over = e.target.closest('.banner-row');
+      if (!over || over === src) return;
+      const r = over.getBoundingClientRect();
+      listEl.insertBefore(src, (e.clientY - r.top) > r.height / 2 ? over.nextSibling : over);
+    });
+    listEl.addEventListener('dragend', function(){
+      if (!src) return;
+      src.classList.remove('dragging');
+      src.draggable = false;
+      src = null;
+      if (onDrop) onDrop(listEl);
+    });
+  }
+  // 메인배너는 정적 마크업이라 끌어놓은 뒤 번호만 다시 매긴다.
+  function renumberBannerRows(listEl){
+    Array.from(listEl.children).forEach(function(r, i){
+      const no = r.querySelector('.banner-no');
+      if (no) no.textContent = (i + 1) + '.';
     });
   }
   function openRecoSelectModal(){
@@ -4471,6 +4531,7 @@
   renderCatStruct();
   updateOrderBulkCount();
   renderPointRows();
+  enableRowDrag(document.getElementById('main-banner-list'), renumberBannerRows);
 </script>
 </body>
 </html>
