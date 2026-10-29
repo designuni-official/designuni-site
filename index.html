@@ -778,6 +778,13 @@
   .price-tier-price-wrap span{ font-size:11px; color:var(--muted); flex-shrink:0; }
   .price-tier-price-wrap input{ flex:1; min-width:0; }
 
+  /* 상품 모달 안의 옵션 그룹 편집기 (상품상세의 '표면 마감'·'인쇄 범위' 같은 선택지) */
+  .prod-opt-value-row{
+    display:grid; grid-template-columns:1fr 18px; gap:8px; align-items:center; margin-bottom:6px;
+  }
+  .prod-opt-value-row:last-child{ margin-bottom:0; }
+  .prod-opt-value-row input{ background:#fff; }
+
   /* 상품별 연결 옵션 그룹 선택 팝업 */
   .prod-opt-link-list{ display:flex; flex-direction:column; gap:10px; }
   .prod-opt-link-item{
@@ -2301,7 +2308,7 @@
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','광목 포스터')">9,500~12,000원 (규격·수량별)</div></td>
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdOptLinkModal('광목 포스터')">원단·후가공 옵션</div></td>
                 <td><span class="status-pill done">판매중</span></td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','광목 포스터')">수정</div><div class="wf-box">삭제</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','광목 포스터')">수정</div><div class="wf-box" onclick="duplicateProduct('광목 포스터')">복제</div><div class="wf-box">삭제</div></div></td>
               </tr>
               <tr>
                 <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
@@ -2309,7 +2316,7 @@
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','기념구 (야구공)')">15,000~18,000원 (규격·수량별)</div></td>
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdOptLinkModal('기념구 (야구공)')">사이즈 옵션</div></td>
                 <td><span class="status-pill done">판매중</span></td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','기념구 (야구공)')">수정</div><div class="wf-box">삭제</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','기념구 (야구공)')">수정</div><div class="wf-box" onclick="duplicateProduct('기념구 (야구공)')">복제</div><div class="wf-box">삭제</div></div></td>
               </tr>
               <tr>
                 <td><div class="wf-box" style="width:44px; height:44px;"></div></td>
@@ -2317,7 +2324,7 @@
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdEditModal('edit','방수토이필름카메라')">8,800~9,500원 (규격·수량별)</div></td>
                 <td><div class="wf-box" style="height:26px; width:auto; padding:0 9px; font-size:10.5px; cursor:pointer;" onclick="openProdOptLinkModal('방수토이필름카메라')">부자재 옵션</div></td>
                 <td><span class="status-pill pending">품절</span></td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','방수토이필름카메라')">수정</div><div class="wf-box">삭제</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openProdEditModal('edit','방수토이필름카메라')">수정</div><div class="wf-box" onclick="duplicateProduct('방수토이필름카메라')">복제</div><div class="wf-box">삭제</div></div></td>
               </tr>
             </table>
           </div>
@@ -2721,6 +2728,14 @@
     </div>
     <div class="help-note-list" style="margin-top:0;">
       <div>· 같은 규격 안에서 수량 구간이 늘어날수록 개당 단가가 낮아지는 방식(대량 할인)입니다. 반대로 소량 구간에 더 높은 단가를 넣으면 소량 할증으로도 쓸 수 있습니다.</div>
+    </div>
+    <div class="admin-modal-field">
+      <label>옵션 - 상품상세에서 고객이 고르는 항목</label>
+      <div class="price-spec-list" id="prod-opt-list"></div>
+      <div class="wf-box admin-modal-add-row" onclick="addProdOptionBlock()">+ 옵션 추가</div>
+    </div>
+    <div class="help-note-list" style="margin-top:0;">
+      <div>· 옵션 그룹 하나가 상품상세의 선택 줄 하나가 됩니다. 예: '표면 마감' → 유광 코팅 / 무광 코팅 / UV 인쇄</div>
     </div>
     <div class="admin-modal-btn-row">
       <div class="wf-box" onclick="closeProdEditModal()">취소</div>
@@ -3379,12 +3394,22 @@
   const PRODUCT_PRICE_DATA = {
     '광목 포스터': { category:'Fabric > 포스터', status:'판매중', specs:[
       { name:'40×60cm', tiers:[ {min:1, max:9, price:12000}, {min:10, max:49, price:11000}, {min:50, max:null, price:9500} ] }
+    ], options:[
+      { name:'원단', values:['광목', '린넨', '쉬폰'] },
+      { name:'후가공', values:['유광 코팅', '무광 코팅', '코팅 없음'] }
     ]},
     '기념구 (야구공)': { category:'Rounding > 야구공', status:'판매중', specs:[
       { name:'정품 규격', tiers:[ {min:1, max:19, price:18000}, {min:20, max:49, price:16500}, {min:50, max:null, price:15000} ] }
+    ], options:[
+      { name:'사이즈(mm)', values:['정식구 73mm', '전시용 80mm'] },
+      { name:'표면 마감', values:['유광 코팅', '무광 코팅', 'UV 인쇄'] },
+      { name:'인쇄 범위', values:['1면 인쇄', '2면 인쇄', '전면 인쇄'] }
     ]},
     '방수토이필름카메라': { category:'ABS > 필름카메라', status:'품절', specs:[
       { name:'기본형', tiers:[ {min:1, max:29, price:9500}, {min:30, max:null, price:8800} ] }
+    ], options:[
+      { name:'색상', values:['화이트', '핑크', '민트'] },
+      { name:'인쇄 범위', values:['1면 인쇄', '전면 인쇄'] }
     ]}
   };
   function buildPriceTierRow(min, max, price){
@@ -3436,6 +3461,45 @@
       wrap.appendChild(buildPriceSpecBlock(s.name, s.tiers));
     });
   }
+  // ----- 상품 모달 안의 옵션 그룹 편집기 -----
+  function buildProdOptValueRow(value){
+    const row = document.createElement('div');
+    row.className = 'prod-opt-value-row';
+    row.innerHTML =
+      '<input type="text" class="admin-modal-input small" placeholder="옵션값 (예: 유광 코팅)" value="' + (value || '') + '">' +
+      '<div class="opt-value-remove" onclick="this.parentElement.remove()">✕</div>';
+    return row;
+  }
+  function buildProdOptionBlock(name, values){
+    const block = document.createElement('div');
+    block.className = 'price-spec-block';
+    const head = document.createElement('div');
+    head.className = 'price-spec-head';
+    head.innerHTML =
+      '<label>옵션명</label>' +
+      '<div class="admin-modal-input small" contenteditable="true">' + (name || '') + '</div>' +
+      '<div class="price-spec-remove" onclick="this.closest(\'.price-spec-block\').remove()">✕</div>';
+    block.appendChild(head);
+    const table = document.createElement('div');
+    table.className = 'price-tier-table';
+    (values && values.length ? values : ['']).forEach(v => table.appendChild(buildProdOptValueRow(v)));
+    block.appendChild(table);
+    const addBtn = document.createElement('div');
+    addBtn.className = 'wf-box price-tier-add';
+    addBtn.textContent = '+ 옵션값 추가';
+    addBtn.onclick = function(){ table.appendChild(buildProdOptValueRow('')); };
+    block.appendChild(addBtn);
+    return block;
+  }
+  function addProdOptionBlock(){
+    document.getElementById('prod-opt-list').appendChild(buildProdOptionBlock('', ['']));
+  }
+  function renderProdOptionList(options){
+    const wrap = document.getElementById('prod-opt-list');
+    wrap.innerHTML = '';
+    (options || []).forEach(o => wrap.appendChild(buildProdOptionBlock(o.name, o.values)));
+  }
+
   function openProdEditModal(mode, productName){
     const data = productName ? PRODUCT_PRICE_DATA[productName] : null;
     document.getElementById('prod-edit-modal-title').textContent = (mode === 'create') ? '상품 등록' : '상품 수정';
@@ -3443,6 +3507,20 @@
     document.getElementById('prod-edit-category').textContent = data ? data.category : '';
     document.getElementById('prod-edit-status').textContent = data ? data.status : '판매중';
     renderPriceSpecList(data ? data.specs : null);
+    renderProdOptionList(data ? data.options : null);
+    document.getElementById('prod-edit-modal').classList.add('show');
+  }
+  // 상품 복제: 원본을 그대로 불러오되 이름에 (복사본)을 붙이고,
+  // 복제본이 실수로 바로 노출되지 않도록 판매상태는 '판매중지'로 내려서 연다.
+  function duplicateProduct(sourceName){
+    const src = PRODUCT_PRICE_DATA[sourceName];
+    if (!src) return;
+    document.getElementById('prod-edit-modal-title').textContent = '상품 복제';
+    document.getElementById('prod-edit-name').textContent = sourceName + ' (복사본)';
+    document.getElementById('prod-edit-category').textContent = src.category;
+    document.getElementById('prod-edit-status').textContent = '판매중지';
+    renderPriceSpecList(src.specs);
+    renderProdOptionList(src.options);
     document.getElementById('prod-edit-modal').classList.add('show');
   }
   function closeProdEditModal(){
