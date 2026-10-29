@@ -812,6 +812,23 @@
   .prod-opt-link-item input{ margin-top:2px; }
   .prod-opt-link-desc{ display:block; font-size:10.5px; color:var(--muted); margin-top:2px; }
   .prod-opt-readonly{ font-size:11px; color:var(--muted); }
+  /* 옵션 그룹의 연결 카테고리 선택기 - 대분류별로 묶어 소분류를 고른다 */
+  /* 읽기전용 상세 모달 (주문/견적/회원) - 라벨:값 2열 */
+  .info-sec{ margin-bottom:16px; }
+  .info-sec:last-of-type{ margin-bottom:0; }
+  .info-sec-title{ font-size:11px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+  .info-row{ display:grid; grid-template-columns:96px 1fr; gap:10px; font-size:12px; padding:6px 0; border-top:1px solid var(--line-light); }
+  .info-row:first-of-type{ border-top:none; }
+  .info-row > span:first-child{ color:var(--muted); }
+  .info-row > span:last-child{ color:var(--text); }
+  .info-total{ font-weight:700; color:var(--ink); }
+  .opt-cat-picker{ background:var(--box); border-radius:var(--r-sm); padding:10px 12px; max-height:190px; overflow-y:auto; }
+  .opt-cat-group{ margin-bottom:10px; }
+  .opt-cat-group:last-child{ margin-bottom:0; }
+  .opt-cat-big{ font-size:10.5px; font-weight:700; color:var(--navy); margin-bottom:5px; }
+  .opt-cat-subs{ display:flex; flex-wrap:wrap; gap:6px 14px; }
+  .opt-cat-sub{ display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text); cursor:pointer; }
+  .opt-cat-sub input{ margin:0; cursor:pointer; }
   .prod-opt-mode{ font-size:9.5px; font-weight:700; color:var(--navy); background:var(--navy-light);
     padding:2px 6px; border-radius:999px; margin-left:4px; }
 
@@ -2166,17 +2183,17 @@
               <tr>
                 <td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
                 <td><span class="status-pill pending">입금대기</span></td><td>2026-07-21</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260721-07')">상세</div><div class="wf-box" onclick="openOrderStatus('20260721-07','에코백 외 2건','입금대기')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
                 <td><span class="status-pill processing">제작중</span></td><td>2026-07-21</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260721-06')">상세</div><div class="wf-box" onclick="openOrderStatus('20260721-06','키링 50개','제작중')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
                 <td><span class="status-pill hold">파일오류</span></td><td>2026-07-20</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-11')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-11','사인볼','파일오류')">상태변경</div></div></td>
               </tr>
             </table>
           </div>
@@ -2375,7 +2392,7 @@
               <div class="admin-btn-row"><div class="wf-box" onclick="openOptEditModal('create','')">+ 옵션 등록</div></div>
             </div>
             <table class="wf-table">
-              <tr><th>옵션그룹</th><th>옵션값</th><th>선택방식</th><th>연결 카테고리</th><th>관리</th></tr>
+              <tr><th>옵션그룹</th><th>옵션값</th><th>선택방식</th><th>연결 카테고리 (소분류)</th><th>관리</th></tr>
               <tbody id="opt-group-rows"></tbody>
             </table>
           </div>
@@ -2398,27 +2415,27 @@
               <tr>
                 <td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
                 <td><span class="status-pill pending">입금대기</span></td><td>2026-07-21</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260721-06')">상세</div><div class="wf-box" onclick="openOrderStatus('20260721-06','키링 50개','제작중')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
                 <td><span class="status-pill processing">제작중</span></td><td>2026-07-21</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-11')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-11','사인볼','파일오류')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
                 <td><span class="status-pill hold">파일오류</span></td><td>2026-07-20</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-11')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-11','사인볼','파일오류')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260720-09</td><td>패브릭 포스터</td><td>최지우</td><td>24,000원</td>
                 <td><span class="status-pill done">배송완료</span></td><td>2026-07-20</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-09')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-09','패브릭 포스터','배송완료')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260719-14</td><td>목봉마감 액자</td><td>정하늘</td><td>31,000원</td>
                 <td><span class="status-pill processing">배송중</span></td><td>2026-07-19</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">상태변경</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260719-14')">상세</div><div class="wf-box" onclick="openOrderStatus('20260719-14','목봉마감 액자','배송중')">상태변경</div></div></td>
               </tr>
             </table>
           </div>
@@ -2435,12 +2452,12 @@
               <tr>
                 <td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td>2026-07-21</td>
                 <td><span class="status-pill pending">답변대기</span></td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세보기</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openQuoteDetail('Q-0721-02')">상세보기</div></div></td>
               </tr>
               <tr>
                 <td>Q-0719-05</td><td>서초고 학생회</td><td>120개</td><td>2026-07-19</td>
                 <td><span class="status-pill done">답변완료</span></td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세보기</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openQuoteDetail('Q-0719-05')">상세보기</div></div></td>
               </tr>
             </table>
           </div>
@@ -2462,15 +2479,15 @@
               <tr><th>아이디</th><th>이름</th><th>등급</th><th>누적 주문</th><th>적립금</th><th>가입일</th><th>관리</th></tr>
               <tr>
                 <td>seoyeon_k</td><td>김서연</td><td>일반회원</td><td>3건</td><td>1,200원</td><td>2026-05-02</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">정지</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('seoyeon_k')">상세</div><div class="wf-box">정지</div></div></td>
               </tr>
               <tr>
                 <td>junho_p</td><td>박준호</td><td>일반회원</td><td>11건</td><td>8,400원</td><td>2025-11-14</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">정지</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('junho_p')">상세</div><div class="wf-box">정지</div></div></td>
               </tr>
               <tr>
                 <td>haeun_l</td><td>이하은</td><td>기업회원</td><td>27건</td><td>0원</td><td>2025-08-30</td>
-                <td><div class="admin-table-actions"><div class="wf-box">상세</div><div class="wf-box">정지</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openMemberDetail('haeun_l')">상세</div><div class="wf-box">정지</div></div></td>
               </tr>
             </table>
           </div>
@@ -2487,11 +2504,11 @@
               <tr><th>쿠폰명</th><th>할인</th><th>발급 대상</th><th>유효기간</th><th>사용 현황</th><th>관리</th></tr>
               <tr>
                 <td>신규가입 쿠폰</td><td>10% 할인</td><td>신규회원 전체</td><td>가입일 +30일</td><td>128 / 340매</td>
-                <td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openCouponEdit('신규가입 쿠폰')">수정</div></div></td>
               </tr>
               <tr>
                 <td>대량주문 감사쿠폰</td><td>5,000원</td><td>기업회원</td><td>2026.07.01~08.31</td><td>12 / 50매</td>
-                <td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td>
+                <td><div class="admin-table-actions"><div class="wf-box" onclick="openCouponEdit('대량주문 감사쿠폰')">수정</div></div></td>
               </tr>
             </table>
           </div>
@@ -2501,9 +2518,9 @@
             </div>
             <table class="wf-table">
               <tr><th>적립 항목</th><th>적립금액</th><th>비고</th><th>관리</th></tr>
-              <tr><td>커뮤니티 게시글 작성</td><td>3,000원</td><td>1일 1회 한도</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
-              <tr><td>커뮤니티 댓글 작성</td><td>500원</td><td>1일 3회 한도</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
-              <tr><td>구매 후기 작성</td><td>1,000원</td><td>주문 1건당 1회</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>커뮤니티 게시글 작성</td><td>3,000원</td><td>1일 1회 한도</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit('커뮤니티 게시글 작성')">수정</div></div></td></tr>
+              <tr><td>커뮤니티 댓글 작성</td><td>500원</td><td>1일 3회 한도</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit('커뮤니티 댓글 작성')">수정</div></div></td></tr>
+              <tr><td>구매 후기 작성</td><td>1,000원</td><td>주문 1건당 1회</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit('구매 후기 작성')">수정</div></div></td></tr>
             </table>
           </div>
         </div>
@@ -2516,22 +2533,22 @@
               <div class="admin-btn-row"><div class="wf-box">순서 저장</div><div class="wf-box solid-dark">+ 배너 등록</div></div>
             </div>
             <div class="admin-tree">
-              <div class="admin-tree-row"><span>1. 기획전 프로모션</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
-              <div class="admin-tree-row"><span>2. 신상품 런칭</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
-              <div class="admin-tree-row"><span>3. 시즌 이벤트</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
-              <div class="admin-tree-row"><span>4. 대량주문 할인</span><span class="admin-toggle off"><span class="dot"></span>미노출</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box">수정</div></div></div>
+              <div class="admin-tree-row"><span>1. 기획전 프로모션</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('기획전 프로모션',1)">수정</div></div></div>
+              <div class="admin-tree-row"><span>2. 신상품 런칭</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('신상품 런칭',1)">수정</div></div></div>
+              <div class="admin-tree-row"><span>3. 시즌 이벤트</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('시즌 이벤트',1)">수정</div></div></div>
+              <div class="admin-tree-row"><span>4. 대량주문 할인</span><span class="admin-toggle off"><span class="dot"></span>미노출</span><div class="admin-table-actions"><div class="wf-box">순서</div><div class="wf-box" onclick="openBannerEdit('대량주문 할인',0)">수정</div></div></div>
             </div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
             <div class="section-title" style="margin-top:0;">커뮤니티 배너 관리</div>
             <div class="admin-tree">
-              <div class="admin-tree-row"><span>커뮤니티 배너</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">수정</div></div></div>
+              <div class="admin-tree-row"><span>커뮤니티 배너</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box" onclick="openBannerEdit('커뮤니티 배너',1)">수정</div></div></div>
             </div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
             <div class="section-title" style="margin-top:0;">글쓰기 배너 관리</div>
             <div class="admin-tree">
-              <div class="admin-tree-row"><span>글쓰기 배너</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box">수정</div></div></div>
+              <div class="admin-tree-row"><span>글쓰기 배너</span><span class="admin-toggle"><span class="dot"></span>노출중</span><div class="admin-table-actions"><div class="wf-box" onclick="openBannerEdit('글쓰기 배너',1)">수정</div></div></div>
             </div>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
@@ -2555,10 +2572,10 @@
             </div>
             <table class="wf-table">
               <tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>관리</th></tr>
-              <tr><td>Fabric</td><td>300dpi</td><td>AI, PDF</td><td>A3 (297×420mm) 기준</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
-              <tr><td>Rounding</td><td>300dpi</td><td>AI, PNG</td><td>지름 7.4cm 기준</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
-              <tr><td>ABS</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
-              <tr><td>Material</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>Fabric</td><td>300dpi</td><td>AI, PDF</td><td>A3 (297×420mm) 기준</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('Fabric')">수정</div></div></td></tr>
+              <tr><td>Rounding</td><td>300dpi</td><td>AI, PNG</td><td>지름 7.4cm 기준</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('Rounding')">수정</div></div></td></tr>
+              <tr><td>ABS</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('ABS')">수정</div></div></td></tr>
+              <tr><td>Material</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('Material')">수정</div></div></td></tr>
             </table>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
@@ -2568,8 +2585,8 @@
             </div>
             <table class="wf-table">
               <tr><th>순서</th><th>분류</th><th>질문</th><th>노출상태</th><th>관리</th></tr>
-              <tr><td>1</td><td>주문/결제</td><td>주문 후 옵션 변경이 가능한가요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
-              <tr><td>2</td><td>배송</td><td>제작 기간은 얼마나 걸리나요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box">수정</div></div></td></tr>
+              <tr><td>1</td><td>주문/결제</td><td>주문 후 옵션 변경이 가능한가요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box" onclick="openFaqEdit('주문/결제')">수정</div></div></td></tr>
+              <tr><td>2</td><td>배송</td><td>제작 기간은 얼마나 걸리나요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box" onclick="openFaqEdit('배송')">수정</div></div></td></tr>
             </table>
           </div>
         </div>
@@ -2793,6 +2810,157 @@
 </div>
 
 <!-- ================= 관리자: 상품 옵션 등록/수정 팝업 (상품상세 페이지 원단/색상/후가공 선택 UI에 대응) ================= -->
+<!-- ================= 관리자: 읽기전용 상세 (주문 · 견적 · 회원) ================= -->
+<div class="admin-modal-overlay" id="admin-info-modal">
+  <div class="admin-modal-box admin-modal-box-wide">
+    <div class="admin-modal-close" onclick="closeAdminInfo()">✕</div>
+    <div class="admin-modal-title" id="admin-info-title">상세</div>
+    <div id="admin-info-body"></div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box solid-dark" onclick="closeAdminInfo()">닫기</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 주문 상태변경 ================= -->
+<div class="admin-modal-overlay" id="order-status-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeOrderStatus()">✕</div>
+    <div class="admin-modal-title">주문 상태변경</div>
+    <div id="order-status-head" style="font-size:12px; color:var(--muted); margin-bottom:14px;"></div>
+    <div class="admin-modal-field">
+      <label>주문상태</label>
+      <select class="admin-modal-input" id="order-status-select">
+        <option>입금대기</option><option>제작중</option><option>파일오류</option><option>배송중</option><option>배송완료</option>
+      </select>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeOrderStatus()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeOrderStatus()">변경사항 저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 배너 수정 ================= -->
+<div class="admin-modal-overlay" id="banner-edit-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeBannerEdit()">✕</div>
+    <div class="admin-modal-title">배너 수정</div>
+    <div class="admin-modal-field"><label>배너명</label>
+      <div class="admin-modal-input" id="banner-edit-name" contenteditable="true"></div></div>
+    <div class="admin-modal-field"><label>배너 이미지</label>
+      <div class="wf-box" style="height:34px; justify-content:flex-start; padding:0 10px; font-size:11px;">promotion-banner.webp</div></div>
+    <div class="admin-modal-field"><label>연결 URL</label>
+      <div class="admin-modal-input" contenteditable="true">/promotion/summer</div></div>
+    <div class="admin-modal-field"><label>노출 상태</label>
+      <select class="admin-modal-input" id="banner-edit-status"><option>노출중</option><option>미노출</option></select></div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeBannerEdit()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeBannerEdit()">수정 저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 제작 가이드 수정 ================= -->
+<div class="admin-modal-overlay" id="guide-edit-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeGuideEdit()">✕</div>
+    <div class="admin-modal-title">제작 가이드 수정</div>
+    <div class="admin-modal-field"><label>카테고리</label>
+      <div class="admin-modal-input" id="guide-edit-cat"></div></div>
+    <div class="admin-modal-row2">
+      <div class="admin-modal-field"><label>권장 해상도</label>
+        <div class="admin-modal-input" id="guide-edit-dpi" contenteditable="true"></div></div>
+      <div class="admin-modal-field"><label>파일 형식</label>
+        <div class="admin-modal-input" id="guide-edit-fmt" contenteditable="true"></div></div>
+    </div>
+    <div class="admin-modal-field"><label>규격</label>
+      <div class="admin-modal-input" id="guide-edit-spec" contenteditable="true"></div></div>
+    <div class="admin-modal-field"><label>비고</label>
+      <div class="admin-modal-input" contenteditable="true" style="min-height:52px; align-items:flex-start;">재단 여백을 포함해 작업해 주세요.</div></div>
+    <div class="admin-modal-field"><label>참고 이미지 (JPG, PNG, WEBP)</label>
+      <div class="admin-tree">
+        <div class="admin-tree-row"><span>규격 참고 이미지</span><div class="admin-table-actions"><div class="wf-box">변경</div></div></div>
+        <div class="admin-tree-row"><span>안전 영역 참고 이미지</span><div class="admin-table-actions"><div class="wf-box">변경</div></div></div>
+        <div class="admin-tree-row"><span>마감 참고 이미지</span><div class="admin-table-actions"><div class="wf-box">변경</div></div></div>
+      </div>
+    </div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeGuideEdit()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeGuideEdit()">수정 저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: FAQ 수정 ================= -->
+<div class="admin-modal-overlay" id="faq-edit-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeFaqEdit()">✕</div>
+    <div class="admin-modal-title">FAQ 수정</div>
+    <div class="admin-modal-field"><label>분류</label>
+      <select class="admin-modal-input" id="faq-edit-cat"><option>주문/결제</option><option>배송</option><option>제작</option><option>교환/환불</option></select></div>
+    <div class="admin-modal-field"><label>질문</label>
+      <div class="admin-modal-input" id="faq-edit-q" contenteditable="true"></div></div>
+    <div class="admin-modal-field"><label>답변</label>
+      <div class="admin-modal-input" contenteditable="true" style="min-height:70px; align-items:flex-start;">답변 내용을 입력해 주세요.</div></div>
+    <div class="admin-modal-field"><label>노출 상태</label>
+      <select class="admin-modal-input"><option>노출중</option><option>미노출</option></select></div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeFaqEdit()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeFaqEdit()">수정 저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 적립금 정책 수정 ================= -->
+<div class="admin-modal-overlay" id="point-edit-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closePointEdit()">✕</div>
+    <div class="admin-modal-title">적립금 정책 수정</div>
+    <div class="admin-modal-field"><label>적립 항목</label>
+      <div class="admin-modal-input" id="point-edit-item"></div></div>
+    <div class="admin-modal-field"><label>적립금액 (원)</label>
+      <div class="admin-modal-input" id="point-edit-amt" contenteditable="true"></div></div>
+    <div class="admin-modal-field"><label>지급 한도</label>
+      <div class="admin-modal-input" id="point-edit-limit" contenteditable="true"></div></div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closePointEdit()">취소</div>
+      <div class="wf-box solid-dark" onclick="closePointEdit()">수정 저장</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 관리자: 쿠폰 수정 ================= -->
+<div class="admin-modal-overlay" id="coupon-edit-modal">
+  <div class="admin-modal-box">
+    <div class="admin-modal-close" onclick="closeCouponEdit()">✕</div>
+    <div class="admin-modal-title">쿠폰 수정</div>
+    <div class="admin-modal-field"><label>쿠폰명</label>
+      <div class="admin-modal-input" id="coupon-edit-name" contenteditable="true"></div></div>
+    <div class="admin-modal-row2">
+      <div class="admin-modal-field"><label>할인 혜택</label>
+        <select class="admin-modal-input" id="coupon-edit-type"><option>정률 할인</option><option>정액 할인</option></select></div>
+      <div class="admin-modal-field"><label>할인값</label>
+        <div class="admin-modal-input" id="coupon-edit-val" contenteditable="true"></div></div>
+    </div>
+    <div class="admin-modal-field"><label>발급 대상</label>
+      <select class="admin-modal-input" id="coupon-edit-target"><option>전체회원</option><option>신규회원</option><option>기업회원</option></select></div>
+    <div class="admin-modal-row2">
+      <div class="admin-modal-field"><label>유효기간 시작</label>
+        <div class="admin-modal-input" contenteditable="true">2026-07-01</div></div>
+      <div class="admin-modal-field"><label>유효기간 종료</label>
+        <div class="admin-modal-input" contenteditable="true">2026-08-31</div></div>
+    </div>
+    <div class="admin-modal-field"><label>발급 수량 (매)</label>
+      <div class="admin-modal-input" id="coupon-edit-qty" contenteditable="true"></div></div>
+    <div class="help-note-list" style="margin-top:0;"><div id="coupon-edit-used"></div></div>
+    <div class="admin-modal-btn-row">
+      <div class="wf-box" onclick="closeCouponEdit()">취소</div>
+      <div class="wf-box solid-dark" onclick="closeCouponEdit()">수정 저장</div>
+    </div>
+  </div>
+</div>
+
 <div class="admin-modal-overlay" id="opt-edit-modal">
   <div class="admin-modal-box admin-modal-box-wide">
     <div class="admin-modal-close" onclick="closeOptEditModal()">✕</div>
@@ -2803,8 +2971,8 @@
         <div class="admin-modal-input" id="opt-edit-group" contenteditable="true">원단</div>
       </div>
       <div class="admin-modal-field">
-        <label>연결 카테고리</label>
-        <div class="admin-modal-input" id="opt-edit-category" contenteditable="true">Fabric</div>
+        <label>연결 카테고리 (소카테고리 단위 · 비우면 전체 적용)</label>
+        <div class="opt-cat-picker" id="opt-edit-cats"></div>
       </div>
     </div>
     <div class="admin-modal-field">
@@ -3354,7 +3522,7 @@
   // 기존 등록된 옵션그룹 데이터 (상품상세 페이지 원단/후가공 선택 UI와 동일한 값 기준)
   // single: 단독선택 여부. true면 상세페이지에서 그룹 내 하나만 고를 수 있다(라디오).
   const OPTION_GROUPS = {
-    '원단': { category: 'Fabric', single:true, rows: [
+    '원단': { cats:['Fabric > 포스터','Fabric > 코스터','Fabric > 북마크','Fabric > 달력'], single:true, rows: [
       { name:'광목10수', desc:'', required:false },
       { name:'광목14수', desc:'', required:false },
       { name:'린넨10수', desc:'', required:false },
@@ -3362,31 +3530,31 @@
       { name:'린넨30수', desc:'', required:false },
       { name:'쉬폰', desc:'', required:false }
     ]},
-    '후가공': { category: 'Fabric', single:false, rows: [
+    '후가공': { cats:['Fabric > 포스터','Fabric > 달력'], single:false, rows: [
       { name:'인터로크', desc:'기본 · 필수', required:true },
       { name:'고리마감', desc:'추가', required:false },
       { name:'목봉마감', desc:'추가', required:false }
     ]},
-    '부자재': { category: '전체', single:false, rows: [
+    '부자재': { cats:[], single:false, rows: [
       { name:'폴리백', desc:'', required:false },
       { name:'택배박스', desc:'', required:false },
       { name:'완충재', desc:'', required:false }
     ]},
-    '색상': { category: 'ABS', single:true, rows: [
+    '색상': { cats:['ABS > 필름카메라','ABS > 홍보 판촉물'], single:true, rows: [
       { name:'화이트', desc:'', required:false },
       { name:'핑크', desc:'', required:false },
       { name:'민트', desc:'', required:false }
     ]},
-    '사이즈': { category: 'Rounding', single:true, rows: [
+    '사이즈': { cats:['Rounding > 야구공'], single:true, rows: [
       { name:'정식구 73mm', desc:'기본', required:true },
       { name:'전시용 80mm', desc:'', required:false }
     ]},
-    '표면 마감': { category: '전체', single:true, rows: [
+    '표면 마감': { cats:['Rounding > 야구공','ABS > 필름카메라','Material > 한지'], single:true, rows: [
       { name:'유광 코팅', desc:'기본', required:true },
       { name:'무광 코팅', desc:'', required:false },
       { name:'UV 인쇄', desc:'', required:false }
     ]},
-    '인쇄 범위': { category: '전체', single:true, rows: [
+    '인쇄 범위': { cats:['Rounding > 야구공','ABS > 필름카메라'], single:true, rows: [
       { name:'1면 인쇄', desc:'기본', required:true },
       { name:'2면 인쇄', desc:'', required:false },
       { name:'전면 인쇄', desc:'', required:false }
@@ -3415,7 +3583,7 @@
     const preset = groupName ? OPTION_GROUPS[groupName] : null;
     document.getElementById('opt-edit-modal-title').textContent = (mode === 'create') ? '옵션 그룹 등록' : '옵션 그룹 수정';
     document.getElementById('opt-edit-group').textContent = groupName || '';
-    document.getElementById('opt-edit-category').textContent = preset ? preset.category : '';
+    renderOptCatPicker(preset ? preset.cats : []);
     const single = preset ? preset.single !== false : true;   // 새 그룹 기본값은 단독선택
     document.getElementById('opt-edit-single').checked = single;
     document.getElementById('opt-edit-single-label').classList.toggle('on', single);
@@ -3528,8 +3696,156 @@
   }
 
   // ----- 상품 목록: 연결된 옵션 그룹 읽기 전용 표시 -----
+
+  // ===== 관리자: 주문 / 견적 / 회원 상세 · 상태변경 · 배너/가이드/쿠폰 수정 =====
+  // 프론트(/manage)의 모달 구성을 그대로 따른다.
+  const ORDER_DETAILS = {
+    '20260721-07': { date:'2026-07-21', customer:'김서연', status:'입금대기',
+      items:[['에코백','2개','40,000원'],['키링','10개','10,000원'],['패브릭 포스터','1개','12,000원']],
+      ship:[['배송방법','택배'],['수취인','김서연 · 010-2456-7812'],['배송지','[06236] 서울 강남구 테헤란로 123 101동 1203호'],['배송 요청','문 앞에 놓아주세요.']],
+      pay:[['상품금액','62,000원'],['배송비','4,000원'],['포장비','0원'],['쿠폰 사용','대량주문 감사쿠폰 · -3,000원'],['포인트 사용','-1,000원'],['결제방법','신용카드']],
+      total:'62,000원' }
+  };
+  const QUOTE_DETAILS = {
+    'Q-0721-02': { company:'(주)해브굿즈', qty:'500개', status:'답변대기',
+      rows:[['담당자','김민수'],['연락처','010-2458-7712'],['이메일','minsu@havegoods.co.kr'],
+            ['희망 카테고리','Fabric'],['희망 수량','500개'],['희망 납기일','2026-08-14'],
+            ['디자인 파일','havegoods_event_logo.ai (3.2MB) · 에코백_인쇄위치.pdf (1.1MB)']],
+      body:'기업 행사 배포용 에코백 500개 제작 견적을 요청드립니다. 개별 포장과 행사 로고 인쇄를 포함해 주세요.' }
+  };
+  const MEMBER_DETAILS = {
+    'seoyeon_k': { rows:[['회원구분','개인회원'],['회원등급','일반회원'],['가입일','2026-05-02'],
+      ['이용 현황','주문 3건 · 적립금 1,200원'],['아이디','seoyeon_k'],['이름','김서연'],
+      ['이메일','seoyeon.kim@example.com'],['휴대전화','010-4821-7356'],
+      ['주소','[06236] 서울 강남구 테헤란로 152 1204호']] }
+  };
+  function infoSec(title, rows, totalLabel, totalVal){
+    return '<div class="info-sec"><div class="info-sec-title">' + title + '</div>' +
+      rows.map(r => '<div class="info-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>').join('') +
+      (totalLabel ? '<div class="info-row"><span>' + totalLabel + '</span><span class="info-total">' + totalVal + '</span></div>' : '') +
+      '</div>';
+  }
+  function openAdminInfo(title, html){
+    document.getElementById('admin-info-title').textContent = title;
+    document.getElementById('admin-info-body').innerHTML = html;
+    document.getElementById('admin-info-modal').classList.add('show');
+  }
+  function closeAdminInfo(){ document.getElementById('admin-info-modal').classList.remove('show'); }
+
+  function openOrderDetail(no){
+    const d = ORDER_DETAILS[no] || ORDER_DETAILS['20260721-07'];
+    const html =
+      infoSec('주문 정보', [['주문번호',no],['주문일',d.date],['고객',d.customer],['주문상태',d.status]]) +
+      infoSec('주문 상품', d.items.map(i => [i[0], i[1] + ' · ' + i[2]])) +
+      infoSec('배송지 정보', d.ship) +
+      infoSec('할인 및 결제 정보', d.pay, '총 결제금액', d.total);
+    openAdminInfo('주문 상세', html);
+  }
+  function openQuoteDetail(no){
+    const d = QUOTE_DETAILS[no] || QUOTE_DETAILS['Q-0721-02'];
+    const html = infoSec('견적 문의', [['문의번호',no],['업체명',d.company],['희망 수량',d.qty],['답변상태',d.status]].concat(d.rows)) +
+      infoSec('문의내용', [['내용', d.body]]);
+    openAdminInfo('견적 문의 상세', html);
+  }
+  function openMemberDetail(id){
+    const d = MEMBER_DETAILS[id] || MEMBER_DETAILS['seoyeon_k'];
+    openAdminInfo('회원 상세정보', infoSec('기본 정보', d.rows));
+  }
+  function openOrderStatus(no, summary, cur){
+    document.getElementById('order-status-head').textContent = no + ' · ' + summary;
+    document.getElementById('order-status-select').value = cur;
+    document.getElementById('order-status-modal').classList.add('show');
+  }
+  function closeOrderStatus(){ document.getElementById('order-status-modal').classList.remove('show'); }
+
+  function openBannerEdit(name, shown){
+    document.getElementById('banner-edit-name').textContent = name;
+    document.getElementById('banner-edit-status').value = shown ? '노출중' : '미노출';
+    document.getElementById('banner-edit-modal').classList.add('show');
+  }
+  function closeBannerEdit(){ document.getElementById('banner-edit-modal').classList.remove('show'); }
+
+  const GUIDE_DATA = {
+    'Fabric':   ['300dpi','AI, PDF','A3 (297×420mm) 기준'],
+    'Rounding': ['300dpi','AI, PNG','지름 7.4cm 기준'],
+    'ABS':      ['300dpi','AI, PDF','상품별 규격 상이'],
+    'Material': ['300dpi','AI, PDF','상품별 규격 상이']
+  };
+  function openGuideEdit(cat){
+    const d = GUIDE_DATA[cat] || GUIDE_DATA['Fabric'];
+    document.getElementById('guide-edit-cat').textContent = cat;
+    document.getElementById('guide-edit-dpi').textContent = d[0];
+    document.getElementById('guide-edit-fmt').textContent = d[1];
+    document.getElementById('guide-edit-spec').textContent = d[2];
+    document.getElementById('guide-edit-modal').classList.add('show');
+  }
+  function closeGuideEdit(){ document.getElementById('guide-edit-modal').classList.remove('show'); }
+
+  const COUPON_DATA = {
+    '신규가입 쿠폰':     ['정률 할인','10','신규회원','340','현재 사용 128매'],
+    '대량주문 감사쿠폰': ['정액 할인','5000','기업회원','50','현재 사용 12매']
+  };
+  function openCouponEdit(name){
+    const d = COUPON_DATA[name] || COUPON_DATA['신규가입 쿠폰'];
+    document.getElementById('coupon-edit-name').textContent = name;
+    document.getElementById('coupon-edit-type').value = d[0];
+    document.getElementById('coupon-edit-val').textContent = d[1];
+    document.getElementById('coupon-edit-target').value = d[2];
+    document.getElementById('coupon-edit-qty').textContent = d[3];
+    document.getElementById('coupon-edit-used').textContent = '· ' + d[4];
+    document.getElementById('coupon-edit-modal').classList.add('show');
+  }
+  function closeCouponEdit(){ document.getElementById('coupon-edit-modal').classList.remove('show'); }
+
+  const FAQ_DATA = { '주문/결제':'주문 후 옵션 변경이 가능한가요?', '배송':'제작 기간은 얼마나 걸리나요?' };
+  function openFaqEdit(cat){
+    document.getElementById('faq-edit-cat').value = cat;
+    document.getElementById('faq-edit-q').textContent = FAQ_DATA[cat] || '';
+    document.getElementById('faq-edit-modal').classList.add('show');
+  }
+  function closeFaqEdit(){ document.getElementById('faq-edit-modal').classList.remove('show'); }
+
+  const POINT_DATA = { '커뮤니티 게시글 작성':['3000','1일 1회 한도'], '커뮤니티 댓글 작성':['500','1일 3회 한도'], '구매 후기 작성':['1000','주문 1건당 1회'] };
+  function openPointEdit(item){
+    const d = POINT_DATA[item] || ['',''];
+    document.getElementById('point-edit-item').textContent = item;
+    document.getElementById('point-edit-amt').textContent = d[0];
+    document.getElementById('point-edit-limit').textContent = d[1];
+    document.getElementById('point-edit-modal').classList.add('show');
+  }
+  function closePointEdit(){ document.getElementById('point-edit-modal').classList.remove('show'); }
+
+  // 오버레이 바깥 클릭 시 닫기
+  [['admin-info-modal',closeAdminInfo],['order-status-modal',closeOrderStatus],
+   ['banner-edit-modal',closeBannerEdit],['guide-edit-modal',closeGuideEdit],
+   ['coupon-edit-modal',closeCouponEdit],['faq-edit-modal',closeFaqEdit],
+   ['point-edit-modal',closePointEdit]].forEach(([id,fn]) => {
+    document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) fn(); });
+  });
+
   // 옵션 그룹 표는 OPTION_GROUPS에서 직접 그린다.
   // 정적 markup이던 탓에, 내가 추가한 색상/사이즈/표면 마감/인쇄 범위가 표에 안 보였다.
+  // 연결 카테고리를 소분류 단위로 고르는 선택기.
+  // 대분류에만 걸면 'Fabric 전체'가 되어 포스터/코스터를 구분할 수 없다.
+  function renderOptCatPicker(selected){
+    const wrap = document.getElementById('opt-edit-cats');
+    if (!wrap) return;
+    const sel = selected || [];
+    wrap.innerHTML = '';
+    categoryMenus.forEach(c => {
+      const g = document.createElement('div');
+      g.className = 'opt-cat-group';
+      g.innerHTML = '<div class="opt-cat-big">' + c.label + '</div>' +
+        '<div class="opt-cat-subs">' + c.groups.map(sub => {
+          const key = c.label + ' > ' + sub.title;
+          return '<label class="opt-cat-sub"><input type="checkbox"' +
+            (sel.indexOf(key) !== -1 ? ' checked' : '') + '>' + sub.title + '</label>';
+        }).join('') + '</div>';
+      wrap.appendChild(g);
+    });
+  }
+  const catLabel = g => (g.cats && g.cats.length) ? g.cats.join(' · ') : '전체';
+
   function renderOptGroupRows(){
     const tb = document.getElementById('opt-group-rows');
     if (!tb) return;
@@ -3542,7 +3858,7 @@
         '<td>' + g.rows.map(r => r.name + (r.required ? '(기본)' : '')).join(' · ') + '</td>' +
         '<td><span class="status-pill ' + (g.single !== false ? 'processing' : 'pending') + '">' +
           (g.single !== false ? '단독선택' : '복수선택') + '</span></td>' +
-        '<td>' + g.category + '</td>' +
+        '<td>' + catLabel(g) + '</td>' +
         '<td><div class="admin-table-actions"><div class="wf-box" onclick="openOptEditModal(\'edit\',\'' + name + '\')">수정</div></div></td>';
       tb.appendChild(tr);
     });
