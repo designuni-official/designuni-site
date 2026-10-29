@@ -850,8 +850,12 @@
   .opt-cat-group:last-child{ margin-bottom:0; }
   .opt-cat-big{ font-size:10.5px; font-weight:700; color:var(--navy); margin-bottom:5px; }
   .opt-cat-subs{ display:flex; flex-wrap:wrap; gap:6px 14px; }
-  .opt-cat-sub{ display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text); cursor:pointer; }
-  .opt-cat-sub input{ margin:0; cursor:pointer; }
+  /* 열람 전용. 연결은 상품 쪽에서 정해지므로 여기서 고치지 않는다 */
+  .opt-cat-sub{
+    font-size:11.5px; color:var(--text); background:#fff;
+    border:1px solid var(--line-light); border-radius:999px; padding:3px 10px;
+  }
+  .opt-cat-empty{ font-size:11.5px; color:var(--muted); }
   .prod-opt-mode{ font-size:9.5px; font-weight:700; color:var(--navy); background:var(--navy-light);
     padding:2px 6px; border-radius:999px; margin-left:4px; }
 
@@ -3005,7 +3009,7 @@
         <div class="admin-modal-input" id="opt-edit-group" contenteditable="true">원단</div>
       </div>
       <div class="admin-modal-field">
-        <label>연결 카테고리 (소카테고리 단위 · 비우면 전체 적용)</label>
+        <label>연결 카테고리 — 이 옵션을 쓰는 소카테고리 (상품 쪽 설정에 따라 반영)</label>
         <div class="opt-cat-picker" id="opt-edit-cats"></div>
       </div>
     </div>
@@ -3617,7 +3621,7 @@
     const preset = groupName ? OPTION_GROUPS[groupName] : null;
     document.getElementById('opt-edit-modal-title').textContent = (mode === 'create') ? '옵션 그룹 등록' : '옵션 그룹 수정';
     document.getElementById('opt-edit-group').textContent = groupName || '';
-    renderOptCatPicker(preset ? preset.cats : []);
+    renderOptCatView(preset ? preset.cats : []);
     const single = preset ? preset.single !== false : true;   // 새 그룹 기본값은 단독선택
     document.getElementById('opt-edit-single').checked = single;
     document.getElementById('opt-edit-single-label').classList.toggle('on', single);
@@ -3910,22 +3914,24 @@
 
   // 옵션 그룹 표는 OPTION_GROUPS에서 직접 그린다.
   // 정적 markup이던 탓에, 내가 추가한 색상/사이즈/표면 마감/인쇄 범위가 표에 안 보였다.
-  // 연결 카테고리를 소분류 단위로 고르는 선택기.
-  // 대분류에만 걸면 'Fabric 전체'가 되어 포스터/코스터를 구분할 수 없다.
-  function renderOptCatPicker(selected){
+  // 연결 카테고리는 열람 전용.
+  // 어떤 상품이 이 옵션 그룹을 쓰는지에 따라 정해지므로, 여기서 고르지 않고 결과만 보여준다.
+  function renderOptCatView(selected){
     const wrap = document.getElementById('opt-edit-cats');
     if (!wrap) return;
     const sel = selected || [];
     wrap.innerHTML = '';
+    if (!sel.length){
+      wrap.innerHTML = '<div class="opt-cat-empty">연결된 소카테고리가 없습니다 — 전체 카테고리에 적용됩니다.</div>';
+      return;
+    }
     categoryMenus.forEach(c => {
+      const subs = c.groups.map(x => x.title).filter(t => sel.indexOf(c.label + ' > ' + t) !== -1);
+      if (!subs.length) return;
       const g = document.createElement('div');
       g.className = 'opt-cat-group';
       g.innerHTML = '<div class="opt-cat-big">' + c.label + '</div>' +
-        '<div class="opt-cat-subs">' + c.groups.map(sub => {
-          const key = c.label + ' > ' + sub.title;
-          return '<label class="opt-cat-sub"><input type="checkbox"' +
-            (sel.indexOf(key) !== -1 ? ' checked' : '') + '>' + sub.title + '</label>';
-        }).join('') + '</div>';
+        '<div class="opt-cat-subs">' + subs.map(t => '<span class="opt-cat-sub">' + t + '</span>').join('') + '</div>';
       wrap.appendChild(g);
     });
   }
