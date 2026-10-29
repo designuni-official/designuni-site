@@ -813,15 +813,38 @@
   .prod-opt-link-desc{ display:block; font-size:10.5px; color:var(--muted); margin-top:2px; }
   .prod-opt-readonly{ font-size:11px; color:var(--muted); }
   /* 옵션 그룹의 연결 카테고리 선택기 - 대분류별로 묶어 소분류를 고른다 */
-  /* 읽기전용 상세 모달 (주문/견적/회원) - 라벨:값 2열 */
-  .info-sec{ margin-bottom:16px; }
+  /* 읽기전용 상세 모달 (주문/견적/회원).
+     프론트 실측: 상단 요약 띠(#fafafa, radius 5) + 라벨 위/값 아래 2열 그리드 +
+     테두리 있는 파일·본문 박스 + 전체폭 레드 버튼 */
+  .info-strip{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:#fafafa; border:1px solid #ededed; border-radius:5px;
+    padding:12px 14px; margin-bottom:18px;
+  }
+  .info-strip-main{ font-size:13px; font-weight:700; color:var(--ink); }
+  .info-strip-sub{ font-size:12px; color:var(--muted); }
+  .info-strip .status-pill{ margin-left:auto; }
+  .info-sec{ margin-bottom:18px; }
   .info-sec:last-of-type{ margin-bottom:0; }
-  .info-sec-title{ font-size:11px; font-weight:700; color:var(--navy); margin-bottom:8px; }
-  .info-row{ display:grid; grid-template-columns:96px 1fr; gap:10px; font-size:12px; padding:6px 0; border-top:1px solid var(--line-light); }
-  .info-row:first-of-type{ border-top:none; }
-  .info-row > span:first-child{ color:var(--muted); }
-  .info-row > span:last-child{ color:var(--text); }
-  .info-total{ font-weight:700; color:var(--ink); }
+  .info-sec-label{ font-size:11px; color:var(--muted); margin-bottom:7px; }
+  .info-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; margin-bottom:18px; }
+  .info-cell{ min-width:0; }
+  .info-cell .k{ display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .info-cell .v{ display:block; font-size:13px; font-weight:600; color:var(--ink); word-break:break-word; }
+  .info-line{
+    display:flex; align-items:center; gap:8px; min-height:38px; padding:0 12px;
+    background:#fafafa; border:1px solid #e1e1e1; border-radius:4px; margin-bottom:6px; font-size:12px; color:var(--ink);
+  }
+  .info-line:last-child{ margin-bottom:0; }
+  .info-line .meta{ margin-left:auto; font-size:11px; color:var(--muted); flex-shrink:0; }
+  .info-box{
+    background:#fafafa; border:1px solid #e1e1e1; border-radius:4px;
+    padding:12px 14px; font-size:12px; color:var(--text); line-height:1.7;
+  }
+  .info-box.total{ display:flex; align-items:center; font-weight:700; color:var(--ink); font-size:13px; }
+  .info-box.total span:last-child{ margin-left:auto; color:var(--navy); }
+  /* 상세 모달은 닫기 버튼 하나가 전체 폭을 쓴다 */
+  .admin-modal-btn-row.single .wf-box{ flex:1; }
   .opt-cat-picker{ background:var(--box); border-radius:var(--r-sm); padding:10px 12px; max-height:190px; overflow-y:auto; }
   .opt-cat-group{ margin-bottom:10px; }
   .opt-cat-group:last-child{ margin-bottom:0; }
@@ -2826,7 +2849,7 @@
     <div class="admin-modal-close" onclick="closeAdminInfo()">✕</div>
     <div class="admin-modal-title" id="admin-info-title">상세</div>
     <div id="admin-info-body"></div>
-    <div class="admin-modal-btn-row">
+    <div class="admin-modal-btn-row single">
       <div class="wf-box solid-dark" onclick="closeAdminInfo()">닫기</div>
     </div>
   </div>
@@ -3719,21 +3742,41 @@
   const QUOTE_DETAILS = {
     'Q-0721-02': { company:'(주)해브굿즈', qty:'500개', status:'답변대기',
       rows:[['담당자','김민수'],['연락처','010-2458-7712'],['이메일','minsu@havegoods.co.kr'],
-            ['희망 카테고리','Fabric'],['희망 수량','500개'],['희망 납기일','2026-08-14'],
-            ['디자인 파일','havegoods_event_logo.ai (3.2MB) · 에코백_인쇄위치.pdf (1.1MB)']],
+            ['희망 카테고리','Fabric'],['희망 수량','500개'],['희망 납기일','2026-08-14']],
+      files:[['havegoods_event_logo.ai','3.2 MB'],['에코백_인쇄위치.pdf','1.1 MB']],
       body:'기업 행사 배포용 에코백 500개 제작 견적을 요청드립니다. 개별 포장과 행사 로고 인쇄를 포함해 주세요.' }
   };
   const MEMBER_DETAILS = {
-    'seoyeon_k': { rows:[['회원구분','개인회원'],['회원등급','일반회원'],['가입일','2026-05-02'],
-      ['이용 현황','주문 3건 · 적립금 1,200원'],['아이디','seoyeon_k'],['이름','김서연'],
+    'seoyeon_k': { name:'김서연', id:'seoyeon_k', grade:'일반회원',
+      rows:[['회원구분','개인회원'],['가입일','2026-05-02'],
+      ['주문','3건'],['적립금','1,200원'],
       ['이메일','seoyeon.kim@example.com'],['휴대전화','010-4821-7356'],
-      ['주소','[06236] 서울 강남구 테헤란로 152 1204호']] }
+      ['주소','[06236] 서울 강남구 테헤란로 152 1204호'],['','']] }
   };
-  function infoSec(title, rows, totalLabel, totalVal){
-    return '<div class="info-sec"><div class="info-sec-title">' + title + '</div>' +
-      rows.map(r => '<div class="info-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>').join('') +
-      (totalLabel ? '<div class="info-row"><span>' + totalLabel + '</span><span class="info-total">' + totalVal + '</span></div>' : '') +
-      '</div>';
+  // 프론트 모달 구조에 맞춘 빌더들
+  function infoStrip(main, sub, pill, pillClass){
+    return '<div class="info-strip"><span class="info-strip-main">' + main + '</span>' +
+      (sub ? '<span class="info-strip-sub">' + sub + '</span>' : '') +
+      (pill ? '<span class="status-pill ' + (pillClass || 'pending') + '">' + pill + '</span>' : '') + '</div>';
+  }
+  function infoGrid(pairs){
+    return '<div class="info-grid">' + pairs.map(function(r){
+      return '<div class="info-cell"><span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
+    }).join('') + '</div>';
+  }
+  function infoLines(label, rows){
+    return '<div class="info-sec"><div class="info-sec-label">' + label + '</div>' +
+      rows.map(function(r){
+        return '<div class="info-line"><span>' + r[0] + '</span>' +
+          (r[1] ? '<span class="meta">' + r[1] + '</span>' : '') + '</div>';
+      }).join('') + '</div>';
+  }
+  function infoBox(label, body){
+    return '<div class="info-sec"><div class="info-sec-label">' + label + '</div>' +
+      '<div class="info-box">' + body + '</div></div>';
+  }
+  function infoTotal(label, val){
+    return '<div class="info-box total"><span>' + label + '</span><span>' + val + '</span></div>';
   }
   function openAdminInfo(title, html){
     document.getElementById('admin-info-title').textContent = title;
@@ -3742,24 +3785,29 @@
   }
   function closeAdminInfo(){ document.getElementById('admin-info-modal').classList.remove('show'); }
 
+  const STATUS_PILL = { '입금대기':'pending', '제작중':'processing', '파일오류':'hold', '배송중':'processing', '배송완료':'done' };
   function openOrderDetail(no){
     const d = ORDER_DETAILS[no] || ORDER_DETAILS['20260721-07'];
     const html =
-      infoSec('주문 정보', [['주문번호',no],['주문일',d.date],['고객',d.customer],['주문상태',d.status]]) +
-      infoSec('주문 상품', d.items.map(i => [i[0], i[1] + ' · ' + i[2]])) +
-      infoSec('배송지 정보', d.ship) +
-      infoSec('할인 및 결제 정보', d.pay, '총 결제금액', d.total);
+      infoStrip(no, d.customer + ' · ' + d.date, d.status, STATUS_PILL[d.status]) +
+      infoLines('주문 상품', d.items.map(i => [i[0] + ' ' + i[1], i[2]])) +
+      infoGrid(d.ship) +
+      infoLines('할인 및 결제 정보', d.pay) +
+      infoTotal('총 결제금액', d.total);
     openAdminInfo('주문 상세', html);
   }
   function openQuoteDetail(no){
     const d = QUOTE_DETAILS[no] || QUOTE_DETAILS['Q-0721-02'];
-    const html = infoSec('견적 문의', [['문의번호',no],['업체명',d.company],['희망 수량',d.qty]].concat(d.rows)) +
-      infoSec('문의내용', [['내용', d.body]]);
+    const html =
+      infoStrip(no, d.company + '  ' + d.qty) +
+      infoGrid(d.rows) +
+      infoLines('디자인 파일', d.files) +
+      infoBox('문의내용', d.body);
     openAdminInfo('견적 문의 상세', html);
   }
   function openMemberDetail(id){
     const d = MEMBER_DETAILS[id] || MEMBER_DETAILS['seoyeon_k'];
-    openAdminInfo('회원 상세정보', infoSec('기본 정보', d.rows));
+    openAdminInfo('회원 상세정보', infoStrip(d.name, d.id, d.grade, 'done') + infoGrid(d.rows));
   }
   function openOrderStatus(no, summary, cur){
     document.getElementById('order-status-head').textContent = no + ' · ' + summary;
