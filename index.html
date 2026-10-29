@@ -890,9 +890,10 @@
   .community-qna-meta{ font-size:10.5px; color:var(--muted); }
 
   /* 관리자 페이지 - 고객용 헤더 대신 별도 어드민 셸(좌측 메뉴 + 우측 콘텐츠) 사용 */
-  .admin-page-wrap{ max-width:1240px; margin:24px auto 60px; background:#fff; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-md); }
+  .admin-page-wrap{ max-width:1228px; margin:24px auto 60px; background:#fff; border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-md); }
   .admin-shell{ display:flex; align-items:stretch; min-height:1700px; }
-  .admin-sidebar{ width:210px; flex-shrink:0; background:var(--navy-dark); padding:20px 0; }
+  /* 프론트 실측: 사이드바 250px, 배경 #0e0e0e(=--ink), 활성 항목만 레드 */
+  .admin-sidebar{ width:250px; flex-shrink:0; background:var(--ink); padding:20px 0; }
   .admin-logo{
     font-size:15px; font-weight:700; color:#fff; padding:0 20px 16px;
     margin-bottom:12px;
@@ -904,14 +905,19 @@
   .admin-nav-item{ padding:9px 20px; font-size:12.5px; color:rgba(255,255,255,.82); cursor:pointer; transition:background .15s ease; }
   .admin-nav-item:hover{ background:rgba(255,255,255,.08); }
   .admin-nav-item.active{ background:var(--navy); color:#fff; font-weight:700; }
-  .admin-main{ flex:1; padding:26px 28px; min-width:0; background:#fff; }
+  /* 프론트 실측: 본문 바탕은 #f3f4f6, 그 위에 흰 카드들이 얹힌다 */
+  .admin-main{ flex:1; padding:28px 32px; min-width:0; background:#f3f4f6; }
   .admin-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
   .admin-topbar-title{ font-size:19px; font-weight:700; color:var(--ink); }
   .admin-topbar-user{ font-size:12px; color:var(--muted); display:flex; align-items:center; gap:12px; }
-  .admin-summary{ display:flex; gap:12px; margin-bottom:28px; }
-  .admin-summary .wf-box{ flex:1; height:78px; flex-direction:column; gap:4px; }
-  .admin-summary .admin-num{ font-size:22px; font-weight:700; color:var(--navy); }
-  .admin-summary .admin-num-label{ font-size:11px; color:var(--muted); }
+  /* 프론트 실측: 251x110, 흰 배경 + 1px #ededed 테두리 + radius 7 */
+  .admin-summary{ display:flex; gap:16px; margin-bottom:28px; }
+  .admin-summary .wf-box{
+    flex:1; height:110px; flex-direction:column; gap:8px;
+    background:#fff; border:1px solid #ededed; border-radius:7px; box-shadow:none;
+  }
+  .admin-summary .admin-num{ font-size:24px; font-weight:700; color:var(--navy); }
+  .admin-summary .admin-num-label{ font-size:12px; color:var(--muted); }
   .admin-section{ margin-bottom:34px; }
   .admin-section-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
   .admin-section-head .section-title{ margin:0; }
@@ -932,8 +938,47 @@
   .status-pill.hold{ background:#fbe1e1; color:#a3312f; }
   .admin-table-actions{ display:flex; gap:6px; }
   .admin-table-actions .wf-box{ height:26px; width:auto; padding:0 9px; flex:none; font-size:10.5px; }
-  .admin-content-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
-  .admin-content-card{ background:var(--box); border-radius:var(--r-md); padding:16px; }
+  .admin-content-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .admin-content-card{ background:#fff; border:1px solid #ededed; border-radius:7px; padding:16px; }
+
+  /* 회색 바탕 위에 올라가는 흰 패널. .wf-table은 다른 페이지에서도 쓰므로 관리자 영역으로만 한정한다.
+     radius를 먹이려면 border-collapse를 separate로 바꿔야 한다. */
+  .admin-main table.wf-table{
+    background:#fff; border:1px solid #ededed; border-radius:7px; overflow:hidden;
+    border-collapse:separate; border-spacing:0;
+  }
+  .admin-main table.wf-table tr:nth-child(even) td{ background:transparent; }
+  .admin-main table.wf-table td{ border-top:1px solid #f1f1f1; }
+
+  /* 통계 카드 */
+  .admin-chart-card{ background:#fff; border:1px solid #ededed; border-radius:7px; padding:18px 20px; }
+  .admin-chart-title{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:18px; }
+  .admin-bars{ display:flex; align-items:flex-end; gap:5px; height:170px; overflow-x:auto; }
+  .admin-bars::-webkit-scrollbar{ display:none; }
+  .admin-bar-col{
+    flex:1 0 28px; height:100%; display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-end; gap:5px;
+  }
+  .admin-bar-val{ font-size:9.5px; color:var(--muted); white-space:nowrap; }
+  .admin-bar{ width:11px; background:var(--navy); border-radius:2px 2px 0 0; }
+  .admin-bar-day{ font-size:9px; color:var(--muted); white-space:nowrap; }
+
+  /* 카테고리별 판매 비중 도넛 (conic-gradient + 가운데 흰 원) */
+  .admin-donut-wrap{ display:flex; align-items:center; gap:44px; }
+  .admin-donut{
+    width:170px; height:170px; border-radius:50%; flex-shrink:0; position:relative;
+    background:conic-gradient(var(--navy) 0 46%, #2f6bff 46% 70%, #6b6b6b 70% 88%, #d9d9d9 88% 100%);
+  }
+  .admin-donut::after{
+    content:'100%'; position:absolute; inset:36px; border-radius:50%; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:700; color:var(--ink);
+  }
+  .admin-legend{ display:flex; flex-direction:column; gap:12px; font-size:12.5px; }
+  .admin-legend-row{ display:flex; align-items:center; gap:10px; }
+  .admin-legend-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .admin-legend-name{ color:var(--text); min-width:80px; }
+  .admin-legend-val{ font-weight:700; color:var(--ink); }
   .admin-content-card-title{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:10px; }
   .admin-view{ display:none; }
   .admin-view.active{ display:block; }
@@ -2046,17 +2091,17 @@
         <div class="admin-logo">DesignUNI 관리자</div>
         <div class="admin-nav-group-title">대시보드</div>
         <div class="admin-nav-item active" data-view="admin-view-dashboard" onclick="showAdminView('admin-view-dashboard','홈 대시보드')">홈 대시보드</div>
-        <div class="admin-nav-group-title">상품</div>
-        <div class="admin-nav-item" data-view="admin-view-products" onclick="showAdminView('admin-view-products','상품 관리')">상품 관리</div>
-        <div class="admin-nav-item" data-view="admin-view-categories" onclick="showAdminView('admin-view-categories','카테고리 · 옵션 관리')">카테고리 · 옵션 관리</div>
         <div class="admin-nav-group-title">주문</div>
         <div class="admin-nav-item" data-view="admin-view-orders" onclick="showAdminView('admin-view-orders','주문 관리')">주문 관리</div>
         <div class="admin-nav-item" data-view="admin-view-quotes" onclick="showAdminView('admin-view-quotes','대량주문 견적 관리')">대량주문 견적 관리</div>
+        <div class="admin-nav-group-title">상품</div>
+        <div class="admin-nav-item" data-view="admin-view-products" onclick="showAdminView('admin-view-products','상품 관리')">상품 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-categories" onclick="showAdminView('admin-view-categories','카테고리 · 옵션 관리')">카테고리 · 옵션 관리</div>
         <div class="admin-nav-group-title">회원</div>
         <div class="admin-nav-item" data-view="admin-view-members" onclick="showAdminView('admin-view-members','회원 관리')">회원 관리</div>
         <div class="admin-nav-item" data-view="admin-view-coupons" onclick="showAdminView('admin-view-coupons','쿠폰 · 적립금 관리')">쿠폰 · 적립금 관리</div>
         <div class="admin-nav-group-title">콘텐츠</div>
-        <div class="admin-nav-item" data-view="admin-view-banners" onclick="showAdminView('admin-view-banners','메인배너 · 기획전 관리')">메인배너 · 기획전 관리</div>
+        <div class="admin-nav-item" data-view="admin-view-banners" onclick="showAdminView('admin-view-banners','배너 · 기획전 관리')">배너 · 기획전 관리</div>
         <div class="admin-nav-item" data-view="admin-view-guide-faq" onclick="showAdminView('admin-view-guide-faq','제작가이드 · FAQ 관리')">제작가이드 · FAQ 관리</div>
         <div class="admin-nav-item" data-view="admin-view-community" onclick="showAdminView('admin-view-community','커뮤니티 · 리뷰 관리')">커뮤니티 · 리뷰 관리</div>
         <div class="admin-nav-group-title">통계</div>
@@ -2106,7 +2151,21 @@
               </tr>
             </table>
           </div>
+          <div class="admin-section">
+            <div class="admin-section-head">
+              <div class="section-title" style="margin-top:0;">대량주문 견적문의</div>
+              <div class="admin-btn-row">
+                <div class="wf-box" onclick="showAdminView('admin-view-quotes','대량주문 견적 관리')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">견적문의 전체보기</div>
+              </div>
+            </div>
+            <table class="wf-table">
+              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>답변상태</th></tr>
+              <tr><td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td><span class="status-pill pending">답변대기</span></td></tr>
+            </table>
+          </div>
+        
 
+        <!-- 상품 관리 -->
           <div class="admin-section">
             <div class="admin-section-head">
               <div class="section-title" style="margin-top:0;">상품 관리</div>
@@ -2128,7 +2187,6 @@
               </tr>
             </table>
           </div>
-
           <div class="admin-section">
             <div class="admin-section-head">
               <div class="section-title" style="margin-top:0;">회원 관리</div>
@@ -2142,14 +2200,13 @@
               <tr><td>junho_p</td><td>박준호</td><td>우수회원</td><td>11건</td><td>2025-11-14</td></tr>
             </table>
           </div>
-
           <div class="admin-section">
             <div class="admin-section-head">
               <div class="section-title" style="margin-top:0;">콘텐츠 관리</div>
             </div>
             <div class="admin-content-grid">
-              <div class="admin-content-card" onclick="showAdminView('admin-view-banners','메인배너 · 기획전 관리')" style="cursor:pointer;">
-                <div class="admin-content-card-title">메인배너 · 기획전</div>
+              <div class="admin-content-card" onclick="showAdminView('admin-view-banners','배너 · 기획전 관리')" style="cursor:pointer;">
+                <div class="admin-content-card-title">배너 · 기획전</div>
                 <div class="wf-box" style="height:44px;">배너 슬라이드 4종 (3종 노출중)</div>
               </div>
               <div class="admin-content-card" onclick="showAdminView('admin-view-categories','카테고리 · 옵션 관리')" style="cursor:pointer;">
@@ -2166,36 +2223,64 @@
               </div>
             </div>
           </div>
-
           <div class="admin-section">
-            <div class="admin-section-head">
-              <div class="section-title" style="margin-top:0;">대량주문 견적문의</div>
-              <div class="admin-btn-row">
-                <div class="wf-box" onclick="showAdminView('admin-view-quotes','대량주문 견적 관리')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">견적문의 전체보기</div>
-              </div>
-            </div>
-            <table class="wf-table">
-              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>답변상태</th></tr>
-              <tr><td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td><span class="status-pill pending">답변대기</span></td></tr>
-            </table>
-          </div>
-
-          <div class="admin-section" style="margin-bottom:0;">
             <div class="admin-section-head">
               <div class="section-title" style="margin-top:0;">매출 · 방문 통계</div>
               <div class="admin-btn-row">
                 <div class="wf-box" onclick="showAdminView('admin-view-stats','매출 · 방문 통계')" style="height:32px; width:auto; padding:0 12px; cursor:pointer;">통계 자세히 보기</div>
               </div>
             </div>
-            <div class="grid grid-2">
-              <div class="wf-box" style="height:140px;">일별 매출 그래프 (최근 30일)</div>
-              <div class="wf-box" style="height:140px;">카테고리별 판매 비중</div>
+            <div class="admin-chart-card" style="margin-bottom:16px;">
+              <div class="admin-chart-title">일별 매출 그래프 (최근 30일)</div>
+              <div class="admin-bars">
+                  <div class="admin-bar-col"><span class="admin-bar-val">42만</span><div class="admin-bar" style="height:47.7%"></div><span class="admin-bar-day">9/24</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">51만</span><div class="admin-bar" style="height:58.0%"></div><span class="admin-bar-day">9/25</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">38만</span><div class="admin-bar" style="height:43.2%"></div><span class="admin-bar-day">9/26</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">47만</span><div class="admin-bar" style="height:53.4%"></div><span class="admin-bar-day">9/27</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">58만</span><div class="admin-bar" style="height:65.9%"></div><span class="admin-bar-day">9/28</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">63만</span><div class="admin-bar" style="height:71.6%"></div><span class="admin-bar-day">9/29</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">55만</span><div class="admin-bar" style="height:62.5%"></div><span class="admin-bar-day">9/30</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">69만</span><div class="admin-bar" style="height:78.4%"></div><span class="admin-bar-day">10/1</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">74만</span><div class="admin-bar" style="height:84.1%"></div><span class="admin-bar-day">10/2</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">61만</span><div class="admin-bar" style="height:69.3%"></div><span class="admin-bar-day">10/3</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">45만</span><div class="admin-bar" style="height:51.1%"></div><span class="admin-bar-day">10/4</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">52만</span><div class="admin-bar" style="height:59.1%"></div><span class="admin-bar-day">10/5</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">66만</span><div class="admin-bar" style="height:75.0%"></div><span class="admin-bar-day">10/6</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">71만</span><div class="admin-bar" style="height:80.7%"></div><span class="admin-bar-day">10/7</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">59만</span><div class="admin-bar" style="height:67.0%"></div><span class="admin-bar-day">10/8</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">76만</span><div class="admin-bar" style="height:86.4%"></div><span class="admin-bar-day">10/9</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">68만</span><div class="admin-bar" style="height:77.3%"></div><span class="admin-bar-day">10/10</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">57만</span><div class="admin-bar" style="height:64.8%"></div><span class="admin-bar-day">10/11</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">64만</span><div class="admin-bar" style="height:72.7%"></div><span class="admin-bar-day">10/12</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">79만</span><div class="admin-bar" style="height:89.8%"></div><span class="admin-bar-day">10/13</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">72만</span><div class="admin-bar" style="height:81.8%"></div><span class="admin-bar-day">10/14</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">83만</span><div class="admin-bar" style="height:94.3%"></div><span class="admin-bar-day">10/15</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">67만</span><div class="admin-bar" style="height:76.1%"></div><span class="admin-bar-day">10/16</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">74만</span><div class="admin-bar" style="height:84.1%"></div><span class="admin-bar-day">10/17</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">62만</span><div class="admin-bar" style="height:70.5%"></div><span class="admin-bar-day">10/18</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">70만</span><div class="admin-bar" style="height:79.5%"></div><span class="admin-bar-day">10/19</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">88만</span><div class="admin-bar" style="height:100.0%"></div><span class="admin-bar-day">10/20</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">81만</span><div class="admin-bar" style="height:92.0%"></div><span class="admin-bar-day">10/21</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">77만</span><div class="admin-bar" style="height:87.5%"></div><span class="admin-bar-day">10/22</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">85만</span><div class="admin-bar" style="height:96.6%"></div><span class="admin-bar-day">10/23</span></div>
+              </div>
+            </div>
+            <div class="admin-chart-card">
+              <div class="admin-chart-title">카테고리별 판매 비중</div>
+              <div class="admin-donut-wrap">
+                <div class="admin-donut"></div>
+                <div class="admin-legend">
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:var(--navy);"></span><span class="admin-legend-name">Fabric</span><span class="admin-legend-val">46%</span></div>
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:#2f6bff;"></span><span class="admin-legend-name">Rounding</span><span class="admin-legend-val">24%</span></div>
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:#6b6b6b;"></span><span class="admin-legend-name">ABS</span><span class="admin-legend-val">18%</span></div>
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:#d9d9d9;"></span><span class="admin-legend-name">Material</span><span class="admin-legend-val">12%</span></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 상품 관리 -->
-        <div class="admin-view" id="admin-view-products">
+<div class="admin-view" id="admin-view-products">
           <div class="admin-section" style="margin-bottom:0;">
             <div class="admin-section-head">
               <div class="section-title" style="margin-top:0;">상품 관리</div>
@@ -2405,7 +2490,7 @@
           </div>
         </div>
 
-        <!-- 메인배너 · 기획전 관리 -->
+        <!-- 배너 · 기획전 관리 -->
         <div class="admin-view" id="admin-view-banners">
           <div class="admin-section" style="margin-bottom:0;">
             <div class="admin-section-head">
@@ -2486,9 +2571,52 @@
         <div class="admin-view" id="admin-view-stats">
           <div class="admin-section" style="margin-bottom:0;">
             <div class="section-title" style="margin-top:0;">매출 · 방문 통계</div>
-            <div class="grid grid-2">
-              <div class="wf-box" style="height:180px;">일별 매출 그래프 (최근 30일)</div>
-              <div class="wf-box" style="height:180px;">카테고리별 판매 비중 (Fabric/Rounding/ABS/Material)</div>
+            <div class="admin-chart-card" style="margin-bottom:16px;">
+              <div class="admin-chart-title">일별 매출 그래프 (최근 30일)</div>
+              <div class="admin-bars">
+                  <div class="admin-bar-col"><span class="admin-bar-val">42만</span><div class="admin-bar" style="height:47.7%"></div><span class="admin-bar-day">9/24</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">51만</span><div class="admin-bar" style="height:58.0%"></div><span class="admin-bar-day">9/25</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">38만</span><div class="admin-bar" style="height:43.2%"></div><span class="admin-bar-day">9/26</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">47만</span><div class="admin-bar" style="height:53.4%"></div><span class="admin-bar-day">9/27</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">58만</span><div class="admin-bar" style="height:65.9%"></div><span class="admin-bar-day">9/28</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">63만</span><div class="admin-bar" style="height:71.6%"></div><span class="admin-bar-day">9/29</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">55만</span><div class="admin-bar" style="height:62.5%"></div><span class="admin-bar-day">9/30</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">69만</span><div class="admin-bar" style="height:78.4%"></div><span class="admin-bar-day">10/1</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">74만</span><div class="admin-bar" style="height:84.1%"></div><span class="admin-bar-day">10/2</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">61만</span><div class="admin-bar" style="height:69.3%"></div><span class="admin-bar-day">10/3</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">45만</span><div class="admin-bar" style="height:51.1%"></div><span class="admin-bar-day">10/4</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">52만</span><div class="admin-bar" style="height:59.1%"></div><span class="admin-bar-day">10/5</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">66만</span><div class="admin-bar" style="height:75.0%"></div><span class="admin-bar-day">10/6</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">71만</span><div class="admin-bar" style="height:80.7%"></div><span class="admin-bar-day">10/7</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">59만</span><div class="admin-bar" style="height:67.0%"></div><span class="admin-bar-day">10/8</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">76만</span><div class="admin-bar" style="height:86.4%"></div><span class="admin-bar-day">10/9</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">68만</span><div class="admin-bar" style="height:77.3%"></div><span class="admin-bar-day">10/10</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">57만</span><div class="admin-bar" style="height:64.8%"></div><span class="admin-bar-day">10/11</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">64만</span><div class="admin-bar" style="height:72.7%"></div><span class="admin-bar-day">10/12</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">79만</span><div class="admin-bar" style="height:89.8%"></div><span class="admin-bar-day">10/13</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">72만</span><div class="admin-bar" style="height:81.8%"></div><span class="admin-bar-day">10/14</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">83만</span><div class="admin-bar" style="height:94.3%"></div><span class="admin-bar-day">10/15</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">67만</span><div class="admin-bar" style="height:76.1%"></div><span class="admin-bar-day">10/16</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">74만</span><div class="admin-bar" style="height:84.1%"></div><span class="admin-bar-day">10/17</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">62만</span><div class="admin-bar" style="height:70.5%"></div><span class="admin-bar-day">10/18</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">70만</span><div class="admin-bar" style="height:79.5%"></div><span class="admin-bar-day">10/19</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">88만</span><div class="admin-bar" style="height:100.0%"></div><span class="admin-bar-day">10/20</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">81만</span><div class="admin-bar" style="height:92.0%"></div><span class="admin-bar-day">10/21</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">77만</span><div class="admin-bar" style="height:87.5%"></div><span class="admin-bar-day">10/22</span></div>
+                  <div class="admin-bar-col"><span class="admin-bar-val">85만</span><div class="admin-bar" style="height:96.6%"></div><span class="admin-bar-day">10/23</span></div>
+              </div>
+            </div>
+            <div class="admin-chart-card">
+              <div class="admin-chart-title">카테고리별 판매 비중</div>
+              <div class="admin-donut-wrap">
+                <div class="admin-donut"></div>
+                <div class="admin-legend">
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:var(--navy);"></span><span class="admin-legend-name">Fabric</span><span class="admin-legend-val">46%</span></div>
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:#2f6bff;"></span><span class="admin-legend-name">Rounding</span><span class="admin-legend-val">24%</span></div>
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:#6b6b6b;"></span><span class="admin-legend-name">ABS</span><span class="admin-legend-val">18%</span></div>
+                  <div class="admin-legend-row"><span class="admin-legend-dot" style="background:#d9d9d9;"></span><span class="admin-legend-name">Material</span><span class="admin-legend-val">12%</span></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
