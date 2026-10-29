@@ -616,6 +616,12 @@
     display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; text-align:center;
   }
   .ref-modal-caption{ margin-top:12px; font-size:12px; color:var(--text); text-align:center; }
+  .ref-modal-title{ font-size:14px; font-weight:700; color:var(--navy); margin-bottom:14px; padding-right:20px; }
+  /* 가이드에 등록된 참고 이미지가 여러 장이라 세로로 쌓고 넘치면 스크롤 */
+  .ref-modal-body{ max-height:62vh; overflow-y:auto; }
+  .ref-modal-body .ref-modal-img{ height:210px; }
+  .ref-modal-body .ref-modal-caption{ margin:10px 0 18px; }
+  .ref-modal-body > div:last-child .ref-modal-caption{ margin-bottom:0; }
 
   /* 장바구니 담기 완료 팝업 */
   .cart-modal-overlay{
@@ -2039,11 +2045,8 @@
 
     <div class="section-title">파일 규격 / 해상도 안내</div>
     <table class="wf-table">
-      <tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>비고</th></tr>
-      <tr><td>Fabric</td><td>300dpi</td><td>AI, PDF</td><td>A3 (297×420mm) 기준</td><td><a class="ref-link" onclick="openRefModal('Fabric')">참고사항</a></td></tr>
-      <tr><td>Rounding</td><td>300dpi</td><td>AI, PNG</td><td>지름 7.4cm (야구공 기준)</td><td><a class="ref-link" onclick="openRefModal('Rounding')">참고사항</a> · 곡면 인쇄 유의</td></tr>
-      <tr><td>ABS</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><a class="ref-link" onclick="openRefModal('ABS')">참고사항</a></td></tr>
-      <tr><td>Material</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><a class="ref-link" onclick="openRefModal('Material')">참고사항</a></td></tr>
+      <thead><tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>비고</th></tr></thead>
+      <tbody id="guide-user-rows"></tbody>
     </table>
 
     <div class="section-title">제작 공정 타임라인</div>
@@ -2676,11 +2679,8 @@
               <div class="admin-btn-row"><div class="wf-box">+ 가이드 등록</div></div>
             </div>
             <table class="wf-table">
-              <tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>관리</th></tr>
-              <tr><td>Fabric</td><td>300dpi</td><td>AI, PDF</td><td>A3 (297×420mm) 기준</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('Fabric')">수정</div></div></td></tr>
-              <tr><td>Rounding</td><td>300dpi</td><td>AI, PNG</td><td>지름 7.4cm 기준</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('Rounding')">수정</div></div></td></tr>
-              <tr><td>ABS</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('ABS')">수정</div></div></td></tr>
-              <tr><td>Material</td><td>300dpi</td><td>AI, PDF</td><td>상품별 규격 상이</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit('Material')">수정</div></div></td></tr>
+              <thead><tr><th>카테고리</th><th>권장 해상도</th><th>파일 형식</th><th>규격</th><th>관리</th></tr></thead>
+              <tbody id="guide-admin-rows"></tbody>
             </table>
           </div>
           <div class="admin-section" style="margin-bottom:0;">
@@ -2787,8 +2787,8 @@
 <div class="ref-modal-overlay" id="ref-modal">
   <div class="ref-modal-box">
     <div class="ref-modal-close" onclick="closeRefModal()">✕</div>
-    <div class="ref-modal-img" id="ref-modal-img">참고 이미지</div>
-    <div class="ref-modal-caption" id="ref-modal-caption">규격 참고 이미지 (예시)</div>
+    <div class="ref-modal-title" id="ref-modal-title">참고 이미지</div>
+    <div class="ref-modal-body" id="ref-modal-body"></div>
   </div>
 </div>
 
@@ -2991,7 +2991,7 @@
     </div>
     <div class="admin-modal-btn-row">
       <div class="wf-box" onclick="closeGuideEdit()">취소</div>
-      <div class="wf-box solid-dark" onclick="closeGuideEdit()">수정 저장</div>
+      <div class="wf-box solid-dark" onclick="saveGuideEdit()">수정 저장</div>
     </div>
   </div>
 </div>
@@ -3601,8 +3601,12 @@
 
   // 제작가이드 표 "참고사항" 링크 -> 참고 이미지 팝업
   function openRefModal(label){
-    document.getElementById('ref-modal-img').textContent = label + ' 참고 이미지';
-    document.getElementById('ref-modal-caption').textContent = label + ' 규격 참고 이미지 (예시)';
+    const d = GUIDE_DATA[label];
+    document.getElementById('ref-modal-title').textContent = label + ' 참고사항';
+    const note = d.note ? '<div class="ref-modal-caption" style="margin:0 0 16px; text-align:left;">' + d.note + '</div>' : '';
+    document.getElementById('ref-modal-body').innerHTML = note + d.imgs.map(function(im){
+      return '<div><div class="ref-modal-img"></div><div class="ref-modal-caption">' + im.c + '</div></div>';
+    }).join('');
     document.getElementById('ref-modal').classList.add('show');
   }
   function closeRefModal(){
@@ -4020,7 +4024,7 @@
       imgs:[{f:'fabric-guide.webp', c:'Fabric 규격 참고 이미지 (예시)'},
             {f:'fabric-safe-area.webp', c:'Fabric 안전 영역 참고 이미지 (예시)'},
             {f:'fabric-finish.webp', c:'Fabric 마감 참고 이미지 (예시)'}] },
-    'Rounding': { dpi:'300dpi', fmt:'AI, PNG', spec:'지름 7.4cm 기준', note:'원형 재단선 바깥 2mm까지 배경을 채워 주세요.',
+    'Rounding': { dpi:'300dpi', fmt:'AI, PNG', spec:'지름 7.4cm (야구공 기준)', note:'원형 재단선 바깥 2mm까지 배경을 채워 주세요.',
       imgs:[{f:'rounding-guide.webp', c:'Rounding 규격 참고 이미지 (예시)'},
             {f:'rounding-safe-area.webp', c:'Rounding 안전 영역 참고 이미지 (예시)'}] },
     'ABS':      { dpi:'300dpi', fmt:'AI, PDF', spec:'상품별 규격 상이', note:'곡면 인쇄 구간은 왜곡이 생길 수 있습니다.',
@@ -4051,6 +4055,17 @@
     }, '.guide-img-row');
   }
   function removeGuideImg(i){ guideImgs.splice(i, 1); renderGuideImgs(); }
+  function saveGuideEdit(){
+    const cat = document.getElementById('guide-edit-cat').textContent;
+    const d = GUIDE_DATA[cat];
+    d.dpi  = document.getElementById('guide-edit-dpi').value;
+    d.fmt  = document.getElementById('guide-edit-fmt').value;
+    d.spec = document.getElementById('guide-edit-spec').value;
+    d.note = document.getElementById('guide-edit-note').value;
+    d.imgs = guideImgs.map(function(im){ return { f:im.f, c:im.c }; });
+    renderGuideTables();
+    closeGuideEdit();
+  }
   function addGuideImg(){
     const cat = document.getElementById('guide-edit-cat').textContent;
     guideImgs.push({ f: cat.toLowerCase() + '-new-' + (guideImgs.length + 1) + '.webp', c: '' });
@@ -4068,6 +4083,23 @@
     document.getElementById('guide-edit-modal').classList.add('show');
   }
   function closeGuideEdit(){ document.getElementById('guide-edit-modal').classList.remove('show'); }
+  // 사용자 가이드 표와 관리자 가이드 표를 같은 GUIDE_DATA로 그린다.
+  // 모달에서 고친 '비고'가 실제로 나가는 곳은 사용자 페이지의 비고 칸이다.
+  function renderGuideTables(){
+    const user = document.getElementById('guide-user-rows');
+    const admin = document.getElementById('guide-admin-rows');
+    const cats = Object.keys(GUIDE_DATA);
+    if (user) user.innerHTML = cats.map(function(c){
+      const d = GUIDE_DATA[c];
+      return '<tr><td>' + c + '</td><td>' + d.dpi + '</td><td>' + d.fmt + '</td><td>' + d.spec + '</td>' +
+        '<td><a class="ref-link" onclick="openRefModal(\'' + c + '\')">참고사항</a> · ' + d.note + '</td></tr>';
+    }).join('');
+    if (admin) admin.innerHTML = cats.map(function(c){
+      const d = GUIDE_DATA[c];
+      return '<tr><td>' + c + '</td><td>' + d.dpi + '</td><td>' + d.fmt + '</td><td>' + d.spec + '</td>' +
+        '<td><div class="admin-table-actions"><div class="wf-box" onclick="openGuideEdit(\'' + c + '\')">수정</div></div></td></tr>';
+    }).join('');
+  }
 
   const COUPON_DATA = {
     '신규가입 쿠폰':     ['정률 할인','10','신규회원','340','현재 사용 128매'],
@@ -4600,6 +4632,7 @@
   renderCatStruct();
   updateOrderBulkCount();
   renderPointRows();
+  renderGuideTables();
   enableRowDrag(document.getElementById('main-banner-list'), renumberBannerRows);
   enableRowDrag(document.getElementById('faq-rows'), function(listEl){
     Array.from(listEl.children).forEach(function(tr, i){
