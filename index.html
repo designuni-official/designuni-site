@@ -1127,6 +1127,30 @@
   .banner-thumb{ width:96px; height:54px; border-radius:var(--r-sm); background:var(--ph-grad); flex-shrink:0; }
   .banner-row > .admin-table-actions{ margin-left:auto; flex-shrink:0; }
   .wf-box.drag-handle{ cursor:grab; }
+
+  /* 제작 가이드 수정 모달 - 참고 이미지 (썸네일 + 파일명 + 설명 + 순서 드래그 + 삭제) */
+  .guide-img-pick{
+    height:38px; background:var(--box); border:1px solid var(--line-light); border-radius:var(--r-sm);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    font-size:11.5px; color:var(--muted); cursor:pointer; transition:background .15s ease;
+  }
+  .guide-img-pick:hover{ background:var(--box2); }
+  .guide-img-hint{ font-size:10px; color:var(--muted); margin:6px 0 8px; }
+  .guide-img-row{
+    display:flex; align-items:center; gap:10px; padding:8px;
+    border:1px solid var(--line-light); border-radius:var(--r-sm); margin-bottom:8px; background:#fff;
+  }
+  .guide-img-row:last-child{ margin-bottom:0; }
+  .guide-img-row.dragging{ opacity:.35; }
+  .guide-img-grip{ flex:0 0 12px; text-align:center; color:var(--muted); font-size:12px; cursor:grab; }
+  .guide-img-thumb{ width:84px; height:56px; border-radius:var(--r-sm); background:var(--ph-grad); flex-shrink:0; }
+  .guide-img-body{ flex:1; min-width:0; }
+  .guide-img-name{ font-size:10.5px; color:var(--muted); margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .guide-img-del{
+    flex:0 0 32px; height:32px; border:1px solid var(--line-light); border-radius:var(--r-sm);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted);
+  }
+  .guide-img-del:hover{ border-color:var(--red); color:var(--red); }
   .wf-box.drag-handle::before{ content:'\283F'; margin-right:5px; color:var(--muted); font-size:12px; }
   .admin-toggle{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; color:var(--muted); }
   .admin-toggle .dot{ width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block; }
@@ -2659,9 +2683,11 @@
               <div class="admin-btn-row"><div class="wf-box">순서 저장</div><div class="wf-box solid-dark">+ FAQ 등록</div></div>
             </div>
             <table class="wf-table">
-              <tr><th>순서</th><th>분류</th><th>질문</th><th>노출상태</th><th>관리</th></tr>
-              <tr><td>1</td><td>주문/결제</td><td>주문 후 옵션 변경이 가능한가요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box" onclick="openFaqEdit('주문/결제')">수정</div></div></td></tr>
-              <tr><td>2</td><td>배송</td><td>제작 기간은 얼마나 걸리나요?</td><td><span class="status-pill done">노출중</span></td><td><div class="admin-table-actions"><div class="wf-box" onclick="openFaqEdit('배송')">수정</div></div></td></tr>
+              <thead><tr><th>순서</th><th>분류</th><th>질문</th><th>노출상태</th><th>관리</th></tr></thead>
+              <tbody id="faq-rows">
+              <tr><td class="faq-no">1</td><td>주문/결제</td><td>주문 후 옵션 변경이 가능한가요?</td><td><span class="admin-toggle"><span class="dot"></span>노출중</span></td><td><div class="admin-table-actions"><div class="wf-box drag-handle">순서</div><div class="wf-box" onclick="openFaqEdit('주문/결제')">수정</div></div></td></tr>
+              <tr><td class="faq-no">2</td><td>배송</td><td>제작 기간은 얼마나 걸리나요?</td><td><span class="admin-toggle"><span class="dot"></span>노출중</span></td><td><div class="admin-table-actions"><div class="wf-box drag-handle">순서</div><div class="wf-box" onclick="openFaqEdit('배송')">수정</div></div></td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -2937,27 +2963,25 @@
 
 <!-- ================= 관리자: 제작 가이드 수정 ================= -->
 <div class="admin-modal-overlay" id="guide-edit-modal">
-  <div class="admin-modal-box">
+  <div class="admin-modal-box admin-modal-box-wide">
     <div class="admin-modal-close" onclick="closeGuideEdit()">✕</div>
     <div class="admin-modal-title">제작 가이드 수정</div>
     <div class="admin-modal-field"><label>카테고리</label>
       <div class="admin-modal-input" id="guide-edit-cat"></div></div>
     <div class="admin-modal-row2">
       <div class="admin-modal-field"><label>권장 해상도</label>
-        <div class="admin-modal-input" id="guide-edit-dpi" contenteditable="true"></div></div>
+        <input type="text" class="admin-modal-input" id="guide-edit-dpi"></div>
       <div class="admin-modal-field"><label>파일 형식</label>
-        <div class="admin-modal-input" id="guide-edit-fmt" contenteditable="true"></div></div>
+        <input type="text" class="admin-modal-input" id="guide-edit-fmt"></div>
     </div>
     <div class="admin-modal-field"><label>규격</label>
-      <div class="admin-modal-input" id="guide-edit-spec" contenteditable="true"></div></div>
+      <input type="text" class="admin-modal-input" id="guide-edit-spec"></div>
     <div class="admin-modal-field"><label>비고</label>
-      <div class="admin-modal-input" contenteditable="true" style="min-height:52px; align-items:flex-start;">재단 여백을 포함해 작업해 주세요.</div></div>
-    <div class="admin-modal-field"><label>참고 이미지 (JPG, PNG, WEBP)</label>
-      <div class="admin-tree">
-        <div class="admin-tree-row"><span>규격 참고 이미지</span><div class="admin-table-actions"><div class="wf-box">변경</div></div></div>
-        <div class="admin-tree-row"><span>안전 영역 참고 이미지</span><div class="admin-table-actions"><div class="wf-box">변경</div></div></div>
-        <div class="admin-tree-row"><span>마감 참고 이미지</span><div class="admin-table-actions"><div class="wf-box">변경</div></div></div>
-      </div>
+      <textarea class="admin-modal-input admin-modal-textarea" id="guide-edit-note"></textarea></div>
+    <div class="admin-modal-field"><label>참고 이미지</label>
+      <div class="guide-img-pick" onclick="addGuideImg()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.6" cy="9.6" r="1.6"/><path d="M21 15.5l-5.2-5.2-9.3 9.3"/></svg> 이미지 선택</div>
+      <div class="guide-img-hint">JPG, PNG, WEBP · 손잡이를 끌어 노출 순서를 바꿀 수 있습니다</div>
+      <div id="guide-img-list"></div>
     </div>
     <div class="admin-modal-btn-row">
       <div class="wf-box" onclick="closeGuideEdit()">취소</div>
@@ -3986,17 +4010,55 @@
   function closeBannerEdit(){ document.getElementById('banner-edit-modal').classList.remove('show'); }
 
   const GUIDE_DATA = {
-    'Fabric':   ['300dpi','AI, PDF','A3 (297×420mm) 기준'],
-    'Rounding': ['300dpi','AI, PNG','지름 7.4cm 기준'],
-    'ABS':      ['300dpi','AI, PDF','상품별 규격 상이'],
-    'Material': ['300dpi','AI, PDF','상품별 규격 상이']
+    'Fabric':   { dpi:'300dpi', fmt:'AI, PDF', spec:'A3 (297×420mm) 기준', note:'재단 여백을 포함해 작업해 주세요.',
+      imgs:[{f:'fabric-guide.webp', c:'Fabric 규격 참고 이미지 (예시)'},
+            {f:'fabric-safe-area.webp', c:'Fabric 안전 영역 참고 이미지 (예시)'},
+            {f:'fabric-finish.webp', c:'Fabric 마감 참고 이미지 (예시)'}] },
+    'Rounding': { dpi:'300dpi', fmt:'AI, PNG', spec:'지름 7.4cm 기준', note:'원형 재단선 바깥 2mm까지 배경을 채워 주세요.',
+      imgs:[{f:'rounding-guide.webp', c:'Rounding 규격 참고 이미지 (예시)'},
+            {f:'rounding-safe-area.webp', c:'Rounding 안전 영역 참고 이미지 (예시)'}] },
+    'ABS':      { dpi:'300dpi', fmt:'AI, PDF', spec:'상품별 규격 상이', note:'곡면 인쇄 구간은 왜곡이 생길 수 있습니다.',
+      imgs:[{f:'abs-guide.webp', c:'ABS 규격 참고 이미지 (예시)'}] },
+    'Material': { dpi:'300dpi', fmt:'AI, PDF', spec:'상품별 규격 상이', note:'소재별 발색 차이가 있어 시안 확인 후 진행합니다.',
+      imgs:[{f:'material-guide.webp', c:'Material 규격 참고 이미지 (예시)'},
+            {f:'material-finish.webp', c:'Material 마감 참고 이미지 (예시)'}] }
   };
+  // 모달에서 편집 중인 참고 이미지 목록 (수정 저장 전까지 GUIDE_DATA에는 반영하지 않는다)
+  let guideImgs = [];
+  function renderGuideImgs(){
+    const wrap = document.getElementById('guide-img-list');
+    wrap.innerHTML = guideImgs.map(function(im, i){
+      return '<div class="guide-img-row" data-file="' + im.f + '">' +
+        '<div class="guide-img-grip drag-handle">\u283F</div>' +
+        '<div class="guide-img-thumb"></div>' +
+        '<div class="guide-img-body">' +
+          '<div class="guide-img-name">' + im.f + '</div>' +
+          '<input type="text" class="admin-modal-input small" value="' + im.c + '" oninput="guideImgs[' + i + '].c=this.value">' +
+        '</div>' +
+        '<div class="guide-img-del" onclick="removeGuideImg(' + i + ')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V4h6v2M7 6l1 14h8l1-14"/></svg></div>' +
+      '</div>';
+    }).join('');
+    enableRowDrag(wrap, function(listEl){
+      const order = Array.from(listEl.children).map(function(r){ return r.dataset.file; });
+      guideImgs.sort(function(a, b){ return order.indexOf(a.f) - order.indexOf(b.f); });
+      renderGuideImgs();
+    }, '.guide-img-row');
+  }
+  function removeGuideImg(i){ guideImgs.splice(i, 1); renderGuideImgs(); }
+  function addGuideImg(){
+    const cat = document.getElementById('guide-edit-cat').textContent;
+    guideImgs.push({ f: cat.toLowerCase() + '-new-' + (guideImgs.length + 1) + '.webp', c: '' });
+    renderGuideImgs();
+  }
   function openGuideEdit(cat){
     const d = GUIDE_DATA[cat] || GUIDE_DATA['Fabric'];
     document.getElementById('guide-edit-cat').textContent = cat;
-    document.getElementById('guide-edit-dpi').textContent = d[0];
-    document.getElementById('guide-edit-fmt').textContent = d[1];
-    document.getElementById('guide-edit-spec').textContent = d[2];
+    document.getElementById('guide-edit-dpi').value = d.dpi;
+    document.getElementById('guide-edit-fmt').value = d.fmt;
+    document.getElementById('guide-edit-spec').value = d.spec;
+    document.getElementById('guide-edit-note').value = d.note;
+    guideImgs = d.imgs.map(function(im){ return { f:im.f, c:im.c }; });
+    renderGuideImgs();
     document.getElementById('guide-edit-modal').classList.add('show');
   }
   function closeGuideEdit(){ document.getElementById('guide-edit-modal').classList.remove('show'); }
@@ -4318,13 +4380,14 @@
   }
 
   // '순서' 핸들을 잡고 행을 끌어 순서를 바꾼다 (프론트 manage의 드래그 정렬과 동일).
-  function enableRowDrag(listEl, onDrop){
+  function enableRowDrag(listEl, onDrop, rowSel){
     if (!listEl || listEl.dataset.dragReady) return;
     listEl.dataset.dragReady = '1';
+    const sel = rowSel || '.banner-row';
     let src = null;
     listEl.addEventListener('mousedown', function(e){
       const h = e.target.closest('.drag-handle');
-      src = h ? h.closest('.banner-row') : null;
+      src = h ? h.closest(sel) : null;
       if (src) src.draggable = true;
     });
     listEl.addEventListener('dragstart', function(e){
@@ -4336,7 +4399,7 @@
     listEl.addEventListener('dragover', function(e){
       if (!src) return;
       e.preventDefault();
-      const over = e.target.closest('.banner-row');
+      const over = e.target.closest(sel);
       if (!over || over === src) return;
       const r = over.getBoundingClientRect();
       listEl.insertBefore(src, (e.clientY - r.top) > r.height / 2 ? over.nextSibling : over);
@@ -4532,6 +4595,12 @@
   updateOrderBulkCount();
   renderPointRows();
   enableRowDrag(document.getElementById('main-banner-list'), renumberBannerRows);
+  enableRowDrag(document.getElementById('faq-rows'), function(listEl){
+    Array.from(listEl.children).forEach(function(tr, i){
+      const no = tr.querySelector('.faq-no');
+      if (no) no.textContent = i + 1;
+    });
+  }, 'tr');
 </script>
 </body>
 </html>
