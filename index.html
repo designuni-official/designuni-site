@@ -780,10 +780,21 @@
 
   /* 상품 모달 안의 옵션 그룹 편집기 (상품상세의 '표면 마감'·'인쇄 범위' 같은 선택지) */
   .prod-opt-value-row{
-    display:grid; grid-template-columns:1fr 18px; gap:8px; align-items:center; margin-bottom:6px;
+    display:grid; grid-template-columns:44px 1fr 18px; gap:8px; align-items:center; margin-bottom:6px;
   }
   .prod-opt-value-row:last-child{ margin-bottom:0; }
   .prod-opt-value-row input{ background:#fff; }
+  /* 단독선택 토글: 체크 시 그룹 안에서 하나만 고를 수 있다 */
+  .prod-opt-single{
+    display:flex; align-items:center; gap:5px; font-size:10px; color:var(--muted);
+    white-space:nowrap; flex-shrink:0; cursor:pointer;
+  }
+  .prod-opt-single input{ margin:0; cursor:pointer; }
+  .prod-opt-single.on{ color:var(--navy); font-weight:700; }
+  .prod-opt-value-header{
+    display:grid; grid-template-columns:44px 1fr 18px; gap:8px;
+    font-size:10px; color:var(--muted); margin-bottom:6px; padding:0 2px;
+  }
 
   /* 상품별 연결 옵션 그룹 선택 팝업 */
   .prod-opt-link-list{ display:flex; flex-direction:column; gap:10px; }
@@ -2736,6 +2747,7 @@
     </div>
     <div class="help-note-list" style="margin-top:0;">
       <div>· 옵션 그룹 하나가 상품상세의 선택 줄 하나가 됩니다. 예: '표면 마감' → 유광 코팅 / 무광 코팅 / UV 인쇄</div>
+      <div>· <strong>단독선택</strong>을 켜면 그 그룹에서 옵션 하나만 고를 수 있습니다(라디오). 끄면 여러 개를 함께 고를 수 있습니다(체크박스).</div>
     </div>
     <div class="admin-modal-btn-row">
       <div class="wf-box" onclick="closeProdEditModal()">취소</div>
@@ -3395,21 +3407,21 @@
     '광목 포스터': { category:'Fabric > 포스터', status:'판매중', specs:[
       { name:'40×60cm', tiers:[ {min:1, max:9, price:12000}, {min:10, max:49, price:11000}, {min:50, max:null, price:9500} ] }
     ], options:[
-      { name:'원단', values:['광목', '린넨', '쉬폰'] },
-      { name:'후가공', values:['유광 코팅', '무광 코팅', '코팅 없음'] }
+      { name:'원단', single:true, values:['광목', '린넨', '쉬폰'] },
+      { name:'후가공', single:false, values:['유광 코팅', '무광 코팅', '형압', '박'] }
     ]},
     '기념구 (야구공)': { category:'Rounding > 야구공', status:'판매중', specs:[
       { name:'정품 규격', tiers:[ {min:1, max:19, price:18000}, {min:20, max:49, price:16500}, {min:50, max:null, price:15000} ] }
     ], options:[
-      { name:'사이즈(mm)', values:['정식구 73mm', '전시용 80mm'] },
-      { name:'표면 마감', values:['유광 코팅', '무광 코팅', 'UV 인쇄'] },
-      { name:'인쇄 범위', values:['1면 인쇄', '2면 인쇄', '전면 인쇄'] }
+      { name:'사이즈(mm)', single:true, values:['정식구 73mm', '전시용 80mm'] },
+      { name:'표면 마감', single:true, values:['유광 코팅', '무광 코팅', 'UV 인쇄'] },
+      { name:'인쇄 범위', single:true, values:['1면 인쇄', '2면 인쇄', '전면 인쇄'] }
     ]},
     '방수토이필름카메라': { category:'ABS > 필름카메라', status:'품절', specs:[
       { name:'기본형', tiers:[ {min:1, max:29, price:9500}, {min:30, max:null, price:8800} ] }
     ], options:[
-      { name:'색상', values:['화이트', '핑크', '민트'] },
-      { name:'인쇄 범위', values:['1면 인쇄', '전면 인쇄'] }
+      { name:'색상', single:true, values:['화이트', '핑크', '민트'] },
+      { name:'인쇄 범위', single:true, values:['1면 인쇄', '전면 인쇄'] }
     ]}
   };
   function buildPriceTierRow(min, max, price){
@@ -3466,20 +3478,33 @@
     const row = document.createElement('div');
     row.className = 'prod-opt-value-row';
     row.innerHTML =
+      '<div class="wf-box opt-value-thumb">이미지</div>' +
       '<input type="text" class="admin-modal-input small" placeholder="옵션값 (예: 유광 코팅)" value="' + (value || '') + '">' +
       '<div class="opt-value-remove" onclick="this.parentElement.remove()">✕</div>';
     return row;
   }
-  function buildProdOptionBlock(name, values){
+  function buildProdOptionBlock(name, values, single){
     const block = document.createElement('div');
     block.className = 'price-spec-block';
     const head = document.createElement('div');
     head.className = 'price-spec-head';
+    const on = single !== false;   // 기본값은 단독선택(라디오)
     head.innerHTML =
       '<label>옵션명</label>' +
       '<div class="admin-modal-input small" contenteditable="true">' + (name || '') + '</div>' +
+      '<label class="prod-opt-single' + (on ? ' on' : '') + '">' +
+        '<input type="checkbox"' + (on ? ' checked' : '') + '> 단독선택' +
+      '</label>' +
       '<div class="price-spec-remove" onclick="this.closest(\'.price-spec-block\').remove()">✕</div>';
     block.appendChild(head);
+    const toggle = head.querySelector('.prod-opt-single input');
+    toggle.addEventListener('change', function(){
+      head.querySelector('.prod-opt-single').classList.toggle('on', this.checked);
+    });
+    const valHeader = document.createElement('div');
+    valHeader.className = 'prod-opt-value-header';
+    valHeader.innerHTML = '<span>이미지</span><span>옵션값</span><span></span>';
+    block.appendChild(valHeader);
     const table = document.createElement('div');
     table.className = 'price-tier-table';
     (values && values.length ? values : ['']).forEach(v => table.appendChild(buildProdOptValueRow(v)));
@@ -3492,12 +3517,12 @@
     return block;
   }
   function addProdOptionBlock(){
-    document.getElementById('prod-opt-list').appendChild(buildProdOptionBlock('', ['']));
+    document.getElementById('prod-opt-list').appendChild(buildProdOptionBlock('', [''], true));
   }
   function renderProdOptionList(options){
     const wrap = document.getElementById('prod-opt-list');
     wrap.innerHTML = '';
-    (options || []).forEach(o => wrap.appendChild(buildProdOptionBlock(o.name, o.values)));
+    (options || []).forEach(o => wrap.appendChild(buildProdOptionBlock(o.name, o.values, o.single)));
   }
 
   function openProdEditModal(mode, productName){
