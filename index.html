@@ -715,6 +715,11 @@
   }
   .admin-modal-input:focus{ outline:none; background:#fff; box-shadow:0 0 0 2px var(--navy-light); }
   .admin-modal-textarea{ min-height:60px; align-items:flex-start; line-height:1.6; }
+  /* textarea에 display:flex가 걸리면 내부 텍스트가 양끝정렬처럼 벌어진다 */
+  textarea.admin-modal-input{
+    display:block; min-height:80px; padding:9px 10px; line-height:1.6;
+    font-family:inherit; font-size:12px; border:none; resize:vertical;
+  }
   .admin-chip-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
   .admin-chip{
     display:inline-flex; align-items:center; gap:6px; background:var(--navy-light);
@@ -1145,6 +1150,7 @@
   .guide-img-grip{ flex:0 0 12px; text-align:center; color:var(--muted); font-size:12px; cursor:grab; }
   .guide-img-thumb{ width:84px; height:56px; border-radius:var(--r-sm); background:var(--ph-grad); flex-shrink:0; }
   .guide-img-body{ flex:1; min-width:0; }
+  .guide-img-cap{ background:#fff; border:1px solid var(--line-light) !important; }
   .guide-img-name{ font-size:10.5px; color:var(--muted); margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .guide-img-del{
     flex:0 0 32px; height:32px; border:1px solid var(--line-light); border-radius:var(--r-sm);
@@ -2980,7 +2986,7 @@
       <textarea class="admin-modal-input admin-modal-textarea" id="guide-edit-note"></textarea></div>
     <div class="admin-modal-field"><label>참고 이미지</label>
       <div class="guide-img-pick" onclick="addGuideImg()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.6" cy="9.6" r="1.6"/><path d="M21 15.5l-5.2-5.2-9.3 9.3"/></svg> 이미지 선택</div>
-      <div class="guide-img-hint">JPG, PNG, WEBP · 손잡이를 끌어 노출 순서를 바꿀 수 있습니다</div>
+      <div class="guide-img-hint">JPG, PNG, WEBP</div>
       <div id="guide-img-list"></div>
     </div>
     <div class="admin-modal-btn-row">
@@ -4029,11 +4035,11 @@
     const wrap = document.getElementById('guide-img-list');
     wrap.innerHTML = guideImgs.map(function(im, i){
       return '<div class="guide-img-row" data-file="' + im.f + '">' +
-        '<div class="guide-img-grip drag-handle">\u283F</div>' +
+        '<div class="guide-img-grip drag-handle" title="끌어서 노출 순서 변경">\u283F</div>' +
         '<div class="guide-img-thumb"></div>' +
         '<div class="guide-img-body">' +
           '<div class="guide-img-name">' + im.f + '</div>' +
-          '<input type="text" class="admin-modal-input small" value="' + im.c + '" oninput="guideImgs[' + i + '].c=this.value">' +
+          '<input type="text" class="admin-modal-input small guide-img-cap" value="' + im.c + '" oninput="guideImgs[' + i + '].c=this.value">' +
         '</div>' +
         '<div class="guide-img-del" onclick="removeGuideImg(' + i + ')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V4h6v2M7 6l1 14h8l1-14"/></svg></div>' +
       '</div>';
