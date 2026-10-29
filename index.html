@@ -975,6 +975,14 @@
   .admin-btn:hover{ background:var(--navy-dark); transform:translateY(-1px); }
   .admin-btn.outline{ background:var(--navy-light); color:var(--navy); }
   .admin-btn-row{ display:flex; gap:8px; }
+  /* 주문 일괄 작업 바 */
+  .order-bulk-bar{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    background:var(--box); border-radius:var(--r-sm); padding:10px 12px; margin-bottom:12px;
+  }
+  .order-bulk-all{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text); cursor:pointer; }
+  .order-bulk-all input{ margin:0; cursor:pointer; }
+  .order-bulk-count{ font-size:11.5px; color:var(--muted); margin-right:auto; }
   .admin-filter-row{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
   .admin-filter-row .wf-box{ height:32px; width:auto; padding:0 12px; flex:none; font-size:11.5px; }
   .status-pill{ display:inline-block; font-size:10.5px; padding:3px 9px; border-radius:10px; font-weight:700; }
@@ -2169,7 +2177,6 @@
             <div class="wf-box"><span class="admin-num">7건</span><span class="admin-num-label">오늘 신규 주문</span></div>
             <div class="wf-box"><span class="admin-num">842,000원</span><span class="admin-num-label">오늘 매출</span></div>
             <div class="wf-box"><span class="admin-num">3건</span><span class="admin-num-label">신규 회원가입</span></div>
-            <div class="wf-box"><span class="admin-num">5건</span><span class="admin-num-label">미답변 1:1문의</span></div>
           </div>
           <div class="admin-section">
             <div class="admin-section-head">
@@ -2179,21 +2186,18 @@
               </div>
             </div>
             <table class="wf-table">
-              <tr><th>주문번호</th><th>상품</th><th>고객</th><th>금액</th><th>상태</th><th>주문일</th><th>관리</th></tr>
+              <tr><th>주문번호</th><th>상품</th><th>고객</th><th>금액</th><th>상태</th><th>주문일</th></tr>
               <tr>
                 <td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
                 <td><span class="status-pill pending">입금대기</span></td><td>2026-07-21</td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260721-07')">상세</div><div class="wf-box" onclick="openOrderStatus('20260721-07','에코백 외 2건','입금대기')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
                 <td><span class="status-pill processing">제작중</span></td><td>2026-07-21</td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260721-06')">상세</div><div class="wf-box" onclick="openOrderStatus('20260721-06','키링 50개','제작중')">상태변경</div></div></td>
               </tr>
               <tr>
                 <td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
                 <td><span class="status-pill hold">파일오류</span></td><td>2026-07-20</td>
-                <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-11')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-11','사인볼','파일오류')">상태변경</div></div></td>
               </tr>
             </table>
           </div>
@@ -2205,8 +2209,8 @@
               </div>
             </div>
             <table class="wf-table">
-              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>답변상태</th></tr>
-              <tr><td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td><span class="status-pill pending">답변대기</span></td></tr>
+              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>문의일</th></tr>
+              <tr><td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td>2026-07-21</td></tr>
             </table>
           </div>
         
@@ -2410,30 +2414,38 @@
               <div class="wf-box">전체 상태</div>
               <div class="wf-box">주문번호 · 고객명 검색</div>
             </div>
+            <div class="order-bulk-bar">
+              <label class="order-bulk-all"><input type="checkbox" id="order-check-all" onchange="toggleAllOrders(this)"> 전체 선택</label>
+              <span class="order-bulk-count" id="order-bulk-count">0건 선택됨</span>
+              <select class="admin-modal-input" id="order-bulk-status" style="width:auto; min-width:130px; height:32px;">
+                <option>입금대기</option><option>제작중</option><option>파일오류</option><option>배송중</option><option>배송완료</option>
+              </select>
+              <div class="wf-box solid-dark" style="height:32px; width:auto; padding:0 14px; cursor:pointer;" onclick="applyOrderBulk()">선택 주문 상태 일괄변경</div>
+            </div>
             <table class="wf-table">
-              <tr><th>주문번호</th><th>상품</th><th>고객</th><th>금액</th><th>상태</th><th>주문일</th><th>관리</th></tr>
+              <tr><th style="width:34px;"></th><th>주문번호</th><th>상품</th><th>고객</th><th>금액</th><th>상태</th><th>주문일</th><th>관리</th></tr>
               <tr>
-                <td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
+                <td><input type="checkbox" class="order-check" onchange="updateOrderBulkCount()"></td><td>20260721-07</td><td>에코백 외 2건</td><td>김서연</td><td>62,000원</td>
                 <td><span class="status-pill pending">입금대기</span></td><td>2026-07-21</td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260721-06')">상세</div><div class="wf-box" onclick="openOrderStatus('20260721-06','키링 50개','제작중')">상태변경</div></div></td>
               </tr>
               <tr>
-                <td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
+                <td><input type="checkbox" class="order-check" onchange="updateOrderBulkCount()"></td><td>20260721-06</td><td>키링 50개</td><td>박준호</td><td>65,000원</td>
                 <td><span class="status-pill processing">제작중</span></td><td>2026-07-21</td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-11')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-11','사인볼','파일오류')">상태변경</div></div></td>
               </tr>
               <tr>
-                <td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
+                <td><input type="checkbox" class="order-check" onchange="updateOrderBulkCount()"></td><td>20260720-11</td><td>사인볼</td><td>이하은</td><td>18,000원</td>
                 <td><span class="status-pill hold">파일오류</span></td><td>2026-07-20</td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-11')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-11','사인볼','파일오류')">상태변경</div></div></td>
               </tr>
               <tr>
-                <td>20260720-09</td><td>패브릭 포스터</td><td>최지우</td><td>24,000원</td>
+                <td><input type="checkbox" class="order-check" onchange="updateOrderBulkCount()"></td><td>20260720-09</td><td>패브릭 포스터</td><td>최지우</td><td>24,000원</td>
                 <td><span class="status-pill done">배송완료</span></td><td>2026-07-20</td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260720-09')">상세</div><div class="wf-box" onclick="openOrderStatus('20260720-09','패브릭 포스터','배송완료')">상태변경</div></div></td>
               </tr>
               <tr>
-                <td>20260719-14</td><td>목봉마감 액자</td><td>정하늘</td><td>31,000원</td>
+                <td><input type="checkbox" class="order-check" onchange="updateOrderBulkCount()"></td><td>20260719-14</td><td>목봉마감 액자</td><td>정하늘</td><td>31,000원</td>
                 <td><span class="status-pill processing">배송중</span></td><td>2026-07-19</td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openOrderDetail('20260719-14')">상세</div><div class="wf-box" onclick="openOrderStatus('20260719-14','목봉마감 액자','배송중')">상태변경</div></div></td>
               </tr>
@@ -2448,15 +2460,13 @@
               <div class="section-title" style="margin-top:0;">대량주문 견적문의 관리</div>
             </div>
             <table class="wf-table">
-              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>문의일</th><th>답변상태</th><th>관리</th></tr>
+              <tr><th>문의번호</th><th>업체명</th><th>희망 수량</th><th>문의일</th><th>관리</th></tr>
               <tr>
                 <td>Q-0721-02</td><td>(주)해브굿즈</td><td>500개</td><td>2026-07-21</td>
-                <td><span class="status-pill pending">답변대기</span></td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openQuoteDetail('Q-0721-02')">상세보기</div></div></td>
               </tr>
               <tr>
                 <td>Q-0719-05</td><td>서초고 학생회</td><td>120개</td><td>2026-07-19</td>
-                <td><span class="status-pill done">답변완료</span></td>
                 <td><div class="admin-table-actions"><div class="wf-box" onclick="openQuoteDetail('Q-0719-05')">상세보기</div></div></td>
               </tr>
             </table>
@@ -3743,7 +3753,7 @@
   }
   function openQuoteDetail(no){
     const d = QUOTE_DETAILS[no] || QUOTE_DETAILS['Q-0721-02'];
-    const html = infoSec('견적 문의', [['문의번호',no],['업체명',d.company],['희망 수량',d.qty],['답변상태',d.status]].concat(d.rows)) +
+    const html = infoSec('견적 문의', [['문의번호',no],['업체명',d.company],['희망 수량',d.qty]].concat(d.rows)) +
       infoSec('문의내용', [['내용', d.body]]);
     openAdminInfo('견적 문의 상세', html);
   }
@@ -3814,6 +3824,32 @@
     document.getElementById('point-edit-modal').classList.add('show');
   }
   function closePointEdit(){ document.getElementById('point-edit-modal').classList.remove('show'); }
+
+  // ----- 주문 일괄 작업 -----
+  function orderChecks(){ return [...document.querySelectorAll('#admin-view-orders .order-check')]; }
+  function updateOrderBulkCount(){
+    const all = orderChecks(), on = all.filter(c => c.checked);
+    document.getElementById('order-bulk-count').textContent = on.length + '건 선택됨';
+    const head = document.getElementById('order-check-all');
+    head.checked = on.length > 0 && on.length === all.length;
+    head.indeterminate = on.length > 0 && on.length < all.length;   // 일부만 선택된 상태 표시
+  }
+  function toggleAllOrders(el){
+    orderChecks().forEach(c => { c.checked = el.checked; });
+    updateOrderBulkCount();
+  }
+  function applyOrderBulk(){
+    const on = orderChecks().filter(c => c.checked);
+    if (!on.length) return;
+    const status = document.getElementById('order-bulk-status').value;
+    const pill = { '입금대기':'pending', '제작중':'processing', '파일오류':'hold', '배송중':'processing', '배송완료':'done' }[status];
+    on.forEach(c => {
+      const cell = c.closest('tr').querySelector('.status-pill');
+      if (cell) { cell.className = 'status-pill ' + pill; cell.textContent = status; }
+      c.checked = false;
+    });
+    updateOrderBulkCount();
+  }
 
   // 오버레이 바깥 클릭 시 닫기
   [['admin-info-modal',closeAdminInfo],['order-status-modal',closeOrderStatus],
@@ -4146,6 +4182,7 @@
   initProdCatSelects();
   renderProdOptReadonly();
   renderOptGroupRows();
+  updateOrderBulkCount();
 </script>
 </body>
 </html>
