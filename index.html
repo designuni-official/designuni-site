@@ -753,6 +753,22 @@
     background-repeat:no-repeat; background-position:right 10px center; background-size:10px auto;
   }
   .admin-modal-row2.cat-row{ gap:10px; }
+
+  /* 적립금 정책 모달 - 금액/지급 한도 입력 (자유 텍스트 대신 구조화된 입력) */
+  input.admin-modal-input{ font-family:inherit; border:none; -moz-appearance:textfield; }
+  input.admin-modal-input:focus{ outline:none; }
+  .point-num-wrap{ display:flex; align-items:center; gap:6px; }
+  .point-num-wrap input{ flex:1; min-width:0; }
+  .point-num-wrap span{ font-size:11px; color:var(--muted); flex-shrink:0; }
+  .point-limit-box{ background:var(--box); border-radius:var(--r-sm); padding:10px; }
+  .point-limit-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .point-limit-row .admin-modal-input{ background:#fff; min-height:32px; font-size:11.5px; }
+  .point-limit-row select.admin-modal-input{ flex:1; min-width:0; }
+  .point-limit-row .point-num-wrap{ flex:1; }
+  .point-limit-preview{
+    font-size:11px; color:var(--muted); padding-top:2px; border-top:1px dashed var(--line); margin-top:2px;
+  }
+  .point-limit-preview b{ color:var(--navy); font-weight:600; }
   .opt-value-required{ display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px; color:var(--muted); }
   .opt-value-required input{ margin:0; }
   .opt-value-remove{ cursor:pointer; color:var(--muted); font-size:12px; text-align:center; }
@@ -2561,10 +2577,8 @@
               <div class="admin-btn-row"><div class="wf-box solid-dark" onclick="openPointEdit(null)">+ 적립 항목 등록</div></div>
             </div>
             <table class="wf-table">
-              <tr><th>적립 항목</th><th>적립금액</th><th>비고</th><th>관리</th></tr>
-              <tr><td>커뮤니티 게시글 작성</td><td>3,000원</td><td>1일 1회 한도</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit('커뮤니티 게시글 작성')">수정</div></div></td></tr>
-              <tr><td>커뮤니티 댓글 작성</td><td>500원</td><td>1일 3회 한도</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit('커뮤니티 댓글 작성')">수정</div></div></td></tr>
-              <tr><td>구매 후기 작성</td><td>1,000원</td><td>주문 1건당 1회</td><td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit('구매 후기 작성')">수정</div></div></td></tr>
+              <tr><th>적립 항목</th><th>적립금액</th><th>지급 한도</th><th>관리</th></tr>
+              <tbody id="point-policy-rows"></tbody>
             </table>
           </div>
         </div>
@@ -3009,16 +3023,37 @@
     <div class="admin-modal-field"><label>적립 항목</label>
       <div class="admin-modal-input" id="point-edit-item" contenteditable="true"></div></div>
     <div class="admin-modal-row2">
-      <div class="admin-modal-field"><label>적립 방식</label>
-        <select class="admin-modal-input" id="point-edit-type"><option>정액 적립</option><option>정률 적립</option></select></div>
-      <div class="admin-modal-field"><label>적립값 (원 / %)</label>
-        <div class="admin-modal-input" id="point-edit-amt" contenteditable="true"></div></div>
-    </div>
-    <div class="admin-modal-row2">
-      <div class="admin-modal-field"><label>지급 한도</label>
-        <div class="admin-modal-input" id="point-edit-limit" contenteditable="true"></div></div>
+      <div class="admin-modal-field"><label>적립 금액 (정액)</label>
+        <div class="point-num-wrap">
+          <input type="number" class="admin-modal-input" id="point-edit-amt" min="0" step="100" placeholder="0" oninput="syncPointLimit()">
+          <span>원</span>
+        </div></div>
       <div class="admin-modal-field"><label>적용 대상</label>
         <select class="admin-modal-input" id="point-edit-target"><option>전체회원</option><option>일반회원</option><option>기업회원</option></select></div>
+    </div>
+    <div class="admin-modal-field"><label>지급 한도</label>
+      <div class="point-limit-box">
+        <div class="point-limit-row">
+          <select class="admin-modal-input" id="point-limit-cycle" onchange="syncPointLimit()">
+            <option value="none">제한 없음</option>
+            <option value="day">매일</option>
+            <option value="week">매주</option>
+            <option value="month-nth">매월 N째 주</option>
+            <option value="month-day">매월 날짜</option>
+            <option value="order">주문 1건당</option>
+          </select>
+          <select class="admin-modal-input" id="point-limit-nth" onchange="syncPointLimit()"></select>
+          <select class="admin-modal-input" id="point-limit-dow" onchange="syncPointLimit()"></select>
+          <select class="admin-modal-input" id="point-limit-day" onchange="syncPointLimit()"></select>
+        </div>
+        <div class="point-limit-row" id="point-limit-cnt-row">
+          <div class="point-num-wrap">
+            <input type="number" class="admin-modal-input" id="point-limit-cnt" min="1" step="1" value="1" oninput="syncPointLimit()">
+            <span>회 한도</span>
+          </div>
+        </div>
+        <div class="point-limit-preview" id="point-limit-preview"></div>
+      </div>
     </div>
     <div class="admin-modal-field"><label>사용 여부</label>
       <select class="admin-modal-input" id="point-edit-use"><option>사용중</option><option>중지</option></select></div>
@@ -3973,16 +4008,73 @@
   }
   function closeFaqEdit(){ document.getElementById('faq-edit-modal').classList.remove('show'); }
 
-  const POINT_DATA = { '커뮤니티 게시글 작성':['3000','1일 1회 한도'], '커뮤니티 댓글 작성':['500','1일 3회 한도'], '구매 후기 작성':['1000','주문 1건당 1회'] };
+  // 적립금은 정액 적립만 쓰므로 금액은 숫자, 지급 한도는 주기+횟수로만 저장한다.
+  // cycle: none | day | week | month-nth | month-day | order
+  const POINT_DATA = {
+    '커뮤니티 게시글 작성': { amt:3000, cycle:'day',   nth:'첫째', dow:'월', day:1, cnt:1 },
+    '커뮤니티 댓글 작성':   { amt:500,  cycle:'day',   nth:'첫째', dow:'월', day:1, cnt:3 },
+    '구매 후기 작성':       { amt:1000, cycle:'order', nth:'첫째', dow:'월', day:1, cnt:1 }
+  };
+  const POINT_NTH = ['첫째','둘째','셋째','넷째','마지막'];
+  const POINT_DOW = ['월','화','수','목','금','토','일'];
+
+  // 저장값 -> 사람이 읽는 한 줄 (모달 미리보기 / 목록 '지급 한도' 칸 공용)
+  function pointLimitText(d){
+    const n = d.cnt || 1;
+    if (d.cycle === 'none')       return '제한 없음';
+    if (d.cycle === 'day')        return '1일 ' + n + '회 한도';
+    const dow = String(d.dow).replace('요일','') + '요일';
+    const day = String(d.day).replace('일','') + '일';
+    if (d.cycle === 'week')       return '매주 ' + dow + ' ' + n + '회 한도';
+    if (d.cycle === 'month-nth')  return '매월 ' + d.nth + ' 주 ' + dow + ' ' + n + '회 한도';
+    if (d.cycle === 'month-day')  return '매월 ' + day + ' ' + n + '회 한도';
+    return '주문 1건당 ' + n + '회';
+  }
+  function renderPointRows(){
+    const tb = document.getElementById('point-policy-rows');
+    if (!tb) return;
+    tb.innerHTML = Object.keys(POINT_DATA).map(function(k){
+      const d = POINT_DATA[k];
+      return '<tr><td>' + k + '</td><td>' + d.amt.toLocaleString() + '원</td><td>' + pointLimitText(d) + '</td>' +
+        '<td><div class="admin-table-actions"><div class="wf-box" onclick="openPointEdit(\'' + k + '\')">수정</div></div></td></tr>';
+    }).join('');
+  }
+  // 주기에 따라 필요한 칸만 노출하고 미리보기 문구를 갱신한다.
+  function syncPointLimit(){
+    const cycle = document.getElementById('point-limit-cycle').value;
+    const show = function(id, on){ document.getElementById(id).style.display = on ? '' : 'none'; };
+    show('point-limit-nth', cycle === 'month-nth');
+    show('point-limit-dow', cycle === 'week' || cycle === 'month-nth');
+    show('point-limit-day', cycle === 'month-day');
+    show('point-limit-cnt-row', cycle !== 'none');
+    const amt = parseInt(document.getElementById('point-edit-amt').value || '0', 10);
+    document.getElementById('point-limit-preview').innerHTML =
+      '<b>' + amt.toLocaleString() + '원</b> · ' + pointLimitText({
+        cycle: cycle,
+        nth: document.getElementById('point-limit-nth').value,
+        dow: document.getElementById('point-limit-dow').value,
+        day: document.getElementById('point-limit-day').value,
+        cnt: parseInt(document.getElementById('point-limit-cnt').value || '1', 10)
+      });
+  }
   // item이 null이면 신규 등록 모드
   function openPointEdit(item){
-    const d = POINT_DATA[item] || ['',''];
+    const d = POINT_DATA[item] || { amt:'', cycle:'day', nth:'첫째', dow:'월', day:1, cnt:1 };
     const isNew = !item;
+    const opts = function(arr, suffix){ return arr.map(function(v){ return '<option>' + v + suffix + '</option>'; }).join(''); };
+    document.getElementById('point-limit-nth').innerHTML = opts(POINT_NTH, '');
+    document.getElementById('point-limit-dow').innerHTML = opts(POINT_DOW, '요일');
+    document.getElementById('point-limit-day').innerHTML =
+      Array.from({length:31}, function(_, i){ return '<option>' + (i+1) + '일</option>'; }).join('');
     document.getElementById('point-edit-title').textContent = isNew ? '적립 항목 등록' : '적립금 정책 수정';
     document.getElementById('point-edit-item').textContent = item || '';
-    document.getElementById('point-edit-amt').textContent = d[0];
-    document.getElementById('point-edit-limit').textContent = d[1];
-    document.getElementById('point-edit-type').value = '정액 적립';
+    document.getElementById('point-edit-amt').value = d.amt;
+    document.getElementById('point-limit-cycle').value = d.cycle;
+    document.getElementById('point-limit-nth').value = d.nth;
+    document.getElementById('point-limit-dow').value = d.dow + '요일';
+    document.getElementById('point-limit-day').value = d.day + '일';
+    document.getElementById('point-limit-cnt').value = d.cnt;
+    syncPointLimit();
     document.getElementById('point-edit-target').value = '전체회원';
     document.getElementById('point-edit-use').value = '사용중';
     document.getElementById('point-edit-btns').innerHTML =
@@ -4378,6 +4470,7 @@
   renderOptGroupRows();
   renderCatStruct();
   updateOrderBulkCount();
+  renderPointRows();
 </script>
 </body>
 </html>
