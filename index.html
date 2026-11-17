@@ -591,23 +591,23 @@
     display:inline-flex; align-items:center; gap:5px; font-size:10.5px; color:var(--text);
     background:var(--box); border-radius:11px; padding:2px 9px 2px 3px;
   }
-  .fab-tag i{ width:14px; height:14px; border-radius:50%; border:1px solid rgba(0,0,0,.14); flex-shrink:0; }
+  .fab-tag i{ width:16px; height:16px; border-radius:3px; background:var(--ph-grad); flex-shrink:0; }
   .fab-tag.off{ color:var(--muted); text-decoration:line-through; }
   .fab-color-list{ background:var(--box); border-radius:var(--r-sm); padding:10px; }
   .fab-color-head{
-    display:grid; grid-template-columns:14px 34px 1fr 90px 44px 18px; gap:8px;
+    display:grid; grid-template-columns:14px 44px 1fr 44px 18px; gap:10px;
     font-size:10px; color:var(--muted); margin-bottom:8px; padding:0 2px;
   }
   .fab-color-row{
-    display:grid; grid-template-columns:14px 34px 1fr 90px 44px 18px; gap:8px;
+    display:grid; grid-template-columns:14px 44px 1fr 44px 18px; gap:10px;
     align-items:center; margin-bottom:8px;
   }
   .fab-color-row:last-child{ margin-bottom:0; }
   .fab-color-row.dragging{ opacity:.35; }
   .fab-grip{ text-align:center; color:var(--muted); font-size:12px; cursor:grab; }
-  .fab-color-row input[type=color]{
-    width:34px; height:30px; padding:2px; border:1px solid var(--line-light);
-    border-radius:var(--r-sm); background:#fff; cursor:pointer;
+  .fab-thumb{
+    width:44px; height:44px; border-radius:var(--r-sm); background:var(--ph-grad);
+    cursor:pointer; flex-shrink:0;
   }
   .fab-use{ display:flex; justify-content:center; }
   .fab-use input{ margin:0; }
@@ -2674,7 +2674,7 @@
               <div>· 상품 상세에서 고객이 원단을 고르면 <strong>그 원단에 등록된 색상만</strong> 색상 선택지로 나옵니다.</div>
             </div>
             <table class="wf-table">
-              <thead><tr><th>원단</th><th>색상</th><th>연결 카테고리 (소분류)</th><th>사용 여부</th><th>관리</th></tr></thead>
+              <thead><tr><th>원단</th><th>색상</th><th>사용 여부</th><th>관리</th></tr></thead>
               <tbody id="fabric-rows"></tbody>
             </table>
           </div>
@@ -2987,11 +2987,9 @@
       <div class="admin-modal-field"><label>사용 여부</label>
         <select class="admin-modal-input" id="fabric-edit-use"><option>사용중</option><option>중지</option></select></div>
     </div>
-    <div class="admin-modal-field"><label>연결 카테고리 (소분류) · 열람 전용</label>
-      <div class="admin-modal-input" id="fabric-edit-cats" style="min-height:34px;"></div></div>
     <div class="admin-modal-field"><label>색상</label>
       <div class="fab-color-list">
-        <div class="fab-color-head"><span></span><span>색상</span><span>색상명</span><span>HEX</span><span>사용</span><span></span></div>
+        <div class="fab-color-head"><span></span><span>이미지</span><span>색상명</span><span>사용</span><span></span></div>
         <div id="fabric-color-rows"></div>
         <div class="wf-box admin-modal-add-row" style="margin-top:8px;" onclick="addFabricColor()">+ 색상 추가</div>
       </div>
@@ -5033,18 +5031,12 @@
   // 평면 구조인 옵션 그룹에 넣을 수 없어 원단 단위로 들고 있는다.
   // 관리자 '원단 관리'와 상품 상세의 원단·색상 선택이 이 배열 하나를 같이 본다.
   let FABRIC_DATA = [
-    { name:'광목 10수', use:true, cats:['Fabric > 포스터','Fabric > 코스터','Fabric > 북마크'],
-      colors:[{n:'화이트', h:'#F7F5F0', use:true}, {n:'오트밀', h:'#E4DBC8', use:true}] },
-    { name:'광목 14수', use:true, cats:['Fabric > 포스터'],
-      colors:[{n:'소프트웜', h:'#EFE3CE', use:true}] },
-    { name:'린넨 10수', use:true, cats:['Fabric > 포스터','Fabric > 코스터'],
-      colors:[{n:'화이트', h:'#F6F4EF', use:true}, {n:'오트밀', h:'#DFD4BE', use:true}] },
-    { name:'린넨 20수', use:true, cats:['Fabric > 포스터'],
-      colors:[{n:'화이트', h:'#F6F4EF', use:true}] },
-    { name:'린넨 30수', use:true, cats:['Fabric > 포스터','Fabric > 달력'],
-      colors:[{n:'화이트', h:'#F6F4EF', use:true}, {n:'오트밀', h:'#DFD4BE', use:true}, {n:'차콜', h:'#4F4F4F', use:false}] },
-    { name:'쉬폰', use:true, cats:['Fabric > 포스터'],
-      colors:[{n:'화이트', h:'#FBFAF7', use:true}] }
+    { name:'광목 10수', use:true, colors:[{n:'화이트', use:true}, {n:'오트밀', use:true}] },
+    { name:'광목 14수', use:true, colors:[{n:'소프트웜', use:true}] },
+    { name:'린넨 10수', use:true, colors:[{n:'화이트', use:true}, {n:'오트밀', use:true}] },
+    { name:'린넨 20수', use:true, colors:[{n:'화이트', use:true}] },
+    { name:'린넨 30수', use:true, colors:[{n:'화이트', use:true}, {n:'오트밀', use:true}, {n:'차콜', use:false}] },
+    { name:'쉬폰', use:true, colors:[{n:'화이트', use:true}] }
   ];
   let fabricIdx = 0;
 
@@ -5067,7 +5059,7 @@
     const colors = f ? f.colors.filter(function(c){ return c.use; }) : [];
     colorGrid.innerHTML = colors.map(function(c, i){
       return '<div class="icon-opt-item"><div class="icon-opt-circle' + (i === 0 ? ' selected' : '') +
-        '" style="background:' + c.h + '; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)" onclick="selectColorChip(this)"></div>' +
+        '" onclick="selectColorChip(this)"></div>' +
         '<div class="icon-opt-label">' + c.n + '</div></div>';
     }).join('');
   }
@@ -5086,11 +5078,10 @@
     if (!tb) return;
     tb.innerHTML = FABRIC_DATA.map(function(f, i){
       const chips = f.colors.map(function(c){
-        return '<span class="fab-tag' + (c.use ? '' : ' off') + '"><i style="background:' + c.h + '"></i>' + c.n + '</span>';
+        return '<span class="fab-tag' + (c.use ? '' : ' off') + '"><i></i>' + c.n + '</span>';
       }).join('');
       return '<tr><td>' + f.name + '</td>' +
         '<td><div class="fab-cell">' + (chips || '<span style="color:var(--muted)">등록된 색상 없음</span>') + '</div></td>' +
-        '<td>' + (f.cats.length ? f.cats.join(' · ') : '전체') + '</td>' +
         '<td><span class="status-pill ' + (f.use ? 'done' : 'hold') + '">' + (f.use ? '사용중' : '중지') + '</span></td>' +
         '<td><div class="admin-table-actions"><div class="wf-box" onclick="openFabricEdit(' + i + ')">수정</div></div></td></tr>';
     }).join('');
@@ -5103,9 +5094,8 @@
     wrap.innerHTML = fabEditColors.map(function(c, i){
       return '<div class="fab-color-row" data-ci="' + i + '">' +
         '<div class="fab-grip drag-handle" title="끌어서 순서 변경">\u283F</div>' +
-        '<input type="color" value="' + c.h + '" oninput="onFabColor(' + i + ', this.value)">' +
+        '<div class="fab-thumb" title="클릭해 원단 색상 이미지를 등록합니다"></div>' +
         '<input type="text" class="admin-modal-input small" value="' + c.n + '" placeholder="색상명" oninput="fabEditColors[' + i + '].n=this.value">' +
-        '<input type="text" class="admin-modal-input small fab-hex" value="' + c.h + '" maxlength="7" oninput="onFabHex(' + i + ', this.value)">' +
         '<label class="fab-use"><input type="checkbox"' + (c.use ? ' checked' : '') + ' onchange="fabEditColors[' + i + '].use=this.checked"></label>' +
         '<div class="opt-value-remove" onclick="removeFabColor(' + i + ')">✕</div>' +
       '</div>';
@@ -5116,20 +5106,8 @@
       renderFabricColorRows();
     }, '.fab-color-row');
   }
-  function onFabColor(i, v){
-    fabEditColors[i].h = v.toUpperCase();
-    const row = document.querySelector('#fabric-color-rows .fab-color-row[data-ci="' + i + '"] .fab-hex');
-    if (row) row.value = fabEditColors[i].h;
-  }
-  function onFabHex(i, v){
-    const t = v.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
-    if (t.length !== 6) return;
-    fabEditColors[i].h = '#' + t.toUpperCase();
-    const sw = document.querySelector('#fabric-color-rows .fab-color-row[data-ci="' + i + '"] input[type=color]');
-    if (sw) sw.value = fabEditColors[i].h;
-  }
   function addFabColor(){
-    fabEditColors.push({ n:'', h:'#FFFFFF', use:true });
+    fabEditColors.push({ n:'', use:true });
     renderFabricColorRows();
   }
   function addFabricColor(){ addFabColor(); }
@@ -5141,11 +5119,10 @@
     const isNew = (i == null);
     const f = isNew ? { name:'', use:true, cats:[], colors:[] } : FABRIC_DATA[i];
     fabEditIdx = i;
-    fabEditColors = f.colors.map(function(c){ return { n:c.n, h:c.h, use:c.use }; });
+    fabEditColors = f.colors.map(function(c){ return { n:c.n, use:c.use }; });
     document.getElementById('fabric-edit-title').textContent = isNew ? '원단 등록' : '원단 수정';
     document.getElementById('fabric-edit-name').value = f.name;
     document.getElementById('fabric-edit-use').value = f.use ? '사용중' : '중지';
-    document.getElementById('fabric-edit-cats').textContent = f.cats.length ? f.cats.join(' · ') : '전체 (지정 없음)';
     renderFabricColorRows();
     document.getElementById('fabric-edit-btns').innerHTML =
       (isNew ? '' : '<div class="wf-box danger" onclick="deleteFabric()">원단 삭제</div>') +
@@ -5158,7 +5135,7 @@
     const name = document.getElementById('fabric-edit-name').value.trim() || '이름 없는 원단';
     const use = document.getElementById('fabric-edit-use').value === '사용중';
     const colors = fabEditColors.filter(function(c){ return c.n.trim(); });
-    if (fabEditIdx == null) FABRIC_DATA.push({ name:name, use:use, cats:[], colors:colors });
+    if (fabEditIdx == null) FABRIC_DATA.push({ name:name, use:use, colors:colors });
     else {
       FABRIC_DATA[fabEditIdx].name = name;
       FABRIC_DATA[fabEditIdx].use = use;
