@@ -547,7 +547,18 @@
   /* 인터로크 실 색상 - 보유 실에서 고르거나 컬러피커/HEX로 지정하면 가장 가까운 보유 실로 매칭 */
   .interlock-row{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line-light); }
   /* 포토샵식 컬러피커: 정사각 명도·채도 박스 + 세로 색상 바 */
-  .il-picker{ display:flex; gap:9px; align-items:stretch; max-width:248px; }
+  .il-pick-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; position:relative; }
+  .cp-trigger{
+    width:46px; height:34px; padding:3px; flex-shrink:0; cursor:pointer;
+    border:1px solid var(--line-light); border-radius:var(--r-sm); background:#fff;
+  }
+  .cp-trigger span{ display:block; width:100%; height:100%; border-radius:2px; }
+  .cp-pop{
+    display:none; position:absolute; top:40px; left:0; z-index:60; padding:12px;
+    background:#fff; border:1px solid var(--line-light); border-radius:var(--r-md); box-shadow:var(--shadow-md);
+  }
+  .cp-pop.show{ display:block; }
+  .il-picker{ display:flex; gap:9px; align-items:stretch; width:238px; }
   .cp-sv{
     position:relative; flex:1; aspect-ratio:1 / 1; border-radius:var(--r-sm);
     border:1px solid var(--line-light); cursor:crosshair; touch-action:none;
@@ -570,10 +581,8 @@
     position:absolute; left:-3px; right:-3px; height:7px; margin-top:-4px; border-radius:3px;
     border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.45); pointer-events:none;
   }
-  .cp-foot{ display:flex; align-items:center; gap:8px; margin-top:10px; max-width:248px; }
-  .cp-preview{
-    width:38px; height:34px; border-radius:var(--r-sm); border:1px solid var(--line-light); flex-shrink:0;
-  }
+  .cp-foot{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px; }
+  .cp-foot .cp-hexval{ font-size:11px; color:var(--text); font-variant-numeric:tabular-nums; letter-spacing:.04em; }
   .cp-rgb{ font-size:10.5px; color:var(--muted); font-variant-numeric:tabular-nums; }
   .il-hex-wrap{
     display:flex; align-items:center; gap:2px; height:34px; padding:0 10px;
@@ -1748,16 +1757,22 @@
             </div>
             <div class="interlock-row" id="interlock-row">
               <div class="opt-sub-label">인터로크 실 색상</div>
-              <div class="il-picker">
-                <div class="cp-sv" id="cp-sv"><div class="cp-dot" id="cp-sv-dot"></div></div>
-                <div class="cp-hue" id="cp-hue"><div class="cp-hue-dot" id="cp-hue-dot"></div></div>
-              </div>
-              <div class="cp-foot">
-                <span class="cp-preview" id="cp-preview"></span>
+              <div class="il-pick-row">
+                <button type="button" class="cp-trigger" id="cp-trigger" onclick="toggleColorPop()"><span id="cp-preview"></span></button>
                 <div class="il-hex-wrap"><span>#</span><input type="text" id="il-hex" maxlength="6" value="F3EADA" oninput="onInterlockHex(this.value)"></div>
-                <span class="cp-rgb" id="cp-rgb"></span>
+                <div class="il-hex-note">컬러칩을 누르거나 HEX 코드를 입력해 주세요</div>
+
+                <div class="cp-pop" id="cp-pop">
+                  <div class="il-picker">
+                    <div class="cp-sv" id="cp-sv"><div class="cp-dot" id="cp-sv-dot"></div></div>
+                    <div class="cp-hue" id="cp-hue"><div class="cp-hue-dot" id="cp-hue-dot"></div></div>
+                  </div>
+                  <div class="cp-foot">
+                    <span class="cp-hexval" id="cp-hexval"></span>
+                    <span class="cp-rgb" id="cp-rgb"></span>
+                  </div>
+                </div>
               </div>
-              <div class="il-hex-note">색상 박스를 끌거나 HEX 코드를 직접 입력해 주세요</div>
 
               <div class="il-note">
                 · 인터로크는 기본 · 필수 후가공이며, 실 색상 지정에 추가 비용은 없습니다.<br>
@@ -5050,6 +5065,7 @@
     dot.style.background = ilCustomHex;
     document.getElementById('cp-hue-dot').style.top = (((360 - ilHSV.h) % 360) / 360 * 100) + '%';
     document.getElementById('cp-preview').style.background = ilCustomHex;
+    document.getElementById('cp-hexval').textContent = ilCustomHex;
     document.getElementById('cp-rgb').textContent = 'R ' + rgb.r + ' · G ' + rgb.g + ' · B ' + rgb.b;
     if (writeHexInput !== false) document.getElementById('il-hex').value = ilCustomHex.slice(1);
   }
@@ -5088,12 +5104,25 @@
       el.addEventListener('pointercancel', up);
     });
   }
+  function toggleColorPop(){
+    document.getElementById('cp-pop').classList.toggle('show');
+  }
+  function closeColorPop(){
+    document.getElementById('cp-pop').classList.remove('show');
+  }
   function initInterlockPicker(){
     const sv = document.getElementById('cp-sv');
     if (!sv) return;
     cpBind(sv, function(x, y){ ilHSV.s = x; ilHSV.v = 1 - y; });
     cpBind(document.getElementById('cp-hue'), function(x, y){ ilHSV.h = (360 - y * 360) % 360; });
     cpSetHex('#F3EADA');
+    // 팝업 밖을 누르거나 Esc 를 누르면 닫는다
+    document.addEventListener('pointerdown', function(e){
+      if (!e.target.closest('.il-pick-row')) closeColorPop();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeColorPop();
+    });
   }
   // 우측 상세내역의 '후가공' 줄을 선택 상태에 맞춰 갱신
   function updateFinishSummary(){
