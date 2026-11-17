@@ -546,16 +546,6 @@
 
   /* 인터로크 실 색상 - 보유 실에서 고르거나 컬러피커/HEX로 지정하면 가장 가까운 보유 실로 매칭 */
   .interlock-row{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line-light); }
-  .il-mode{ display:flex; gap:3px; background:var(--box); border-radius:var(--r-sm); padding:3px; width:fit-content; }
-  .il-mode-btn{ padding:6px 14px; font-size:11px; color:var(--text); cursor:pointer; border-radius:3px; }
-  .il-mode-btn.selected{ background:var(--navy); color:#fff; font-weight:700; }
-  .il-panel{ display:none; margin-top:12px; }
-  .il-panel.show{ display:block; }
-  .il-swatch-grid{ display:flex; flex-wrap:wrap; gap:9px; }
-  .il-swatch{ width:36px; cursor:pointer; }
-  .il-swatch i{ display:block; width:36px; height:26px; border-radius:3px; border:1px solid rgba(0,0,0,.14); }
-  .il-swatch.selected i{ box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--navy); }
-  .il-swatch b{ display:block; font-size:9px; font-weight:400; color:var(--muted); text-align:center; margin-top:5px; line-height:1.3; }
   .il-pick-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .il-pick-row input[type=color]{
     width:46px; height:34px; padding:2px; border:1px solid var(--line-light);
@@ -571,19 +561,6 @@
     font-family:var(--font); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
   }
   .il-hex-note{ font-size:10.5px; color:var(--muted); }
-  .il-match{
-    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
-    margin-top:12px; background:var(--box); border-radius:var(--r-sm); padding:10px 12px;
-  }
-  .il-chip{ display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--text); }
-  .il-chip .sw{ width:20px; height:20px; border-radius:3px; border:1px solid rgba(0,0,0,.14); flex-shrink:0; }
-  .il-chip em{ font-style:normal; color:var(--muted); }
-  .il-match .arw{ font-size:12px; color:var(--muted); }
-  .il-acc{ margin-left:auto; font-size:10px; font-weight:700; padding:3px 9px; border-radius:10px; white-space:nowrap; }
-  .il-acc.hi{ background:#e1f0e6; color:var(--green); }
-  .il-acc.mid{ background:#fdf1d6; color:#a3690b; }
-  .il-acc.low{ background:#fbe1e1; color:#a3312f; }
-  .il-warn{ font-size:10.5px; color:#a3312f; line-height:1.7; margin-top:8px; }
   .il-note{ font-size:10.5px; color:var(--muted); line-height:1.8; margin-top:12px; }
   .dowel-pos-row{ display:none; margin-top:14px; padding-top:14px; }
   .dowel-pos-row.show{ display:block; }
@@ -1747,29 +1724,15 @@
             </div>
             <div class="interlock-row" id="interlock-row">
               <div class="opt-sub-label">인터로크 실 색상</div>
-              <div class="il-mode">
-                <div class="il-mode-btn selected" data-ilmode="stock" onclick="setInterlockMode('stock')">보유 실에서 선택</div>
-                <div class="il-mode-btn" data-ilmode="custom" onclick="setInterlockMode('custom')">색상 직접 지정</div>
+              <div class="il-pick-row">
+                <input type="color" id="il-color" value="#F3EADA" oninput="onInterlockPick(this.value)">
+                <div class="il-hex-wrap"><span>#</span><input type="text" id="il-hex" maxlength="6" value="F3EADA" oninput="onInterlockHex(this.value)"></div>
+                <div class="il-hex-note">컬러칩을 누르거나 HEX 코드를 입력해 주세요</div>
               </div>
-
-              <div class="il-panel show" id="il-panel-stock">
-                <div class="il-swatch-grid" id="il-swatch-grid"></div>
-              </div>
-
-              <div class="il-panel" id="il-panel-custom">
-                <div class="il-pick-row">
-                  <input type="color" id="il-color" value="#CC1418" oninput="onInterlockPick(this.value)">
-                  <div class="il-hex-wrap"><span>#</span><input type="text" id="il-hex" maxlength="6" value="CC1418" oninput="onInterlockHex(this.value)"></div>
-                  <div class="il-hex-note">컬러칩을 누르거나 HEX 코드를 입력해 주세요</div>
-                </div>
-              </div>
-
-              <div class="il-match" id="il-match"></div>
-              <div id="il-warn"></div>
 
               <div class="il-note">
                 · 인터로크는 기본 · 필수 후가공이며, 실 색상 지정에 추가 비용은 없습니다.<br>
-                · 지정하신 색은 <strong>보유 중인 실 가운데 가장 가까운 색</strong>으로 제작됩니다. 실 재질과 모니터 환경에 따라 화면에서 보시는 색과 차이가 있습니다.<br>
+                · 지정하신 색과 <strong>가장 가까운 실</strong>로 제작됩니다. 실 재질과 모니터 환경에 따라 화면에서 보시는 색과 차이가 있습니다.<br>
                 · 정확한 색 지정이 필요하시면 주문 전 톡상담으로 문의해 주세요. 실물 실 색상 사진을 보내드립니다.
               </div>
             </div>
@@ -5017,102 +4980,18 @@
   }
 
   // ----- 인터로크 실 색상 -----
-  // 보유 중인 실 색상. 고객이 지정한 색은 이 목록에서 가장 가까운 색으로 매칭해 제작한다.
-  const INTERLOCK_THREADS = [
-    {n:'화이트',     h:'#FFFFFF'}, {n:'아이보리',   h:'#F3EADA'}, {n:'베이지',   h:'#D6C3A5'},
-    {n:'라이트그레이', h:'#C9C9C9'}, {n:'차콜',      h:'#4A4A4A'}, {n:'블랙',     h:'#1A1A1A'},
-    {n:'레드',       h:'#C8102E'}, {n:'버건디',     h:'#6E1A2B'}, {n:'핑크',     h:'#E89AB4'},
-    {n:'오렌지',     h:'#E8641C'}, {n:'머스타드',   h:'#D8A32A'}, {n:'브라운',    h:'#7A5230'},
-    {n:'올리브',     h:'#6B7A3A'}, {n:'그린',      h:'#2E7D4F'}, {n:'민트',     h:'#7FC8B4'},
-    {n:'스카이블루',  h:'#6FA8DC'}, {n:'네이비',     h:'#1F3A6E'}, {n:'퍼플',     h:'#6B4E9B'}
-  ];
-  let ilMode = 'stock';
-  let ilStockIdx = 1;            // 기본값: 아이보리
-  let ilCustomHex = '#CC1418';
-
-  function ilRgb(hex){
-    const v = parseInt(hex.slice(1), 16);
-    return { r:(v >> 16) & 255, g:(v >> 8) & 255, b:v & 255 };
-  }
-  // redmean: 사람이 느끼는 색차에 가깝게 가중치를 준 RGB 거리
-  function ilDistance(h1, h2){
-    const a = ilRgb(h1), b = ilRgb(h2);
-    const rm = (a.r + b.r) / 2, dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
-    return Math.sqrt((2 + rm / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rm) / 256) * db * db);
-  }
-  function ilNearest(hex){
-    let best = 0, bestD = Infinity;
-    INTERLOCK_THREADS.forEach(function(t, i){
-      const d = ilDistance(hex, t.h);
-      if (d < bestD){ bestD = d; best = i; }
-    });
-    return { idx:best, dist:bestD };
-  }
-  function renderIlSwatches(){
-    document.getElementById('il-swatch-grid').innerHTML = INTERLOCK_THREADS.map(function(t, i){
-      return '<div class="il-swatch' + (i === ilStockIdx ? ' selected' : '') + '" onclick="selectIlStock(' + i + ')" title="' + t.n + ' ' + t.h + '">' +
-        '<i style="background:' + t.h + '"></i><b>' + t.n + '</b></div>';
-    }).join('');
-  }
-  function setInterlockMode(m){
-    ilMode = m;
-    document.querySelectorAll('#interlock-row [data-ilmode]').forEach(function(b){
-      b.classList.toggle('selected', b.dataset.ilmode === m);
-    });
-    document.getElementById('il-panel-stock').classList.toggle('show', m === 'stock');
-    document.getElementById('il-panel-custom').classList.toggle('show', m === 'custom');
-    renderIlMatch();
-  }
-  function selectIlStock(i){
-    ilStockIdx = i;
-    renderIlSwatches();
-    renderIlMatch();
-  }
+  // 고객이 지정한 색은 그대로 주문 데이터로 넘기고, 제작 시 가장 가까운 실로 맞춘다.
+  let ilCustomHex = '#F3EADA';
   function onInterlockPick(v){
     ilCustomHex = v.toUpperCase();
     document.getElementById('il-color').value = ilCustomHex;
     document.getElementById('il-hex').value = ilCustomHex.slice(1);
-    renderIlMatch();
   }
   function onInterlockHex(v){
     const t = v.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
     if (t.length !== 6) return;          // 입력 중에는 건드리지 않는다
     ilCustomHex = '#' + t.toUpperCase();
     document.getElementById('il-color').value = ilCustomHex;
-    renderIlMatch();
-  }
-  function ilChip(hex, label, sub){
-    return '<span class="il-chip"><span class="sw" style="background:' + hex + '"></span>' +
-      label + (sub ? ' <em>' + sub + '</em>' : '') + '</span>';
-  }
-  function renderIlMatch(){
-    const matchEl = document.getElementById('il-match');
-    const warnEl = document.getElementById('il-warn');
-    if (ilMode === 'stock'){
-      const t = INTERLOCK_THREADS[ilStockIdx];
-      matchEl.innerHTML = ilChip(t.h, t.n, t.h) +
-        '<span class="il-acc hi">보유 실 그대로 제작</span>';
-      warnEl.innerHTML = '';
-    } else {
-      const near = ilNearest(ilCustomHex);
-      const t = INTERLOCK_THREADS[near.idx];
-      const acc = near.dist <= 30 ? ['hi','거의 일치'] : near.dist <= 80 ? ['hi','근사치 높음']
-                : near.dist <= 170 ? ['mid','근사치 보통'] : ['low','근사치 낮음'];
-      matchEl.innerHTML =
-        ilChip(ilCustomHex, '지정한 색', ilCustomHex) +
-        '<span class="arw">&rarr;</span>' +
-        ilChip(t.h, t.n + ' 실로 제작', t.h) +
-        '<span class="il-acc ' + acc[0] + '">' + acc[1] + '</span>';
-      warnEl.innerHTML = acc[0] === 'low'
-        ? '<div class="il-warn">지정하신 색과 보유 실의 차이가 큽니다. 그대로 주문하시면 위 실 색상으로 제작되며, 색이 중요하시면 주문 전 톡상담으로 확인해 주세요.</div>'
-        : '';
-    }
-    updateFinishSummary();
-  }
-  function ilThreadLabel(){
-    return ilMode === 'stock'
-      ? INTERLOCK_THREADS[ilStockIdx].n
-      : INTERLOCK_THREADS[ilNearest(ilCustomHex).idx].n + ' (지정 ' + ilCustomHex + ')';
   }
   // 우측 상세내역의 '후가공' 줄을 선택 상태에 맞춰 갱신
   function updateFinishSummary(){
@@ -5122,7 +5001,7 @@
     document.querySelectorAll('#finish-grid .icon-opt-circle.selected:not(.locked)').forEach(function(c){
       extras.push(c.parentElement.querySelector('.icon-opt-label').childNodes[0].textContent.trim());
     });
-    el.textContent = '인터로크 ' + ilThreadLabel() + (extras.length ? ' · ' + extras.join(' · ') : '');
+    el.textContent = '인터로크' + (extras.length ? ' · ' + extras.join(' · ') : '');
   }
 
   // 목봉 위치(상단/하단), 부자재 등 다중 선택 가능한 아이콘 옵션 토글
@@ -5212,8 +5091,7 @@
   renderAdminReviews();
   renderAdminReports();
   renderPolicyRows();
-  renderIlSwatches();
-  renderIlMatch();
+  updateFinishSummary();
   enableRowDrag(document.getElementById('main-banner-list'), renumberBannerRows);
   enableRowDrag(document.getElementById('faq-rows'), function(listEl){
     Array.from(listEl.children).forEach(function(tr, i){
