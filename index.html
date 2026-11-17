@@ -449,27 +449,32 @@
   }
   .pt-modal-overlay.show{ display:flex; }
   .pt-modal-box{
-    background:#fff; width:560px; max-width:92vw; max-height:84vh; overflow-y:auto;
-    padding:26px; position:relative; border-radius:var(--r-md); box-shadow:var(--shadow-lg);
+    background:#fff; width:640px; max-width:92vw; max-height:84vh; overflow-y:auto;
+    padding:24px; position:relative; border-radius:var(--r-md); box-shadow:var(--shadow-lg);
   }
   .pt-modal-title{ font-size:15px; font-weight:700; color:var(--navy); padding-right:24px; }
   .pt-modal-sub{ font-size:11.5px; color:var(--muted); margin-top:5px; }
-  .pt-spec{ margin-top:20px; }
-  .pt-spec:first-child{ margin-top:16px; }
-  .pt-spec-name{ font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
-  /* 단가단위 / 개당단가 두 칸만. 구간은 1 · 2~100 · 201~ 형태로 적는다. */
-  table.pt-table{ width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
-  .pt-table th{
-    background:var(--navy-light); color:var(--navy); font-weight:700; font-size:10.5px;
-    padding:8px 10px; text-align:left; white-space:nowrap;
+  /* 규격이 여러 개라 세로로 쌓으면 한없이 길어진다 -> 2단 그리드 */
+  #pt-body{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+  .pt-spec{ border:1px solid var(--line-light); border-radius:var(--r-sm); overflow:hidden; }
+  .pt-spec-name{
+    background:var(--box); padding:7px 10px; font-size:11.5px; font-weight:700; color:var(--text);
   }
-  .pt-table td{ padding:9px 10px; border-bottom:1px solid #f1f1f1; color:var(--text); }
-  .pt-table tr:last-child td{ border-bottom:none; }
+  /* 단가단위 / 개당단가 두 칸만. 구간은 1 · 2~100 · 201~ 형태로 적는다. */
+  table.pt-table{ width:100%; border-collapse:collapse; font-size:11.5px; table-layout:fixed; }
+  .pt-table th{
+    color:var(--muted); font-weight:500; font-size:10px; padding:5px 10px;
+    text-align:left; white-space:nowrap; border-bottom:1px solid #f1f1f1;
+  }
+  .pt-table td{ padding:5px 10px; border-top:1px solid #f6f6f6; color:var(--text); }
+  .pt-table tbody tr:first-child td{ border-top:none; }
   .pt-table .pt-num{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .pt-quote{ font-size:11.5px; color:var(--muted); background:var(--box); border-radius:var(--r-sm); padding:11px 12px; }
+  @media (max-width:560px){ #pt-body{ grid-template-columns:1fr; } }
+  .pt-quote{ font-size:11px; color:var(--muted); padding:9px 10px; line-height:1.7; }
+  .pt-spec.pt-span{ grid-column:1 / -1; }
   .pt-note{
-    margin-top:20px; padding-top:12px; border-top:1px dashed var(--line);
-    font-size:11px; color:var(--muted); line-height:1.8;
+    margin-top:14px; padding-top:10px; border-top:1px dashed var(--line);
+    font-size:10.5px; color:var(--muted); line-height:1.8;
   }
 
   /* 상품 상세 (레드프린팅 - 깔끔한 UI/sticky 요약, 올댓프린팅 - 아이콘형 옵션 참고)
@@ -3961,7 +3966,7 @@
     document.getElementById('pt-title').textContent = name + ' 전체 가격표';
     document.getElementById('pt-sub').textContent = d.category + ' · 개당 단가(VAT 포함) 기준이며 배송비는 별도입니다.';
     const quoteBlock = d.customQuote
-      ? '<div class="pt-spec"><div class="pt-spec-name">규격 외 직접 입력</div>' +
+      ? '<div class="pt-spec pt-span"><div class="pt-spec-name">규격 외 직접 입력</div>' +
         '<div class="pt-quote">단가표에 없는 사이즈는 개별 견적으로 안내드립니다. 대량주문 견적문의로 접수해 주세요.</div></div>'
       : '';
     document.getElementById('pt-body').innerHTML = d.specs.map(function(sp){
